@@ -1,0 +1,125 @@
+{
+    "mark": "iotm",
+    "config": [
+        {
+            "global": 0,
+            "type": "Reading",
+            "subtype": "AnalogAdc",
+            "id": "t1",
+            "widget": "anydataRed",
+            "page": "Сенсоры",
+            "descr": "Аналог",
+            "map": "1,1024,1,255",
+            "plus": 0,
+            "multiply": 1,
+            "round": 1,
+            "pin": 0,
+            "int": "1",
+            "avgSteps": 1
+        },
+        {
+            "global": 0,
+            "type": "Reading",
+            "subtype": "Variable",
+            "id": "b1",
+            "needSave": 0,
+            "widget": "rangeServo",
+            "page": "Сенсоры",
+            "descr": "Бар 1",
+            "int": "0",
+            "val": "0.0",
+            "map": "1024,1024,1,255",
+            "plus": 0,
+            "multiply": 1,
+            "round": 0
+        },
+        {
+            "global": 0,
+            "type": "Reading",
+            "subtype": "Variable",
+            "id": "b2",
+            "needSave": 0,
+            "widget": "rangeServo",
+            "page": "Сенсоры",
+            "descr": "Бар 2",
+            "int": "0",
+            "val": "0.0",
+            "map": "1024,1024,1,255",
+            "plus": 0,
+            "multiply": 1,
+            "round": 0
+        },
+        {
+            "global": 0,
+            "type": "Reading",
+            "subtype": "LedFX",
+            "id": "fl20",
+            "widget": "inputTxt",
+            "page": "Кнопки",
+            "descr": "Лента",
+            "int": 15,
+            "needSave": 0,
+            "data_pin": "2",
+            "numLeds": "7",
+            "brightness": "50",
+            "speed": "100",
+            "color": "0xFF0000",
+            "effectsMode": "11",
+            "valueMode": 0,
+            "show": false
+        },
+        {
+            "global": 0,
+            "type": "Reading",
+            "subtype": "VButton",
+            "id": "pause",
+            "needSave": 0,
+            "widget": "toggle",
+            "page": "Кнопки",
+            "descr": "Пауза",
+            "int": "0",
+            "val": "0"
+        },
+        {
+            "global": 0,
+            "type": "Reading",
+            "subtype": "VButton",
+            "id": "bars",
+            "needSave": 0,
+            "widget": "toggle",
+            "page": "Кнопки",
+            "descr": "Бары",
+            "int": "0",
+            "val": "0"
+        },
+        {
+            "global": 0,
+            "type": "Reading",
+            "subtype": "VButton",
+            "id": "any",
+            "needSave": 0,
+            "widget": "toggle",
+            "page": "Кнопки",
+            "descr": "Анимация",
+            "int": "0",
+            "val": "0"
+        },
+        {
+            "global": 0,
+            "type": "Reading",
+            "subtype": "VButton",
+            "id": "fade",
+            "needSave": 0,
+            "widget": "toggle",
+            "page": "Кнопки",
+            "descr": "Скрыть",
+            "int": "0",
+            "val": "0"
+        }
+    ]
+}
+
+scenario=>if bars then fl20.vuMeter(7, "t1") else fl20.stop()
+if any then fl20.setEffect(100) else fl20.stop()
+if pause then fl20.pause() else fl20.resume()
+if fade then fl20.fadeOut(1, 3) else fl20.fadeIn(60, 3)

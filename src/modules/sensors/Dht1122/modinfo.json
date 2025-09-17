@@ -1,0 +1,62 @@
+{
+    "menuSection": "sensors",
+    "configItem": [
+        {
+            "global": 0,
+            "name": "DHT11 Температура",
+            "type": "Reading",
+            "subtype": "Dht1122t",
+            "id": "tmp3",
+            "widget": "anydataTmp",
+            "page": "Сенсоры",
+            "descr": "Температура",
+            "int": 60,
+            "pin": 19,
+            "senstype": "dht11"
+        },
+        {
+            "global": 0,
+            "name": "DHT11 Влажность",
+            "type": "Reading",
+            "subtype": "Dht1122h",
+            "id": "Hum3",
+            "widget": "anydataHum",
+            "page": "Сенсоры",
+            "descr": "Влажность",
+            "int": 60,
+            "pin": 19,
+            "senstype": "dht11"
+        }
+    ],
+    "about": {
+        "authorName": "Ilya Belyakov",
+        "authorContact": "https://t.me/Biveraxe",
+        "authorGit": "https://github.com/biveraxe",
+        "specialThanks": "Serghei Crasnicov @Serghei63",
+        "moduleName": "Dht1122",
+        "moduleVersion": "1.0",
+        "usedRam": {
+            "esp32_4mb": 15,
+            "esp8266_4mb": 15
+        },
+        "subTypes": [
+            "Dht1122t",
+            "Dht1122h"
+        ],
+        "title": "Сенсор температуры и влажности с dht11 или dht22",
+        "moduleDesc": "Позволяет получить значения температуры и влажности с dht11 или dht22.",
+        "propInfo": {
+            "senstype": "Тип сенсора dht11 или dht22.",
+            "int": "Количество секунд между опросами датчика."
+        }
+    },
+    "defActive": true,
+    "usedLibs": {
+        "esp32*": [
+            "beegee-tokyo/DHT sensor library for ESPx"
+        ],
+        "esp82*": [
+            "beegee-tokyo/DHT sensor library for ESPx"
+        ]
+    }
+}

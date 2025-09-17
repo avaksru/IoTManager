@@ -1,0 +1,459 @@
+{
+    "mark": "iotm",
+    "config": [
+        {
+            "global": 0,
+            "type": "Reading",
+            "subtype": "Variable",
+            "id": "boilerConnected",
+            "needSave": 0,
+            "widget": "anydataDef",
+            "page": "Статус котла",
+            "descr": "✔ Связь с котлом",
+            "int": "0",
+            "val": "0.0",
+            "map": "1024,1024,1,100",
+            "plus": 0,
+            "multiply": 1,
+            "round": 0
+        },
+        {
+            "global": 0,
+            "type": "Reading",
+            "subtype": "Variable",
+            "id": "burner",
+            "needSave": 0,
+            "widget": "anydataDef",
+            "page": "Статус котла",
+            "descr": "🔥 Горелка",
+            "int": "0",
+            "val": "0.0",
+            "map": "1024,1024,1,100",
+            "plus": 0,
+            "multiply": 1,
+            "round": 0
+        },
+        {
+            "global": 0,
+            "type": "Reading",
+            "subtype": "Variable",
+            "id": "heating",
+            "needSave": 0,
+            "widget": "anydataDef",
+            "page": "Статус котла",
+            "descr": "☢ Контур отопления",
+            "int": "0",
+            "val": "0.0",
+            "map": "1024,1024,1,100",
+            "plus": 0,
+            "multiply": 1,
+            "round": 0
+        },
+        {
+            "global": 0,
+            "type": "Reading",
+            "subtype": "Variable",
+            "id": "dhw",
+            "needSave": 0,
+            "widget": "anydataDef",
+            "page": "Статус котла",
+            "descr": "🛁 Контур ГВС",
+            "int": "0",
+            "val": "0.0",
+            "map": "1024,1024,1,100",
+            "plus": 0,
+            "multiply": 1,
+            "round": 0
+        },
+        {
+            "global": "1",
+            "type": "Reading",
+            "subtype": "Variable",
+            "id": "tempCH",
+            "needSave": 0,
+            "widget": "anydataDef",
+            "page": "Котёл",
+            "descr": "🌡️ Теплоносителя",
+            "int": "0",
+            "val": "0.0",
+            "map": "1024,1024,1,100",
+            "plus": 0,
+            "multiply": 1,
+            "round": 0
+        },
+        {
+            "global": "1",
+            "type": "Reading",
+            "subtype": "Variable",
+            "id": "tempDHW",
+            "needSave": 0,
+            "widget": "anydataDef",
+            "page": "Котёл",
+            "descr": "🌡️ ГВС",
+            "int": "0",
+            "val": "0.0",
+            "map": "1024,1024,1,100",
+            "plus": 0,
+            "multiply": 1,
+            "round": 0
+        },
+        {
+            "global": 0,
+            "type": "Reading",
+            "subtype": "VButton",
+            "id": "setStatusCH",
+            "needSave": "0",
+            "widget": "toggle",
+            "page": "Управление",
+            "descr": "☢ Отопление (вкл/выкл)",
+            "int": "0",
+            "val": "0"
+        },
+        {
+            "global": 0,
+            "type": "Reading",
+            "subtype": "VButton",
+            "id": "setStatusDHW",
+            "needSave": "0",
+            "widget": "toggle",
+            "page": "Управление",
+            "descr": "🛁 Гвс (вкл/выкл)",
+            "int": "0",
+            "val": "0"
+        },
+        {
+            "global": 0,
+            "type": "Reading",
+            "subtype": "Variable",
+            "id": "setTCH",
+            "needSave": "0",
+            "widget": "inputDgt",
+            "page": "Управление",
+            "descr": "🌡️ Уставка отопления",
+            "int": "0",
+            "val": "0",
+            "map": "1024,1024,1,100",
+            "plus": 0,
+            "multiply": 1,
+            "round": 0
+        },
+        {
+            "global": "1",
+            "type": "Reading",
+            "subtype": "Ds18b20",
+            "id": "temp",
+            "widget": "anydataTmp",
+            "page": "Термостат",
+            "descr": "🌡️ В помещении",
+            "int": "120",
+            "pin": "15",
+            "index": "0",
+            "addr": "28163C0D000000CF",
+            "round": "1"
+        },
+        {
+            "global": 0,
+            "type": "Reading",
+            "subtype": "Variable",
+            "id": "SetTempId",
+            "needSave": "1",
+            "widget": "inputDgt",
+            "page": "Термостат",
+            "descr": "🌡️ Желаемая",
+            "int": "0",
+            "val": "23",
+            "map": "1024,1024,1,100",
+            "plus": 0,
+            "multiply": 1,
+            "round": 0
+        },
+        {
+            "global": 0,
+            "type": "Reading",
+            "subtype": "Variable",
+            "id": "setDHW",
+            "needSave": "1",
+            "widget": "inputDgt",
+            "page": "Управление",
+            "descr": "🌡️ Уставка ГВС",
+            "int": "0",
+            "val": "0",
+            "map": "1024,1024,1,100",
+            "plus": 0,
+            "multiply": 1,
+            "round": 0
+        },
+        {
+            "global": 0,
+            "type": "Reading",
+            "subtype": "Variable",
+            "id": "pressure",
+            "needSave": 0,
+            "widget": "anydataDef",
+            "page": "Статус котла",
+            "descr": "💧 Давление",
+            "int": "0",
+            "val": "0.0",
+            "map": "1024,1024,1,100",
+            "plus": 0,
+            "multiply": 1,
+            "round": "2"
+        },
+        {
+            "global": 0,
+            "type": "Reading",
+            "subtype": "Variable",
+            "id": "codeError",
+            "needSave": 0,
+            "widget": "anydataDef",
+            "page": "Котёл",
+            "descr": "🚨 Ошибка котла",
+            "int": "0",
+            "val": "0.0",
+            "map": "1024,1024,1,100",
+            "plus": 0,
+            "multiply": 1,
+            "round": 0
+        },
+        {
+            "global": 0,
+            "type": "Reading",
+            "subtype": "Variable",
+            "id": "lasttemp",
+            "needSave": 0,
+            "widget": "nil",
+            "page": "Ввод",
+            "descr": "Введите число",
+            "int": "0",
+            "val": "0",
+            "map": "1024,1024,1,100",
+            "plus": 0,
+            "multiply": 1,
+            "round": 0,
+            "moduleName": "Variable"
+        },
+        {
+            "global": 0,
+            "type": "Reading",
+            "subtype": "VButton",
+            "id": "auto",
+            "needSave": "1",
+            "widget": "toggle",
+            "page": "Термостат",
+            "descr": "Термостат (вкл/выкл",
+            "int": "0",
+            "val": "0",
+            "moduleName": "VButton"
+        },
+        {
+            "global": 0,
+            "type": "Reading",
+            "subtype": "Variable",
+            "id": "tempOT",
+            "needSave": 0,
+            "widget": "nil",
+            "page": "Ввод",
+            "descr": "Введите число",
+            "int": "0",
+            "val": "0",
+            "map": "1024,1024,1,100",
+            "plus": 0,
+            "multiply": 1,
+            "round": 0,
+            "moduleName": "Variable"
+        },
+        {
+            "global": 0,
+            "type": "Writing",
+            "subtype": "TelegramLT",
+            "id": "tg",
+            "widget": "",
+            "page": "",
+            "descr": "",
+            "token": "",
+            "chatID": "",
+            "moduleName": "TelegramLT"
+        },
+        {
+            "global": "1",
+            "needSave": "0",
+            "type": "Writing",
+            "subtype": "ThermostatPID",
+            "id": "Thermo96",
+            "widget": "anydataTmp",
+            "page": "Термостат",
+            "descr": "🌡️ Расчетная",
+            "int": "10",
+            "round": 1,
+            "map": "1024,1024,1,100",
+            "set_id": "SetTempId",
+            "term_id": "temp",
+            "rele": "",
+            "setDirection": 0,
+            "setLimitsMIN": "20",
+            "setLimitsMAX": "60",
+            "KP": 10,
+            "KI": "0.01",
+            "KD": "8",
+            "moduleName": "Thermostat"
+        },
+        {
+            "global": 0,
+            "type": "Reading",
+            "subtype": "UpdateServer",
+            "id": "UpdateServer38",
+            "widget": "",
+            "page": "",
+            "descr": "",
+            "btn-startUpdateAll": "http://192.168.0.84:5500/iotm/esp32c6_8mb/400/",
+            "btn-startUpdateFS": "",
+            "btn-startUpdateFW": ""
+        },
+        {
+            "global": 0,
+            "type": "Reading",
+            "subtype": "Variable",
+            "id": "tSetCH",
+            "needSave": 0,
+            "widget": "anydataDef",
+            "page": "Сохраненные значения",
+            "descr": "🌡️ Отопления",
+            "int": "0",
+            "val": "0.0",
+            "map": "1024,1024,1,100",
+            "plus": 0,
+            "multiply": 1,
+            "round": 0
+        },
+        {
+            "global": 0,
+            "type": "Reading",
+            "subtype": "Variable",
+            "id": "tSetDHW",
+            "needSave": 0,
+            "widget": "anydataDef",
+            "page": "Сохраненные значения",
+            "descr": "🌡️ ГВС",
+            "int": "0",
+            "val": "0.0",
+            "map": "1024,1024,1,100",
+            "plus": 0,
+            "multiply": 1,
+            "round": 0
+        },
+        {
+            "global": 0,
+            "type": "Reading",
+            "subtype": "Variable",
+            "id": "writtenHeatingEnabled",
+            "needSave": 0,
+            "widget": "anydataDef",
+            "page": "Сохраненные значения",
+            "descr": "Отопление (вкл/выкл)",
+            "int": "0",
+            "val": "0.0",
+            "map": "1024,1024,1,100",
+            "plus": 0,
+            "multiply": 1,
+            "round": 0
+        },
+        {
+            "global": 0,
+            "type": "Reading",
+            "subtype": "Variable",
+            "id": "writtenDHWEnabled",
+            "needSave": 0,
+            "widget": "anydataDef",
+            "page": "Сохраненные значения",
+            "descr": "ГВС (вкл/выкл)",
+            "int": "0",
+            "val": "0.0",
+            "map": "1024,1024,1,100",
+            "plus": 0,
+            "multiply": 1,
+            "round": 0
+        },
+        {
+            "global": 0,
+            "type": "Reading",
+            "subtype": "Variable",
+            "id": "setMaxModLevel",
+            "needSave": 0,
+            "widget": "anydataDef",
+            "page": "Сохраненные значения",
+            "descr": "Модуляция",
+            "int": "0",
+            "val": "0.0",
+            "map": "1024,1024,1,100",
+            "plus": 0,
+            "multiply": 1,
+            "round": 0
+        },
+        {
+            "global": 0,
+            "type": "Reading",
+            "subtype": "ecAdapter",
+            "id": "ecto",
+            "widget": "nil",
+            "page": "Котёл",
+            "descr": "Адаптер",
+            "int": "20",
+            "addr": "23",
+            "RX": "11",
+            "TX": "10",
+            "DIR_PIN": "0",
+            "baud": 19200,
+            "protocol": "SERIAL_8N1",
+            "debug": "0",
+            "UARTLine": "1"
+        }
+    ]
+}
+
+scenario=>if onStart then {
+tg.sendOftenMsg("E-bus  http://" + getIP());
+if auto then {Thermo96.enable(1);} else {Thermo96.enable(0);}
+}
+
+#включение/отключение отопления
+if setStatusCH == 1 then ecto.setHeating(1);
+if setStatusCH == 0 then ecto.setHeating(0);
+
+#включение/отключение ГВС
+if setStatusDHW == 1 then ecto.setDHW(1);
+if setStatusDHW == 0 then ecto.setDHW(0);
+
+#setStatusCH2
+if setStatusCH2 == 1 then ecto.setSecondaryCircuit(1);
+if setStatusCH2 == 0 then ecto.setSecondaryCircuit(0);
+
+#Установка 🌡️ГВС
+if setDHW then ecto.setTDHW (setDHW);
+#Установка 🌡️ теплоносителя
+if setTCH then ecto.setTCH (setTCH);
+
+#Включение термостата пид
+if auto == 1 then Thermo96.enable(1);
+
+#Вылючение термостата пмд
+if auto == 0 then {
+Thermo96.enable(0);
+tempOT = 20;
+}
+
+if Thermo96 > 38 then tempOT = Thermo96 else tempOT = 20;
+
+#Сравнение температуры для предотвращения повторных данных
+if tempOT != lasttemp then lasttemp = tempOT;
+if lasttemp then ecto.setTCH (lasttemp);
+
+#считывание записанных в адаптер значений
+if writtenHeatingEnabled then setStatusCH := writtenHeatingEnabled;
+if writtenDHWEnabled then setStatusDHW := writtenDHWEnabled;
+if tSetDHW then setDHW := tSetDHW;
+if tSetCH then setTCH := tSetCH;
+
+#уведомления в телеграм
+if  codeError > 1 then tg.sendMsg("🚨 Ошибка котла F" + codeError);
+if  boilerConnected == 0 then tg.sendMsg("🚨 Отсутствует связь с котлом") else tg.sendMsg("Cвязь с котлом восстановлена") ;
+if  pressure < 0.9 then tg.sendMsg("💧 Низкое давление теплоносителя" + pressure);

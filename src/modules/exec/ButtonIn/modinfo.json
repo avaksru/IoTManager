@@ -1,0 +1,52 @@
+{
+    "menuSection": "executive_devices",
+    "configItem": [
+        {
+            "global": 0,
+            "name": "Кнопка подключенная к пину",
+            "type": "Writing",
+            "subtype": "ButtonIn",
+            "id": "btn",
+            "widget": "toggle",
+            "page": "Кнопки",
+            "descr": "Освещение",
+            "needSave": 0,
+            "int": 0,
+            "pin": 16,
+            "execLevel": "1",
+            "pinMode": "INPUT",
+            "debounceDelay": 50,
+            "fixState": 0,
+            "inv": 0
+        }
+    ],
+    "about": {
+        "authorName": "Ilya Belyakov",
+        "authorContact": "https://t.me/Biveraxe",
+        "authorGit": "https://github.com/biveraxe",
+        "specialThanks": "",
+        "moduleName": "ButtonIn",
+        "moduleVersion": "1.0",
+        "usedRam": {
+            "esp32_4mb": 15,
+            "esp8266_4mb": 15
+        },
+        "title": "Кнопка подключенная к пину",
+        "moduleDesc": "Позволяет интерпретировать сигналы на цифровом пине как кнопку, т.е. создает в системе объект для чтения булевых значений с внешнего физического источника. Может вести себя как кнопка или как переключатель.",
+        "retInfo": "Элемент данного модуля может иметь два значения 0 - низкий уровень, 1 - высокий уровень на входе. Значение меняется при выполнении условий по параметрам.",
+        "propInfo": {
+            "pin": "Укажите GPIO номер пина для чтения состояний подключенной кнопки",
+            "execLevel": "Высокий 1 или низкий 0 уровень переключения состояния в режиме fixState = 1",
+            "pinMode": "Может быть INPUT_PULLUP INPUT_PULLDOWN INPUT",
+            "debounceDelay": "Время обработки дребезга",
+            "fixState": "Поведение кнопки. При fixState = 0 - нет фиксации и значение кнопки повторяет уровень сигнала на входе. fixState = 1 - кнопка работает как переключатель и переключение происходит по высокому или низкому уровню сигнала (execLevel).",
+            "inv": "Инвертировать снимаемые показания на последнем этапе."
+        }
+    },
+    "defActive": true,
+    "usedLibs": {
+        "esp32*": [],
+        "esp82*": [],
+        "bk72*": []
+    }
+}

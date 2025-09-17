@@ -1,0 +1,41 @@
+{
+  "menuSection": "virtual_elments",
+  "configItem": [
+    {
+      "global": 0,
+      "name": "Discovery of HomeD",
+      "type": "Reading",
+      "subtype": "DiscoveryHomeD",
+      "id": "homed",
+      "widget": "",
+      "page": "",
+      "descr": "",
+      "topic": "homed",
+      "names":1
+    }
+  ],
+  "about": {
+    "authorName": "Bubnov Mikhail",
+    "authorContact": "https://t.me/Mit4bmw",
+    "authorGit": "https://github.com/Mit4el",
+    "specialThanks": "@AVAKS",
+    "moduleName": "DiscoveryHomeD",
+    "moduleVersion": "1.0",
+    "usedRam": {
+      "esp32_4mb": 15,
+      "esp8266_4mb": 15
+    },
+    "title": "DiscoveryHomeD",
+    "moduleDesc": "Модуль проброса данных в MQTT для HOMEd-Custom",
+    "propInfo": {
+      "topic":"Топик службы HOMEd-Custom, например /myRoom/homed"
+    }
+    
+  },
+  "defActive": false,
+  "usedLibs": {
+    "esp32*": [],
+    "esp82*": [],
+    "bk72*": []
+  }
+}

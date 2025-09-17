@@ -1,0 +1,62 @@
+{
+    "menuSection": "sensors",
+    "configItem": [
+        {
+            "global": 0,
+            "name": "HDC1080 Температура",
+            "type": "Reading",
+            "subtype": "Hdc1080t",
+            "id": "Temp1080",
+            "widget": "anydataTmp",
+            "page": "Сенсоры",
+            "descr": "1080 Температура",
+            "int": 15,
+            "addr": "0x40",
+            "round": 1
+        },
+        {
+            "global": 0,
+            "name": "HDC1080 Влажность",
+            "type": "Reading",
+            "subtype": "Hdc1080h",
+            "id": "Hum1080",
+            "widget": "anydataHum",
+            "page": "Сенсоры",
+            "descr": "1080 Влажность",
+            "int": 15,
+            "addr": "0x40",
+            "round": 1
+        }
+    ],
+    "about": {
+        "authorName": "Serghei Crasnicov",
+        "authorContact": "https://t.me/Serghei63",
+        "authorGit": "https://github.com/Serghei63",
+        "specialThanks": "",
+        "moduleName": "Hdc1080",
+        "moduleVersion": "1.0",
+        "usedRam": {
+            "esp32_4mb": 15,
+            "esp8266_4mb": 15
+        },
+        "subTypes": [
+            "Hdc1080t",
+            "Hdc1080h"
+        ],
+        "title": "Датчик температуры и влажности Hdc1080",
+        "moduleDesc": "Позволяет получить значения температуры и влажности с Hdc1080.",
+        "propInfo": {
+            "addr": "Адрес датчика на шине данных, обычно 0x40",
+            "int": "Количество секунд между опросами датчика."
+        }
+    },
+    "defActive": false,
+    "usedLibs": {
+        "esp32*": [
+            "ClosedCube HDC1080"
+        ],
+        "esp82*": [
+            "ClosedCube HDC1080"
+        ]
+    }
+}

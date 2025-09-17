@@ -1,0 +1,105 @@
+{
+    "menuSection": "executive_devices",
+    "configItem": [
+        {
+            "global": 0,
+            "name": "MP3 плеер",
+            "type": "Reading",
+            "subtype": "Mp3",
+            "id": "mp3",
+            "widget": "",
+            "page": "",
+            "descr": "",
+            "int": 1,
+            "pins": "14,12",
+            "volume": 20
+        }
+    ],
+    "about": {
+        "authorName": "Ilya Belyakov",
+        "authorContact": "https://t.me/Biveraxe",
+        "authorGit": "https://github.com/biveraxe",
+        "specialThanks": "",
+        "moduleName": "Mp3",
+        "moduleVersion": "1.0",
+        "usedRam": {
+            "esp32_4mb": 15,
+            "esp8266_4mb": 15
+        },
+        "title": "MP3 плеер",
+        "moduleDesc": "Позволяет управлять модулем проигрывания MP3 файлов с SD-карты по serial интерфейсу (DFplayer mini).",
+        "propInfo": {
+            "int": "Периодичность в секундах опроса состояния плеера.",
+            "pins": "Список GPIO через запятую, к которым подключен плеер.",
+            "volume": "Уровень громкости при инициализации."
+        },
+        "retInfo": "Содержит описание текущего статуса модуля, например, Time Out! - не может подключиться",
+        "funcInfo": [
+            {
+                "name": "enableLoop",
+                "descr": "Включить бесконечное повторение",
+                "params": []
+            },
+            {
+                "name": "disableLoop",
+                "descr": "Выключить бесконечное повторение",
+                "params": []
+            },
+            {
+                "name": "randomAll",
+                "descr": "Запустить случайны трек",
+                "params": []
+            },
+            {
+                "name": "stop",
+                "descr": "Остановить проигрывание трека",
+                "params": []
+            },
+            {
+                "name": "volume",
+                "descr": "Установить громкость",
+                "params": [
+                    "Значение громкости"
+                ]
+            },
+            {
+                "name": "playFolder",
+                "descr": "Проиграть файл из папки",
+                "params": [
+                    "Номер папки",
+                    "Номер файла"
+                ]
+            },
+            {
+                "name": "play",
+                "descr": "Запустить проигрывание первого файла",
+                "params": []
+            },
+            {
+                "name": "next",
+                "descr": "Запустить проигрывание следующего файла",
+                "params": []
+            },
+            {
+                "name": "previous",
+                "descr": "Запустить проигрывание предыдущего файла",
+                "params": []
+            }
+        ]
+    },
+    "defActive": true,
+    "usedLibs": {
+        "esp32*": [
+            "dfrobot/DFRobotDFPlayerMini @ ^1.0.5"
+        ],
+        "esp32c6_4mb": [
+            "exclude"
+        ],
+        "esp32c6_8mb": [
+            "exclude"
+        ],
+        "esp82*": [
+            "dfrobot/DFRobotDFPlayerMini @ ^1.0.5"
+        ]
+    }
+}

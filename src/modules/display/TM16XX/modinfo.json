@@ -1,0 +1,91 @@
+{
+    "menuSection": "screens",
+    "configItem": [
+        {
+            "global": 0,
+            "name": "7 сегментный дисплей TM16XX",
+            "type": "Writing",
+            "subtype": "TM16XX",
+            "id": "tm",
+            "widget": "inputTxt",
+            "page": "screens",
+            "descr": "Экран",
+            "round": 0,
+            "chip": 1637,
+            "numDigits": 4,
+            "DIO": "13",
+            "CLK": "14",
+            "STB": "21",
+            "intensity": "5",
+            "on": "1",
+            "id2show": ""
+        }
+    ],
+    "about": {
+        "authorName": "Ilya Belyakov",
+        "authorContact": "https://t.me/Biveraxe",
+        "authorGit": "https://github.com/biveraxe",
+        "specialThanks": "",
+        "moduleName": "TM16XX",
+        "moduleVersion": "1.0",
+        "usedRam": {
+            "esp32_4mb": 15,
+            "esp8266_4mb": 15
+        },
+        "moduleDesc": "Позволяет выводить на 7 сегментный экран серии TM16XX (TM1637, TM1638). Может быть расширен до поддержки TM1616, TM1620, TM1628, TM1630, TM1637, TM1638, TM1640, TM1650, TM1652 и TM1668",
+        "retInfo": "Если не установлен ИД для отслеживания значения, то внутренняя переменная будет использоваться как источник для информации",
+        "propInfo": {
+            "int": "Период времени в секундах обновления информации на экране по конкретному элементу.",
+            "chip": "Номер чипа TM1637 или TM1638",
+            "numDigits": "Число цифр на дисплее",
+            "DIO": "Номер пина данных",
+            "CLK": "Номер пина часового сигнала",
+            "intensity": "Яркость 0-7",
+            "on": "Вкл/выкл при старте 1/0",
+            "STB": "Номер пина стекового сигнала - не используется на определенных моделях",
+            "id2show": "id элемента конфигурации для отображения. Если пустая строка, то дисплей использует свою переменную."
+        },
+        "funcInfo": [
+            {
+                "name": "setLEDs",
+                "descr": "Зажигает верхние светодиоды через установку байта, где каждый разряд соответствует диоду. От 0 до 255",
+                "params": ["Значение байта"]
+            },
+            {
+                "name": "onLED",
+                "descr": "Включить один диод",
+                "params": ["Номер диода"]
+            },
+            {
+                "name": "offLED",
+                "descr": "Выключить один диод",
+                "params": ["Номер диода"]
+            },
+            {
+                "name": "setParamLED",
+                "descr": "Включить/выключить (1/0) и установить яркость от 0 до 7 дисплея",
+                "params": ["Вкл/Выкл", "Яркость"]
+            },
+            {
+                "name": "id2show",
+                "descr": "Задает ИД элемента, значение которого хотим отображать на экране",
+                "params": [
+                    "Имя элемента конфигурации"
+                ]
+            }
+        ]
+    },
+    "defActive": false,
+    "usedLibs": {
+        "esp32*": [
+            "https://github.com/maxint-rd/TM16xx",
+            "https://github.com/adafruit/Adafruit-GFX-Library",
+            "adafruit/Adafruit BusIO @ ^1.13.2"
+        ],
+        "esp82*": [
+            "https://github.com/maxint-rd/TM16xx",
+            "https://github.com/adafruit/Adafruit-GFX-Library",
+            "adafruit/Adafruit BusIO @ ^1.13.2"
+        ]
+    }
+}

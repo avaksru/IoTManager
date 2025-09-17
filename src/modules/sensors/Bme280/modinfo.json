@@ -1,0 +1,90 @@
+{
+    "menuSection": "sensors",
+    "configItem": [
+        {
+            "global": 0,
+            "name": "BME280 Температура",
+            "type": "Reading",
+            "subtype": "Bme280t",
+            "id": "Tmp3",
+            "widget": "anydataTmp",
+            "page": "Сенсоры",
+            "descr": "Температура",
+            "int": 15,
+            "addr": "0x77",
+            "round": 1
+        },
+        {
+            "global": 0,
+            "name": "BME280 Давление",
+            "type": "Reading",
+            "subtype": "Bme280p",
+            "id": "Press3",
+            "widget": "anydataMm",
+            "page": "Сенсоры",
+            "descr": "Давление",
+            "int": 15,
+            "addr": "0x77",
+            "round": 1
+        },
+        {
+            "global": 0,
+            "name": "BME280 Влажность",
+            "type": "Reading",
+            "subtype": "Bme280h",
+            "id": "Hum3",
+            "widget": "anydataHum",
+            "page": "Сенсоры",
+            "descr": "Влажность",
+            "int": 15,
+            "addr": "0x77",
+            "round": 1
+        },
+        {
+            "global": 0,
+            "name": "BME280 Tочка росы",
+            "type": "Reading",
+            "subtype": "Bme280dp",
+            "id": "Dew3",
+            "widget": "anydataTmp",
+            "page": "Сенсоры",
+            "descr": "Точка росы",
+            "int": 15,
+            "addr": "0x77",
+            "round": 1
+        }
+    ],
+    "about": {
+        "authorName": "Ilya Belyakov",
+        "authorContact": "https://t.me/Biveraxe",
+        "authorGit": "https://github.com/biveraxe",
+        "specialThanks": "Serghei Crasnicov @Serghei63",
+        "moduleName": "Bme280",
+        "moduleVersion": "1.0",
+        "usedRam": {
+            "esp32_4mb": 15,
+            "esp8266_4mb": 15
+        },
+        "subTypes": [
+            "Bme280t",
+            "Bme280p",
+            "Bme280h",
+            "Bme280dp"
+        ],
+        "title": "Сенсор температуры, давления, влажности и точки росы с Bme280",
+        "moduleDesc": "Позволяет получить значения температуры, давления, влажности и точки росы с Bme280.",
+        "propInfo": {
+            "addr": "Адрес датчика на шине, обычно 0x77. Для стабильности надо пин SDO притянуть к 3.3В. Если пин SDO притянуть к GND то адрес будет 0х76",
+            "int": "Количество секунд между опросами датчика."
+        }
+    },
+    "defActive": true,
+    "usedLibs": {
+        "esp32*": [
+            "adafruit/Adafruit BME280 Library"
+        ],
+        "esp82*": [
+            "adafruit/Adafruit BME280 Library"
+        ]
+    }
+}

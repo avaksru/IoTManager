@@ -1,0 +1,72 @@
+{
+    "menuSection": "sensors",
+    "configItem": [
+        {
+            "global": 0,
+            "name": "Gran данные",
+            "type": "Reading",
+            "subtype": "gran485",
+            "id": "gran",
+            "widget": "anydataVlt",
+            "page": "Гран-Электро",
+            "descr": "Потребление",
+            "sensor": "k",
+            "int": 15,
+            "round": 1
+        },
+        {
+            "global": 0,
+            "name": "SDM120 данные",
+            "type": "Reading",
+            "subtype": "sdm120",
+            "id": "sdm120",
+            "widget": "anydataVlt",
+            "page": "Счётчик SDM120",
+            "descr": "Потребление",
+            "sensor": "k",
+            "int": 15,
+            "round": 1
+        },
+        {
+            "global": 0,
+            "name": "Energy UART",
+            "type": "Reading",
+            "subtype": "energy_uart",
+            "id": "enrg_uart",
+            "widget": "nil",
+            "page": "",
+            "descr": "",
+            "tx": 17,
+            "rx": 16,
+            "line": 2,
+            "speed": 9600
+        }
+    ],
+    "about": {
+        "authorName": "Bubnov Mikhail",
+        "authorContact": "https://t.me/Mit4bmw",
+        "authorGit": "https://github.com/Mit4el",
+        "specialThanks": "",
+        "moduleName": "EnergyMon485",
+        "moduleVersion": "1.0",
+        "usedRam": {
+            "esp32_4mb": 15,
+            "esp8266_4mb": 15
+        },
+        "title": "Счетчик электроэнергии Гран-Электро или SDM120",
+        "moduleDesc": "Счетчик электроэнергии Гран-Электро (Беларусь) или SDM120 (Китай) с интерфейсом rs-485. Energy UART - обязателен, настройки UART интерфейса модуля",
+        "propInfo": {
+            "tx": "TX пин",
+            "rx": "RX пин",
+            "speed": "Скорость UART",
+            "line": "Актуально только для ESP32: номер линии hardUART. =2 rx=16 tx=17, для SoftwarwSerial в ESP32 line = -1",
+            "sensor": "Тип данных: v - напряжение, a - ток, w - активная мощность, r - реактивная мощность, f - частота, k - общее потребление, p - косинус фи",
+            "int": "Количество секунд между опросами датчика. Желателно устанавливать одинаковые интервалы для параметров (для одного адреса Pzem) что опрос происходил один раз, остальные из 1000мс буфера."
+        }
+    },
+    "defActive": false,
+    "usedLibs": {
+        "esp32*": [],
+        "esp82*": []
+    }
+}

@@ -1,0 +1,138 @@
+{
+    "menuSection": "sensors",
+    "configItem": [
+        {
+            "global": 0,
+            "name": "BL0937 Напряжение",
+            "type": "Reading",
+            "subtype": "BL0937v",
+            "id": "bl_v",
+            "widget": "anydataVlt",
+            "page": "BL0937",
+            "descr": "Напряжение",
+            "int": 15,
+            "round": 1
+        },
+        {
+            "global": 0,
+            "name": "BL0937 Сила тока",
+            "type": "Reading",
+            "subtype": "BL0937a",
+            "id": "bl_a",
+            "widget": "anydataAmp",
+            "page": "BL0937",
+            "descr": "Сила тока",
+            "int": 15,
+            "round": 1
+        },
+        {
+            "global": 0,
+            "name": "BL0937 Мощность",
+            "type": "Reading",
+            "subtype": "BL0937w",
+            "id": "bl_w",
+            "widget": "anydataWt",
+            "page": "BL0937",
+            "descr": "Мощность",
+            "int": 15,
+            "round": 1
+        },
+        {
+            "global": 0,
+            "name": "BL0937 Реакт.Мощность",
+            "type": "Reading",
+            "subtype": "BL0937reactw",
+            "id": "bl_reactw",
+            "widget": "anydataWt",
+            "page": "BL0937",
+            "descr": "Реакт.Мощность",
+            "int": 15,
+            "round": 1
+        },
+        {
+            "global": 0,
+            "name": "BL0937 Активн.Мощность",
+            "type": "Reading",
+            "subtype": "BL0937actw",
+            "id": "bl_actw",
+            "widget": "anydataWt",
+            "page": "BL0937",
+            "descr": "Актив.Мощность",
+            "int": 15,
+            "round": 1
+        },
+        {
+            "global": 0,
+            "name": "BL0937 Энергия",
+            "type": "Reading",
+            "subtype": "BL0937wh",
+            "id": "bl_wh",
+            "widget": "anydataWth",
+            "page": "BL0937",
+            "descr": "Энергия",
+            "int": 15,
+            "round": 1
+        },
+        {
+            "global": 0,
+            "name": "BL0937 настройка",
+            "type": "Reading",
+            "subtype": "BL0937cmd",
+            "id": "bl_set",
+            "widget": "nil",
+            "page": "",
+            "descr": "",
+            "btn-reset": "",
+            "int": "5",
+            "R_current": 0.001,
+            "R_upstream": 1000000,
+            "R_downstream": 1000,
+            "CF_GPIO": 4,
+            "CF1_GPIO": 5,
+            "SEL_GPIO": 12,
+            "kfV": 0,
+            "kfA": 0,
+            "kfW": 0
+        }
+    ],
+    "about": {
+        "authorName": "Bubnov Mikhail",
+        "authorContact": "https://t.me/Mit4bmw",
+        "authorGit": "https://github.com/Mit4el",
+        "specialThanks": "",
+        "moduleName": "BL0937",
+        "moduleVersion": "1.0",
+        "usedRam": {
+            "esp32_4mb": 15,
+            "esp8266_4mb": 15
+        },
+        "title": "Счетчик электроэнергии BL0937",
+        "moduleDesc": "Считает потраченную электроэнергию, измеряет напряжение, силу тока и прочие параметры.",
+        "propInfo": {
+            "int": "Количество секунд между опросами датчика. В bl_set интервал между попытками калибровки (т.к. нужны сначала данные от датчика)",
+            "btn-reset": "Энергия BL0937 будет сброшена к нулю.",
+            "R_current": "Резистор подключенный последовательно к основной линии",
+            "R_upstream": "это 5 резисторов по 470 Ком в делителе напряжения, который питает вывод V2P",
+            "R_downstream": "это резистор емкостью 1 Ком в делителе напряжения, который питает вывод V2P",
+            "CF_GPIO": "пин CF",
+            "CF1_GPIO": "пин CF1",
+            "SEL_GPIO": "пин SEL",
+            "kfV": "Коэффициент корректировки напряжение, указать после калибровки",
+            "kfA": "Коэффициент корректировки тока, указать после калибровки",
+            "kfW": "Коэффициент корректировки мощности, указать после калибровки"
+        },
+        "funcInfo": [
+            {   
+                "name": "calibration",
+                "descr": "Расчет коэффициентов калибровки. Вызывать от имени BL0937 настройка. bl_set.calibration(220, 16, 3.5). Полученный коэффициенты искать в логе и ввести в конфигурацию kfV, kfA и kfW",
+                "params": ["Напряжение, Ток, Мощность"]
+            }
+        ]
+    },
+    "defActive": false,
+    "usedLibs": {
+        "esp32*": [],
+        "esp82*": [],
+        "bk72*": []
+    }
+}

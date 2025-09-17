@@ -1,0 +1,56 @@
+{
+    "menuSection": "executive_devices",
+    "configItem": [
+        {
+            "global": 0,
+            "name": "Управление пином",
+            "type": "Writing",
+            "subtype": "ButtonOut",
+            "needSave": 0,
+            "id": "btn",
+            "widget": "toggle",
+            "page": "Кнопки",
+            "descr": "Освещение",
+            "int": 0,
+            "inv": 0,
+            "pin": 2
+        }
+    ],
+    "about": {
+        "authorName": "Ilya Belyakov",
+        "authorContact": "https://t.me/Biveraxe",
+        "authorGit": "https://github.com/biveraxe",
+        "specialThanks": "",
+        "moduleName": "ButtonOut",
+        "moduleVersion": "1.0",
+        "usedRam": {
+            "esp32_4mb": 15,
+            "esp8266_4mb": 15
+        },
+        "title": "Управление пином",
+        "moduleDesc": "Управляем состоянием конкретного пина по модели реле.",
+        "propInfo": {
+            "pin": "Укажите GPIO номер пина для управления выходом",
+            "inv": "Инвертировать выходные сигналы"
+        },
+        "retInfo": "Элемент данного модуля может иметь два значения 0 - низкий уровень, 1 - высокий уровень на выходе",
+        "funcInfo": [
+            {
+                "name": "change",
+                "descr": "Инвертирует значение переключателя",
+                "params": []
+            },
+            {
+                "name": "pulse",
+                "descr": "Генерирует одиночный импульс",
+                "params": ["Длительность (ms)"]
+            }
+        ]
+    },
+    "defActive": true,
+    "usedLibs": {
+        "esp32*": [],
+        "esp82*": [],
+        "bk72*": []
+    }
+}

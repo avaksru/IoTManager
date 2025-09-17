@@ -1,0 +1,50 @@
+{
+  "menuSection": "virtual_elments",
+  "configItem": [
+    {
+      "global": 0,
+      "name": "График дневного расхода",
+      "type": "Writing",
+      "subtype": "LogingDaily",
+      "id": "log",
+      "widget": "chart3",
+      "page": "Графики",
+      "descr": "Температура",
+      "num": 1,
+      "int": 1,
+      "logid": "t",
+      "points": 365,
+      "telegram": 0,
+      "test": 0,
+      "btn-defvalue": 0,
+      "btn-reset": "nil"
+    }
+  ],
+  "about": {
+    "authorName": "Dmitry Borisenko",
+    "authorContact": "https://t.me/Dmitry_Borisenko",
+    "authorGit": "https://github.com/DmitryBorisenko33",
+    "specialThanks": "@itsid1 @Valiuhaaa Serg",
+    "moduleName": "LogingDaily",
+    "moduleVersion": "3.1",
+    "usedRam": {
+      "esp32_4mb": 15,
+      "esp8266_4mb": 15
+    },
+    "title": "График дневного расхода",
+    "moduleDesc": "Расширение позволяющее логировать накопительные величины и видеть их дневное изменение. Графики доступны в мобильном приложении и в веб интерфейсе. Данные графиков хранятся в встроенной памяти esp",
+    "propInfo": {
+      "int": "Интервал логирования в мнутах, частота проверки смены суток в минутах. Не рекомендуется менять",
+      "logid": "ID накопительной величины которую будем логировать",
+      "points": "Максимальное количество точек",
+      "telegram": "График будет отправлять в телеграм репорт с расходами каждый день",
+      "test": "Параметр необходим для разработчиков. Режим тестирования. График будет обновляться не раз в сутки, а кадый заданный в int интервал."
+    }
+  },
+  "defActive": true,
+  "usedLibs": {
+    "esp32*": [],
+    "esp82*": [],
+    "bk72*": []
+  }
+}

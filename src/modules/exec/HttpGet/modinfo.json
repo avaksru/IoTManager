@@ -1,0 +1,55 @@
+{
+  "menuSection": "executive_devices",
+  "configItem": [
+    {
+      "global": 0,
+      "name": "HttpGet",
+      "type": "Writing",
+      "subtype": "HttpGet",
+      "id": "http",
+      "widget": "",
+      "page": "",
+      "descr": "",
+      "token": "",
+      "chatID": ""
+    }
+  ],
+  "about": {
+    "authorName": "AVAKS",
+    "authorContact": "https://t.me/@avaks_dev",
+    "authorGit": "https://github.com/avaksru",
+    "specialThanks": "",
+    "moduleName": "HttpGet",
+    "moduleVersion": "1",
+    "usedRam": {
+      "esp32_4mb": 15,
+      "esp8266_4mb": 15
+    },
+    "title": "Отправка запросов по http",
+    "moduleDesc": "Запросы по протоколу https НЕ РАБОТАЮТ!",
+    "propInfo": {},
+    "retInfo": "",
+    "funcInfo": [
+      {
+        "name": "get",
+        "descr": "Отправить http запрос методом GET.",
+        "params": [
+          "URL"
+        ]
+      },
+      {
+        "name": "post",
+        "descr": "Отправить http запрос методом POST.",
+        "params": [
+          "URL",
+          "message"
+        ]
+      }
+    ]
+  },
+  "defActive": false,
+  "usedLibs": {
+    "esp32*": [],
+    "esp82*": []
+  }
+}

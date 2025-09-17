@@ -1,0 +1,72 @@
+{
+    "menuSection": "executive_devices",
+    "configItem": [
+        {
+            "global": 0,
+            "name": "Camera OV2640 (ESPcam)",
+            "type": "Reading",
+            "subtype": "EspCam",
+            "id": "EspCam",
+            "widget": "",
+            "page": "",
+            "descr": "",
+            "int": 60,
+            "flashOn": 0,
+            "ticker": 0,
+            "webTicker": 0
+        }
+    ],
+    "about": {
+        "authorName": "Ilya Belyakov, Mikhail Bubnov",
+        "authorContact": "https://t.me/Biveraxe",
+        "authorGit": "https://github.com/biveraxe",
+        "specialThanks": "",
+        "moduleName": "EspCam",
+        "moduleVersion": "3.0",
+        "usedRam": {
+            "esp32_4mb": 15,
+            "esp8266_4mb": 15
+        },
+        "title": "Camera OV2640 (ESPcam)",
+        "moduleDesc": "Предназначен для специальной платы esp32 со встроенной камерой. Добавляет в прошивку функцию создания фото и сохранения на SD при наличии. По адресу /getpic можно получить текущее фото (работает в том числе без SD карты). Отправка фото в телеграмм через модуль Telegram_v2",
+        "propInfo": {
+            "int": "Пауза в секундах во время постоянной фотосъемки.",
+            "flashOn": "использовать диод подсветки при съемке. используем = 1 или нет = 0 подсветку (вспышку)",
+            "ticker": "Генерировать(1) или нет(0) событие с интервалом int",
+            "webTicker": "Генерировать(1) или нет(0) событие при обращении через веб-страницу по адресу /getpic."
+        },
+        "funcInfo": [
+            {
+                "name": "save",
+                "descr": "Сохранить снимок на SD",
+                "params": []
+            },
+            {   
+                "name": "sendFoto",
+                "descr": "Отправить фото с esp-CAM в телеграмм",
+                "params": [""]
+            },
+            {   
+                "name": "editFoto",
+                "descr": "Отредактировать последнее отправленное фото в телеграмм",
+                "params": [""]
+            }, 
+            {
+                "name": "flashOn",
+                "descr": "Включить вспышку",
+                "params": []
+            },
+            {
+                "name": "flashOff",
+                "descr": "Отключить вспышку",
+                "params": []
+            }
+        ]
+    },
+    "defActive": false,
+    "usedLibs": {
+        "esp32cam_4mb": [
+            "espressif/esp32-camera @ ^2.0.0"
+        ]
+    }
+}

@@ -1,0 +1,40 @@
+{
+  "menuSection": "virtual_elments",
+  "configItem": [
+    {
+      "global": 0,
+      "name": "Discovery of Sprut",
+      "type": "Reading",
+      "subtype": "DiscoverySprut",
+      "id": "Sprut",
+      "widget": "",
+      "page": "",
+      "descr": "",
+      "topic": "Sprut",
+      "names": 1
+    }
+  ],
+  "about": {
+    "authorName": "Bubnov Mikhail",
+    "authorContact": "https://t.me/Mit4bmw",
+    "authorGit": "https://github.com/Mit4el",
+    "specialThanks": "@AVAKS",
+    "moduleName": "DiscoverySprut",
+    "moduleVersion": "1.0",
+    "usedRam": {
+      "esp32_4mb": 15,
+      "esp8266_4mb": 15
+    },
+    "title": "DiscoverySprut",
+    "moduleDesc": "Модуль проброса данных в MQTT для Sprut-Custom",
+    "propInfo": {
+      "topic": "Топик службы Sprut, например /myRoom/Sprut"
+    }
+  },
+  "defActive": false,
+  "usedLibs": {
+    "esp32*": [],
+    "esp82*": [],
+    "bk72*": []
+  }
+}

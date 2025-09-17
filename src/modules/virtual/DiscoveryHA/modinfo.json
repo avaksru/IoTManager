@@ -1,0 +1,40 @@
+{
+  "menuSection": "virtual_elments",
+  "configItem": [
+    {
+      "global": 0,
+      "name": "Discovery of HA",
+      "type": "Reading",
+      "subtype": "DiscoveryHA",
+      "id": "ha",
+      "widget": "",
+      "page": "",
+      "descr": "",
+      "topic": "homeassistant"
+    }
+  ],
+  "about": {
+    "authorName": "Bubnov Mikhail",
+    "authorContact": "https://t.me/Mit4bmw",
+    "authorGit": "https://github.com/Mit4el",
+    "specialThanks": "@AVAKS",
+    "moduleName": "DiscoveryHA",
+    "moduleVersion": "1.0",
+    "usedRam": {
+      "esp32_4mb": 15,
+      "esp8266_4mb": 15
+    },
+    "title": "DiscoveryHA",
+    "moduleDesc": "Модуль проброса данных в MQTT для HomeAssistant",
+    "propInfo": {
+      "topic":"Топик HomeAssistant"
+    }
+    
+  },
+  "defActive": false,
+  "usedLibs": {
+    "esp32*": [],
+    "esp82*": [],
+    "bk72*": []
+  }
+}

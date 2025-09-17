@@ -1,0 +1,59 @@
+{
+    "menuSection": "sensors",
+    "configItem": [
+        {
+            "global": 0,
+            "name": "GY21 Температура",
+            "type": "Reading",
+            "subtype": "GY21t",
+            "id": "tmp4",
+            "widget": "anydataTmp",
+            "page": "Сенсоры",
+            "descr": "Температура",
+            "round": 1,
+            "int": 15
+        },
+        {
+            "global": 0,
+            "name": "GY21 Влажность",
+            "type": "Reading",
+            "subtype": "GY21h",
+            "id": "Hum4",
+            "widget": "anydataHum",
+            "page": "Сенсоры",
+            "descr": "Влажность",
+            "round": 1,
+            "int": 15
+        }
+    ],
+    "about": {
+        "authorName": "Alecs",
+        "authorContact": "https://t.me/Alecs",
+        "authorGit": "",
+        "specialThanks": "",
+        "moduleName": "GY21",
+        "moduleVersion": "1.0",
+        "usedRam": {
+            "esp32_4mb": 15,
+            "esp8266_4mb": 15
+        },
+        "subTypes": [
+            "GY21t",
+            "GY21h"
+        ],
+        "title": "Датчик температуры и влажности GY21",
+        "moduleDesc": "Позволяет получить значения температуры и влажности с GY21.",
+        "propInfo": {
+            "int": "Количество секунд между опросами датчика."
+        }
+    },
+    "defActive": false,
+    "usedLibs": {
+        "esp32*": [
+            "https://github.com/JonasGMorsch/GY-21.git"
+        ],
+        "esp82*": [
+            "https://github.com/JonasGMorsch/GY-21.git"
+        ]
+    }
+}

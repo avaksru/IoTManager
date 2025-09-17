@@ -1,0 +1,131 @@
+{
+    "menuSection": "screens",
+    "configItem": [
+        {
+            "global": 0,
+            "name": "LCD экран 2004",
+            "type": "Reading",
+            "subtype": "Lcd2004",
+            "id": "Lcd",
+            "widget": "inputTxt",
+            "page": "screens",
+            "descr": "LCD Экран",
+            "addr": "0x27",
+            "size": "20,4",
+            "coord": "0,0",
+            "id2show": "",
+            "prefix": "",
+            "postfix": ""
+        },
+        {
+            "name": "LCD экран 1602",
+            "type": "Reading",
+            "subtype": "Lcd2004",
+            "id": "Lcd",
+            "widget": "inputTxt",
+            "page": "screens",
+            "descr": "LCD Экран",
+            "addr": "0x27",
+            "size": "16,2",
+            "coord": "0,0",
+            "id2show": "",
+            "prefix": "",
+            "postfix": ""
+        }
+    ],
+    "about": {
+        "authorName": "Ilya Belyakov",
+        "authorContact": "https://t.me/Biveraxe",
+        "authorGit": "https://github.com/biveraxe",
+        "specialThanks": "Sergey @Serghei63",
+        "moduleName": "Lcd2004",
+        "moduleVersion": "1.0",
+        "usedRam": {
+            "esp32_4mb": 15,
+            "esp8266_4mb": 15
+        },
+        "moduleDesc": "Позволяет выводить на символьные экраны по указанным позициям значения других элементов конфигурации.",
+        "propInfo": {
+            "addr": "Адрес устройства на шине, обычно 0x27. Установите пустую строку для включения режима сканирования адресов на шине (результат в консоли).",
+            "size": "Размерность матрицы экрана.",
+            "coord": "Координата позиции для вывода данных элемента конфигурации.",
+            "id2show": "id элемента конфигурации для отображения на экране. Если пустое значение, то данные берутся из собственной переменной.",
+            "prefix": "Символы до значения.",
+            "postfix": "Символы после значения."
+        },
+        "title": "Символьный дисплей Lcd2004",
+        "funcInfo": [
+            {
+                "name": "noBacklight",
+                "descr": "Выключить подсветку",
+                "params": []
+            },
+            {
+                "name": "backlight",
+                "descr": "Включить подсветку",
+                "params": []
+            },
+            {
+                "name": "noDisplay",
+                "descr": "Спрятать все данные",
+                "params": []
+            },
+            {
+                "name": "display",
+                "descr": "Показать данные на экране",
+                "params": []
+            },
+            {
+                "name": "toggle",
+                "descr": "Переключает видимость значений на экране",
+                "params": []
+            },
+            {
+                "name": "x",
+                "descr": "Устанавливает первую координату",
+                "params": [
+                    "Номер строки первого символа"
+                ]
+            },
+            {
+                "name": "y",
+                "descr": "Устанавливает вторую координату",
+                "params": [
+                    "Номер столбца первого символа"
+                ]
+            },
+            {
+                "name": "prefix",
+                "descr": "Задает приставку слева от значения",
+                "params": [
+                    "Строка"
+                ]
+            },
+            {
+                "name": "postfix",
+                "descr": "Задает приставку справа от значения",
+                "params": [
+                    "Строка"
+                ]
+            },
+            {
+                "name": "id2show",
+                "descr": "Задает ИД элемента, значение которого хотим отображать на экране",
+                "params": [
+                    "Имя элемента конфигурации"
+                ]
+            }
+        ]
+    },
+    "defActive": false,
+    "usedLibs": {
+        "esp32*": [
+            "https://github.com/robotclass/RobotClass_LiquidCrystal_I2C",
+            "marcoschwartz/LiquidCrystal_I2C@^1.1.4"
+        ],
+        "esp82*": [
+            "https://github.com/robotclass/RobotClass_LiquidCrystal_I2C",
+            "marcoschwartz/LiquidCrystal_I2C@^1.1.4"
+        ]
+    }
+}

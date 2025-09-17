@@ -1,0 +1,46 @@
+{
+  "menuSection": "executive_devices",
+  "configItem": [
+    {
+      "global": 0,
+      "name": "sysReset",
+      "type": "Writing",
+      "subtype": "sysReset",
+      "id": "sysReset",
+      "widget": "",
+      "page": "",
+      "descr": "",
+      "int": 60,
+      "WiFI_led": 11,
+      "MQTT_led": 10,
+      "OT_led": 6,
+      "RESET_pin": 8,
+      "pinMode": "INPUT_PULLUP",
+      "debounceDelay": 50
+    }
+  ],
+  "about": {
+    "authorName": "AVAKS",
+    "authorContact": "https://t.me/@avaks_dev",
+    "authorGit": "https://github.com/avaksru",
+    "specialThanks": "",
+    "moduleName": "sysReset",
+    "moduleVersion": "1.0",
+    "usedRam": {
+      "esp32_4mb": 15,
+      "esp8266_4mb": 15
+    },
+    "title": "Модуль индикации подключения к WiFi, MQTT, Opentherm и системного сброса",
+    "moduleDesc": "",
+    "propInfo": {
+      "pin": "Укажите GPIO номер пина для чтения состояний подключенной кнопки",
+      "pinMode": "Может быть INPUT_PULLUP INPUT_PULLDOWN INPUT",
+      "debounceDelay": "Время обработки дребезга (миллисекунд)"
+    }
+  },
+  "defActive": true,
+  "usedLibs": {
+    "esp32*": [],
+    "esp82*": []
+  }
+}

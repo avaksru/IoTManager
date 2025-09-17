@@ -1,0 +1,228 @@
+{
+    "menuSection": "executive_devices",
+    "configItem": [
+        {
+            "global": 0,
+            "name": "ectoCtrlAdapter",
+            "type": "Reading",
+            "subtype": "ecAdapter",
+            "id": "ecto",
+            "widget": "anydataTmp",
+            "page": "Котёл",
+            "descr": "Адаптер",
+            "int": 60,
+            "addr": 240,
+            "RX": 18,
+            "TX": 19,
+            "DIR_PIN": 4,
+            "baud": 19200,
+            "protocol": "SERIAL_8N1",
+            "debug": 1,
+            "UARTLine": 1
+        }
+    ],
+    "about": {
+        "authorName": "Mikhail Bubnov",
+        "authorContact": "https://t.me/Mit4bmw",
+        "authorGit": "https://github.com/Mit4el",
+        "specialThanks": "SeregaKi",
+        "moduleName": "EctoControlAdapter",
+        "moduleVersion": "2.0",
+        "usedRam": {
+            "esp32_4mb": 15,
+            "esp8266_4mb": 15
+        },
+        "subTypes": [
+            "ecAdapter"
+        ],
+        "title": "EctoControlAdapter",
+        "moduleDesc": "Управление отопительным котлом через адаптер EctoControl по протоколам OpenTherm, eBUS, Navien. Посредством Modbus RTU. Разъем 4P4C: 1-Желтый(красный)+12V; 2-Белый-GND; 3-Зелёный-A; 4-Коричневый(Синий)-B",
+        "propInfo": {
+            "addr": "Адрес slave, что бы узнать адрес - в конфиге адрес 0 и смотреть лог",
+            "int": "Количество секунд между опросами датчика.",
+            "RX": "Пин RX",
+            "TX": "Пин TX",
+            "DIR_PIN": "connect DR, RE pin of MAX485 to gpio, указать 0 если не нужен",
+            "baud": "скорость Uart",
+            "protocol": "Протокол Uart: SERIAL_8N1 или SERIAL_8N2",
+            "debug": "0 - отключить дебаг, 1 - включить вывод дебага, 2 - лог комманд, 3 - вывод modbus",
+            "UARTLine": "Номер UART порта (0, 1 или 2), по умолчанию 1"
+        },
+        "funcInfo": [
+            {
+                "name": "setHeating",
+                "descr": "Включение/отключение контура отопления",
+                "params": ["1 - включить, 0 - отключить"]
+            },
+            {
+                "name": "setDHW",
+                "descr": "Включение/отключение ГВС",
+                "params": ["1 - включить, 0 - отключить"]
+            },
+            {
+                "name": "setSecondaryCircuit",
+                "descr": "Включение/отключение вторичного контура",
+                "params": ["1 - включить, 0 - отключить"]
+            },
+            {
+                "name": "setBoilerStatus",
+                "descr": "Комбинированная установка статусов котла",
+                "params": [
+                    "отопление (1/0)",
+                    "ГВС (1/0)",
+                    "вторичный контур (1/0)"
+                ]
+            },
+            {
+                "name": "getBoilerInfo",
+                "descr": "Запрос информации о котле и адаптере",
+                "params": []
+            },
+            {
+                "name": "getWrittenBoilerStatus",
+                "descr": "Запрос записанного статуса котла",
+                "params": []
+            },
+            {
+                "name": "getSettings",
+                "descr": "Запрос текущих настроек адаптера",
+                "params": []
+            },
+            {
+                "name": "setTCH",
+                "descr": "Установка температуры отопления",
+                "params": ["температура (например 55.5)"]
+            },
+            {
+                "name": "setTDHW",
+                "descr": "Установка температуры ГВС",
+                "params": ["температура (целое число)"]
+            },
+            {
+                "name": "setSetTypeConnect",
+                "descr": "Установка типа подключения",
+                "params": ["0 - адаптер к котлу, 1 - котел к внешнему устройству"]
+            },
+            {
+                "name": "setTSetCHFaultConn",
+                "descr": "Установка температуры отопления при аварии связи",
+                "params": ["температура (например 55.5)"]
+            },
+            {
+                "name": "setTSetMinCH",
+                "descr": "Установка минимальной температуры отопления",
+                "params": ["температура (например 35.0)"]
+            },
+            {
+                "name": "setTSetMaxCH",
+                "descr": "Установка максимальной температуры отопления",
+                "params": ["температура (например 85.0)"]
+            },
+            {
+                "name": "setTSetMinDHW",
+                "descr": "Установка минимальной температуры ГВС",
+                "params": ["температура (целое число)"]
+            },
+            {
+                "name": "setTSetMaxDHW",
+                "descr": "Установка максимальной температуры ГВС",
+                "params": ["температура (целое число)"]
+            },
+            {
+                "name": "setSetMaxModLevel",
+                "descr": "Установка максимального уровня модуляции",
+                "params": ["уровень (0-100)"]
+            },
+            {
+                "name": "getTempCH",
+                "descr": "Текущая температура теплоносителя",
+                "params": []
+            },
+            {
+                "name": "getTempDHW",
+                "descr": "Текущая температура ГВС",
+                "params": []
+            },
+            {
+                "name": "getPressure",
+                "descr": "Давление в контуре",
+                "params": []
+            },
+            {
+                "name": "getFlowRate",
+                "descr": "Расход ГВС",
+                "params": []
+            },
+            {
+                "name": "getModLevel",
+                "descr": "Уровень модуляции горелки",
+                "params": []
+            },
+            {
+                "name": "getBoilerStatusRaw",
+                "descr": "Сырое значение регистра статуса",
+                "params": []
+            },
+            {
+                "name": "getTempOutside",
+                "descr": "Температура уличного датчика",
+                "params": []
+            },
+            {
+                "name": "getFlagErrorOT",
+                "descr": "Флаги ошибок OpenTherm",
+                "params": []
+            },
+            {
+                "name": "getMinSetCH",
+                "descr": "Минимальная уставка теплоносителя",
+                "params": []
+            },
+            {
+                "name": "getMaxSetCH",
+                "descr": "Максимальная уставка теплоносителя",
+                "params": []
+            },
+            {
+                "name": "getMinSetDHW",
+                "descr": "Минимальная уставка ГВС",
+                "params": []
+            },
+            {
+                "name": "getMaxSetDHW",
+                "descr": "Максимальная уставка ГВС",
+                "params": []
+            },
+            {
+                "name": "getAdapterInfo",
+                "descr": "Информация об адаптере (регистр 0x0010)",
+                "params": []
+            },
+            {
+                "name": "getAdapterVersion",
+                "descr": "Версия адаптера (регистр 0x0011)",
+                "params": []
+            },
+            {
+                "name": "getUptime",
+                "descr": "Время работы адаптера (регистр 0x0012)",
+                "params": []
+            },
+            {
+                "name": "reboot",
+                "descr": "Перезагрузка адаптера",
+                "params": []
+            },
+            {
+                "name": "resetErrors",
+                "descr": "Сброс ошибок котла",
+                "params": []
+            }
+        ]
+    },
+    "defActive": false,
+    "usedLibs": {
+        "esp32*": [],
+        "esp32c3m_4mb": ["exclude"]
+    }
+}

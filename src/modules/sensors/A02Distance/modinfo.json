@@ -1,0 +1,43 @@
+{
+    "menuSection": "sensors",
+    "configItem": [
+        {
+            "name": "A02 Дальность",
+            "type": "Reading",
+            "subtype": "A02Distance",
+            "id": "dist",
+            "widget": "anydataCm",
+            "page": "Сенсоры",
+            "descr": "Дальность",
+            "int": 5,
+            "round": 1,
+            "tx": 17,
+            "rx": 16,
+            "line": 2,
+            "speed": 9600
+        }
+    ],
+    "about": {
+        "authorName": "Bubnov Mikhail",
+        "authorContact": "https://t.me/Mit4bmw",
+        "authorGit": "https://github.com/Mit4el",
+        "exampleURL": "https://iotmanager.org/wiki",
+        "specialThanks": "",
+        "moduleName": "A02Distance",
+        "moduleVersion": "0.1",
+        "moduleDesc": "Позволяет получить дальность с ультрозвуковых датчиков A0221AU, A02YYUW",
+        "propInfo": {
+            "int": "Количество секунд между опросами датчика.",
+            "tx": "TX пин",
+            "rx": "RX пин",
+            "speed": "Скорость UART",
+            "line": "Актуально только для ESP32: номер линии hardUART. =2 rx=16 tx=17, для SoftwarwSerial в ESP32 line = -1"
+        },
+        "title": "A0221AU, A02YYUW Ультразвуковой датчик дальности"
+    },
+    "defActive": false,
+    "usedLibs": {
+        "esp32*": [],
+        "esp82*": []
+    }
+}

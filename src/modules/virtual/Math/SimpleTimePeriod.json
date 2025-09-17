@@ -1,0 +1,57 @@
+{
+    "mark": "iotm",
+    "config": [
+        {
+            "global": 0,
+            "type": "Reading",
+            "subtype": "IoTMath",
+            "id": "math",
+            "widget": "anydataValue",
+            "page": "Ввод",
+            "descr": ""
+        },
+        {
+            "global": 0,
+            "type": "Reading",
+            "subtype": "Variable",
+            "id": "start",
+            "needSave": 0,
+            "widget": "inputTm",
+            "page": "Ввод",
+            "descr": "Введите время",
+            "int": "0",
+            "val": "02:00"
+        },
+        {
+            "global": 0,
+            "type": "Reading",
+            "subtype": "Variable",
+            "id": "stop",
+            "needSave": 0,
+            "widget": "inputTm",
+            "page": "Ввод",
+            "descr": "Введите время",
+            "int": "0",
+            "val": "02:00"
+        },
+        {
+            "global": 0,
+            "type": "Writing",
+            "subtype": "ButtonOut",
+            "needSave": 0,
+            "id": "led",
+            "widget": "toggle",
+            "page": "Ввод",
+            "descr": "Освещение",
+            "int": 0,
+            "inv": 0,
+            "pin": 2
+        }
+    ]
+}
+
+scenario=>if start | stop then {
+if math.nowInTimePeriod(start, stop) then {
+led = 1
+} else led = 0
+}

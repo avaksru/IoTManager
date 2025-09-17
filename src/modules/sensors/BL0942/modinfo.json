@@ -1,0 +1,108 @@
+{
+    "menuSection": "sensors",
+    "configItem": [
+        {
+            "global": 0,
+            "name": "BL0942 Напряжение",
+            "type": "Reading",
+            "subtype": "BL0942v",
+            "id": "bl_v",
+            "widget": "anydataVlt",
+            "page": "BL0942",
+            "descr": "Напряжение",
+            "int": 15,
+            "round": 1
+        },
+        {
+            "global": 0,
+            "name": "BL0942 Сила тока",
+            "type": "Reading",
+            "subtype": "BL0942a",
+            "id": "bl_a",
+            "widget": "anydataAmp",
+            "page": "BL0942",
+            "descr": "Сила тока",
+            "int": 15,
+            "round": 1
+        },
+        {
+            "global": 0,
+            "name": "BL0942 Мощность",
+            "type": "Reading",
+            "subtype": "BL0942w",
+            "id": "bl_w",
+            "widget": "anydataWt",
+            "page": "BL0942",
+            "descr": "Мощность",
+            "int": 15,
+            "round": 1
+        },
+        {
+            "global": 0,
+            "name": "BL0942 Энергия",
+            "type": "Reading",
+            "subtype": "BL0942wh",
+            "id": "bl_wh",
+            "widget": "anydataWth",
+            "page": "BL0942",
+            "descr": "Энергия",
+            "int": 15,
+            "round": 1
+        },
+        {
+            "global": 0,
+            "name": "BL0942 настройка",
+            "type": "Reading",
+            "subtype": "BL0942cmd",
+            "id": "bl_set",
+            "widget": "nil",
+            "page": "",
+            "descr": "",
+            "int": "5",
+            "tx": 17,
+            "rx": 16,
+            "line": 2,
+            "speed": 9600
+        }
+    ],
+    "about": {
+        "authorName": "Bubnov Mikhail",
+        "authorContact": "https://t.me/Mit4bmw",
+        "authorGit": "https://github.com/Mit4el",
+        "specialThanks": "",
+        "moduleName": "BL0942",
+        "moduleVersion": "1.0",
+        "usedRam": {
+            "esp32_4mb": 15,
+            "esp8266_4mb": 15
+        },
+        "title": "Счетчик электроэнергии BL0942",
+        "moduleDesc": "Считает потраченную электроэнергию, измеряет напряжение, силу тока и прочие параметры.",
+        "propInfo": {
+            "int": "Количество секунд между опросами датчика. В bl_set интервал между попытками калибровки (т.к. нужны сначала данные от датчика)",
+            "btn-reset": "Энергия BL0942 будет сброшена к нулю.",
+            "R_current": "Резистор подключенный последовательно к основной линии",
+            "R_upstream": "это 5 резисторов по 470 Ком в делителе напряжения, который питает вывод V2P",
+            "R_downstream": "это резистор емкостью 1 Ком в делителе напряжения, который питает вывод V2P",
+            "CF_GPIO": "пин CF",
+            "CF1_GPIO": "пин CF1",
+            "SEL_GPIO": "пин SEL",
+            "kfV": "Коэффициент корректировки напряжение, указать после калибровки",
+            "kfA": "Коэффициент корректировки тока, указать после калибровки",
+            "kfW": "Коэффициент корректировки мощности, указать после калибровки"
+        },
+        "funcInfo": [
+            {   
+                "name": "calibration",
+                "descr": "Расчет коэффициентов калибровки. Вызывать от имени BL0942 настройка. bl_set.calibration(220, 16, 3.5). Полученный коэффициенты искать в логе и ввести в конфигурацию kfV, kfA и kfW",
+                "params": ["Напряжение, Ток, Мощность"]
+            }
+        ]
+    },
+    "defActive": false,
+    "usedLibs": {
+        "esp32*": [],
+        "esp82*": [],
+        "bk72*": []
+    }
+}
