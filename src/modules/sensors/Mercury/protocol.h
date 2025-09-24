@@ -1,204 +1,86 @@
-#ifndef _PROTOCOL
-#define _PROTOCOL
+#ifndef PROTOCOL_H
+#define PROTOCOL_H
 
+#include <Arduino.h>
 
-//Таблица 1
-//Код ответа Интерпретация
-//X0h Все нормально.
-//X1h Недопустимая команда или параметр.
-//X2h Внутренняя ошибка счетчика.
-//X3h Не достаточен уровень доступа для удовлетворения запроса.
-//X4h Внутренние часы счетчика уже корректировались в течение текущих суток.
-//X5h Не открыт канал связи
-
-//Запросы со стороны управляющего компьютера делятся на четыре группы:
-//запрос на тестирование канала связи (код запроса 00h);
-//запросы на открытие/закрытие канала связи (коды запроса 01h, 02h);
-//запросы на запись параметров (коды запроса 03h, 07h);
-//запросы на чтение параметров (коды запроса 04h, 05h, 06h, 08h);
-
-
-
-
-typedef struct  //  1.1 Запрос на тестирование канала связи
+// Structure for three-phase values (e.g., voltage, current, power)
+struct P3V
 {
-    //     Сетевой адрес
-    //     (1 байт)
-    //     Код запроса = 0h
-    //     (1 байт)
-    //     CRC
-    //     (2 байта)
-    uint8_t    address;
-    uint8_t    code;
-}ChannelTest;
+    float p1; // Phase 1 value
+    float p2; // Phase 2 value
+    float p3; // Phase 3 value
+};
 
-
-
-typedef struct  // 1.2 Запросы на открытие/закрытие канала связи
+// Structure for power values (active and reactive)
+struct PWV
 {
-    //      Сетевой адрес
-    //      (1 байт)
-    //      Код запроса =
-    //      1h открыть, 2h закрыть
-    //      (1 байт)
-    //      Уровень доступа
-    //      (1 байт)
-    //      Пароль (6 байт)
-    //      CRC
-    //      (2 байта)
-    uint8_t    address;
-    uint8_t    code;
-    uint8_t    accessLevel;
-    uint8_t    password[6];
-} ChannelOpen;
+    float ap; // Active power (A+)
+    float rp; // Reactive power (R+)
+};
 
-
-
-typedef struct // 1.3 Запросы на запись параметров.
+// Structure for date and time
+struct Time
 {
-    //      Сетевой адрес
-    //      (1 байт)
-    //      Код запроса = 3
-    //      (1 байт)
-    //      Номер
-    //      параметра
-    //      (1 байт)
-    //      Параметры
-    //      (1...19 байт)
-    //      CRC
-    //      (2 байта)
-    uint8_t    address;
-    uint8_t    code;
-    uint8_t    num;
-    uint8_t    parameter;//?????????????/
-    //uint8_t    parameters[];
-} WriteCmd;
+    uint8_t sec;   // Seconds
+    uint8_t min;   // Minutes
+    uint8_t hour;  // Hours
+    uint8_t dow;   // Day of week
+    uint8_t day;   // Day
+    uint8_t mon;   // Month
+    uint8_t year;  // Year (last two digits)
+    uint8_t tyear; // Season (0 = summer, 1 = winter)
+};
 
-
-
-
-                        //.................
-                        //.................
-                        // 1.3.43 Запросы на запись параметров.
-
-
-
-
-
-
-
-
-
-
-
-typedef struct{ // 1.4 Запросы на запись информации по физическим адресам физической памяти
-    // Сетевой
-    //     адрес
-    //     (1 байт)
-    //     Код
-    //     запроса
-    //    =7h
-    //    (1 байт)
-    //№
-    //     памяти
-    //    (1 байт)
-    //    Старший
-    //   байт адреса
-    //    (1 байт)
-    //    Младший
-    //     байт адреса
-    //    (1 байт)
-    //     Число
-    //     байт
-    //    информации
-    //    (1 байт)
-    //    Записываемая информация (1…
-    //                           16 байт)
-    //     CRC
-    //     (2 байта)
-    uint8_t    address;
-    uint8_t    code;
-
-
-
-}rrtr;
-
-
-
-// 2.1 Запросы на чтение массивов времён
-
-// 2.2 Запросы на чтение массивов регистров накопленной энергии.
-
-
-
-
-
-typedef struct // 2.3 Запросы на чтение параметров.
+// Structure for channel commands
+struct ChannelCmd
 {
-    //      Сетевой адрес
-    //      (1 байт)
-    //      Код запроса =
-    //      8h
-    //      (1 байт)
-    //      № параметра
-    //      (1 байт)
-    //      Параметры
-    //      (0...3 байт)
-    //      CRC
-    //      (2 байта)
-    uint8_t    address;
-    uint8_t    code;
-    uint8_t    parameter;//?????????????/
-    //uint8_t    parameters[];
+    uint8_t address;
+    uint8_t code;
+};
 
-} ReadParam;
+// Structure for opening a channel with password
+struct ChannelOpen
+{
+    uint8_t address;
+    uint8_t code;
+    uint8_t accessLevel;
+    uint8_t password[6];
+};
 
+// Structure for reading parameters
+struct ReadParam
+{
+    uint8_t address;
+    uint8_t code;
+    uint8_t paramNum;
+};
 
-//...................
-//...................
-//  2.3.33 Чтение параметров PLC1
+// Structure for reading parameters with BWRI
+struct ReadParamCmd
+{
+    uint8_t address;
+    uint8_t code;
+    uint8_t paramNum;
+    uint8_t BWRI;
+};
 
+// Structure for writing date/time
+struct WriteDate
+{
+    uint8_t address;
+    uint8_t code;
+    uint8_t paramNum;
+    Time time;
+};
 
+// Sample arrays for days and months
+extern const char *dow[7];
+extern const char *moy[12];
 
-typedef struct{ //2.4 Запросы на чтение информации по физическим адресам физической памяти
-    // Сетевой
-    //     адрес
-    //     (1
-    //      байт)
-    //     Код
-    //     запроса
-    //     = 06h
-    //       (1 байт)
-    //      17-ый
-    //      бит
-    //       адреса
-    //       Вид
-    //       энергии
-    //      (3
-    //       бита)
-    //№ памяти
-    //      (4
-    //        бита)
-    //      (1 байт)
-    //      Старший
-    //      байт адреса
-    //       (1 байт)
-    //       Младший
-    //      байт адреса
-    //      (1 байт)
-    //     Число
-    //     байт информации
-    //      (1 байт)
-    //      CRC
-    //       (2 байта)
-    uint8_t    address;
-    uint8_t    code;
+// Stub functions
+uint8_t ascii2hex(char c);
+uint8_t getBit(uint8_t byte, uint8_t bit);
+int binToDec(String bin);
+uint16_t calculateCRC(uint8_t *data, int len);
 
-
-
-} ReadInfo;
-
-
-
-
-#endif //_PROTOCOL
+#endif
