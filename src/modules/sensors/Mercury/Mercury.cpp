@@ -181,7 +181,8 @@ private:
         }
 
         // Send command
-        String txMsg = "RX ";
+        String txMsg = "TX ";
+        digitalWrite(MODBUS_DIR_PIN, HIGH); // new
         for (int i = 0; i < len; i++)
         {
             ((HardwareSerial *)_modbusUART)->write(cmd[i]);
@@ -194,6 +195,7 @@ private:
         uint8_t CRC2 = crc16 & 0xFF;
         ((HardwareSerial *)_modbusUART)->write(CRC1);
         ((HardwareSerial *)_modbusUART)->write(CRC2);
+        ((HardwareSerial *)_modbusUART)->flush(); // new
         char buf[3];
         sprintf(buf, "%02X", CRC1);
         txMsg += String(buf) + " ";
@@ -202,8 +204,9 @@ private:
         SerialPrint("I", "MercuryNode", txMsg);
 
         // Wait for response
+        digitalWrite(MODBUS_DIR_PIN, LOW);  // new
         delayMicroseconds(TIME_OUT * 1000); // Convert ms to us
-        String rxMsg = "TX ";
+        String rxMsg = "RX ";
         respSize = 0;
         while (((HardwareSerial *)_modbusUART)->available() && respSize < 64)
         { // Arbitrary max size
