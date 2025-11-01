@@ -1,7 +1,7 @@
 {
   "iotmSettings": {
-    "name": "PressureRelay",
-    "apssid": "SK_PumpRelay",
+    "name": "OTPanel",
+    "apssid": "OTPanel",
     "appass": "",
     "routerssid": "Mikro",
     "routerpass": "4455667788",
@@ -22,12 +22,11 @@
     "pinSDA": 0,
     "i2cFreq": 100000,
     "wg": "group1",
-    "debugTraceMsgTlgrm": 0,
-    "udps": 0
+    "debugTraceMsgTlgrm": 0
   },
   "projectProp": {
     "platformio": {
-      "default_envs": "esp32c6_8mb",
+      "default_envs": "esp32s3_16mb",
       "comments_default_envs": "choose from: esp8266_4mb, esp32_4mb, esp32_4mb3f, esp8266_16mb, esp32_16mb, esp32cam_4mb, esp32s2_4mb, esp32s3_16mb, esp32c3m_4mb, esp8266_1mb, esp8266_1mb_ota, esp8266_2mb, esp8266_2mb_ota, esp8285_1mb, esp8285_1mb_ota, esp32c6_4mb, esp32c6_8mb, bk7231n",
       "envs": [
         {
@@ -160,11 +159,11 @@
         "active": true
       },
       {
-        "path": "src/modules/virtual/DiscoverySprut",
+        "path": "src/modules/virtual/DiscoveryHomeD",
         "active": true
       },
       {
-        "path": "src/modules/virtual/DiscoveryHomeD",
+        "path": "src/modules/virtual/DiscoverySprut",
         "active": true
       },
       {
@@ -181,10 +180,6 @@
       },
       {
         "path": "src/modules/virtual/LogingHourly",
-        "active": true
-      },
-      {
-        "path": "src/modules/virtual/Loging2",
         "active": true
       },
       {
@@ -225,213 +220,7 @@
       },
       {
         "path": "src/modules/virtual/Weather",
-        "active": false
-      }
-    ],
-    "sensors": [
-      {
-        "path": "src/modules/exec/Pcf8591",
-        "active": false
-      },
-      {
-        "path": "src/modules/sensors/A02Distance",
         "active": true
-      },
-      {
-        "path": "src/modules/sensors/Acs712",
-        "active": false
-      },
-      {
-        "path": "src/modules/sensors/Ads1115",
-        "active": false
-      },
-      {
-        "path": "src/modules/sensors/AhtXX",
-        "active": true
-      },
-      {
-        "path": "src/modules/sensors/AnalogAdc",
-        "active": true
-      },
-      {
-        "path": "src/modules/sensors/BH_1750",
-        "active": false
-      },
-      {
-        "path": "src/modules/sensors/BL0937",
-        "active": false
-      },
-      {
-        "path": "src/modules/sensors/Ble",
-        "active": false
-      },
-      {
-        "path": "src/modules/sensors/Ble_part1",
-        "active": false
-      },
-      {
-        "path": "src/modules/sensors/Ble_part2",
-        "active": false
-      },
-      {
-        "path": "src/modules/sensors/Bme280",
-        "active": false
-      },
-      {
-        "path": "src/modules/sensors/Bmp280",
-        "active": true
-      },
-      {
-        "path": "src/modules/sensors/Dht1122",
-        "active": true
-      },
-      {
-        "path": "src/modules/sensors/Ds18b20",
-        "active": true
-      },
-      {
-        "path": "src/modules/sensors/DS2401",
-        "active": false
-      },
-      {
-        "path": "src/modules/sensors/Emon",
-        "active": false
-      },
-      {
-        "path": "src/modules/sensors/EnergyMon485",
-        "active": false
-      },
-      {
-        "path": "src/modules/sensors/ExampleModule",
-        "active": false
-      },
-      {
-        "path": "src/modules/sensors/ExternalMQTT",
-        "active": true
-      },
-      {
-        "path": "src/modules/sensors/FreqMeter",
-        "active": false
-      },
-      {
-        "path": "src/modules/sensors/GY21",
-        "active": false
-      },
-      {
-        "path": "src/modules/sensors/Hdc1080",
-        "active": false
-      },
-      {
-        "path": "src/modules/sensors/Hx710",
-        "active": false
-      },
-      {
-        "path": "src/modules/sensors/Hx711",
-        "active": false
-      },
-      {
-        "path": "src/modules/sensors/Impulse",
-        "active": true
-      },
-      {
-        "path": "src/modules/sensors/Ina219",
-        "active": false
-      },
-      {
-        "path": "src/modules/sensors/Ina226",
-        "active": false
-      },
-      {
-        "path": "src/modules/sensors/IoTWiegand",
-        "active": false
-      },
-      {
-        "path": "src/modules/sensors/ld2410",
-        "active": false
-      },
-      {
-        "path": "src/modules/sensors/Max6675",
-        "active": false
-      },
-      {
-        "path": "src/modules/sensors/Mhz19",
-        "active": false
-      },
-      {
-        "path": "src/modules/sensors/ModbusRTU",
-        "active": false
-      },
-      {
-        "path": "src/modules/sensors/ModbusRTUasync",
-        "active": false
-      },
-      {
-        "path": "src/modules/sensors/Mercury",
-        "active": true
-      },
-      {
-        "path": "src/modules/sensors/MQgas",
-        "active": false
-      },
-      {
-        "path": "src/modules/sensors/Ntc",
-        "active": true
-      },
-      {
-        "path": "src/modules/sensors/Pcf8591",
-        "active": false
-      },
-      {
-        "path": "src/modules/sensors/Pzem004t",
-        "active": false
-      },
-      {
-        "path": "src/modules/sensors/Pzem004t_v2",
-        "active": false
-      },
-      {
-        "path": "src/modules/sensors/RCswitch",
-        "active": false
-      },
-      {
-        "path": "src/modules/sensors/RTC",
-        "active": true
-      },
-      {
-        "path": "src/modules/sensors/S8",
-        "active": false
-      },
-      {
-        "path": "src/modules/sensors/Scd40",
-        "active": false
-      },
-      {
-        "path": "src/modules/sensors/Sds011",
-        "active": false
-      },
-      {
-        "path": "src/modules/sensors/Sgp30",
-        "active": false
-      },
-      {
-        "path": "src/modules/sensors/Sht20",
-        "active": true
-      },
-      {
-        "path": "src/modules/sensors/Sht30",
-        "active": true
-      },
-      {
-        "path": "src/modules/sensors/Sonar",
-        "active": false
-      },
-      {
-        "path": "src/modules/sensors/UART",
-        "active": true
-      },
-      {
-        "path": "src/modules/sensors/JHM1200",
-        "active": false
       }
     ],
     "executive_devices": [
@@ -505,15 +294,7 @@
       },
       {
         "path": "src/modules/exec/OpenThermMonitor",
-        "active": false
-      },
-      {
-        "path": "src/modules/exec/PressureRelay",
-        "active": false
-      },
-      {
-        "path": "src/modules/exec/sysReset",
-        "active": false
+        "active": true
       },
       {
         "path": "src/modules/exec/Pcf8574",
@@ -525,7 +306,7 @@
       },
       {
         "path": "src/modules/exec/Pwm8266",
-        "active": true
+        "active": false
       },
       {
         "path": "src/modules/exec/SDcard",
@@ -544,6 +325,10 @@
         "active": false
       },
       {
+        "path": "src/modules/exec/sysReset",
+        "active": false
+      },
+      {
         "path": "src/modules/exec/Telegram",
         "active": false
       },
@@ -553,7 +338,7 @@
       },
       {
         "path": "src/modules/exec/Telegram_v2",
-        "active": true
+        "active": false
       },
       {
         "path": "src/modules/exec/Thermostat",
@@ -564,13 +349,211 @@
         "active": false
       }
     ],
+    "sensors": [
+      {
+        "path": "src/modules/exec/Pcf8591",
+        "active": false
+      },
+      {
+        "path": "src/modules/sensors/A02Distance",
+        "active": false
+      },
+      {
+        "path": "src/modules/sensors/Acs712",
+        "active": false
+      },
+      {
+        "path": "src/modules/sensors/Ads1115",
+        "active": false
+      },
+      {
+        "path": "src/modules/sensors/AhtXX",
+        "active": false
+      },
+      {
+        "path": "src/modules/sensors/AnalogAdc",
+        "active": true
+      },
+      {
+        "path": "src/modules/sensors/BH_1750",
+        "active": false
+      },
+      {
+        "path": "src/modules/sensors/BL0937",
+        "active": false
+      },
+      {
+        "path": "src/modules/sensors/Ble",
+        "active": false
+      },
+      {
+        "path": "src/modules/sensors/Ble_part1",
+        "active": true
+      },
+      {
+        "path": "src/modules/sensors/Ble_part2",
+        "active": false
+      },
+      {
+        "path": "src/modules/sensors/Bme280",
+        "active": false
+      },
+      {
+        "path": "src/modules/sensors/Bmp280",
+        "active": false
+      },
+      {
+        "path": "src/modules/sensors/Dht1122",
+        "active": false
+      },
+      {
+        "path": "src/modules/sensors/Ds18b20",
+        "active": false
+      },
+      {
+        "path": "src/modules/sensors/DS2401",
+        "active": false
+      },
+      {
+        "path": "src/modules/sensors/Emon",
+        "active": false
+      },
+      {
+        "path": "src/modules/sensors/EnergyMon485",
+        "active": false
+      },
+      {
+        "path": "src/modules/sensors/ExampleModule",
+        "active": false
+      },
+      {
+        "path": "src/modules/sensors/ExternalMQTT",
+        "active": true
+      },
+      {
+        "path": "src/modules/sensors/FreqMeter",
+        "active": false
+      },
+      {
+        "path": "src/modules/sensors/GY21",
+        "active": false
+      },
+      {
+        "path": "src/modules/sensors/Hdc1080",
+        "active": false
+      },
+      {
+        "path": "src/modules/sensors/Hx710",
+        "active": false
+      },
+      {
+        "path": "src/modules/sensors/Hx711",
+        "active": false
+      },
+      {
+        "path": "src/modules/sensors/Impulse",
+        "active": true
+      },
+      {
+        "path": "src/modules/sensors/Ina219",
+        "active": false
+      },
+      {
+        "path": "src/modules/sensors/Ina226",
+        "active": false
+      },
+      {
+        "path": "src/modules/sensors/IoTWiegand",
+        "active": false
+      },
+      {
+        "path": "src/modules/sensors/ld2410",
+        "active": false
+      },
+      {
+        "path": "src/modules/sensors/Max6675",
+        "active": false
+      },
+      {
+        "path": "src/modules/sensors/Mhz19",
+        "active": false
+      },
+      {
+        "path": "src/modules/sensors/MQgas",
+        "active": false
+      },
+      {
+        "path": "src/modules/sensors/Ntc",
+        "active": false
+      },
+      {
+        "path": "src/modules/sensors/Pcf8591",
+        "active": false
+      },
+      {
+        "path": "src/modules/sensors/Pzem004t",
+        "active": false
+      },
+      {
+        "path": "src/modules/sensors/Pzem004t_v2",
+        "active": false
+      },
+      {
+        "path": "src/modules/sensors/RCswitch",
+        "active": false
+      },
+      {
+        "path": "src/modules/sensors/RTC",
+        "active": true
+      },
+      {
+        "path": "src/modules/sensors/S8",
+        "active": false
+      },
+      {
+        "path": "src/modules/sensors/Scd40",
+        "active": false
+      },
+      {
+        "path": "src/modules/sensors/Sds011",
+        "active": false
+      },
+      {
+        "path": "src/modules/sensors/Sgp30",
+        "active": false
+      },
+      {
+        "path": "src/modules/sensors/Sht20",
+        "active": false
+      },
+      {
+        "path": "src/modules/sensors/Sht30",
+        "active": false
+      },
+      {
+        "path": "src/modules/sensors/Sonar",
+        "active": false
+      },
+      {
+        "path": "src/modules/sensors/UART",
+        "active": false
+      }
+    ],
     "screens": [
       {
-        "path": "src/modules/display/GyverLAMP",
+        "path": "src/modules/display/OTPanel",
+        "active": true
+      },
+      {
+        "path": "src/modules/display/OTDisplay",
         "active": false
       },
       {
         "path": "src/modules/display/DwinI",
+        "active": false
+      },
+      {
+        "path": "src/modules/display/GyverLAMP",
         "active": false
       },
       {
@@ -604,10 +587,6 @@
       {
         "path": "src/modules/display/Ws2812b",
         "active": false
-      },
-      {
-        "path": "src/modules/display/LedFX",
-        "active": true
       }
     ]
   }

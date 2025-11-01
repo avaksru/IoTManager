@@ -1,7 +1,7 @@
 {
   "iotmSettings": {
-    "name": "PressureRelay",
-    "apssid": "SK_PumpRelay",
+    "name": "OpenTherm",
+    "apssid": "SmartKot",
     "appass": "",
     "routerssid": "Mikro",
     "routerpass": "4455667788",
@@ -22,8 +22,7 @@
     "pinSDA": 0,
     "i2cFreq": 100000,
     "wg": "group1",
-    "debugTraceMsgTlgrm": 0,
-    "udps": 0
+    "debugTraceMsgTlgrm": 0
   },
   "projectProp": {
     "platformio": {
@@ -184,16 +183,12 @@
         "active": true
       },
       {
-        "path": "src/modules/virtual/Loging2",
-        "active": true
-      },
-      {
         "path": "src/modules/virtual/Math",
         "active": false
       },
       {
         "path": "src/modules/virtual/owmWeather",
-        "active": false
+        "active": true
       },
       {
         "path": "src/modules/virtual/Ping",
@@ -201,7 +196,7 @@
       },
       {
         "path": "src/modules/virtual/SaveConfig",
-        "active": false
+        "active": true
       },
       {
         "path": "src/modules/virtual/Timer",
@@ -225,7 +220,7 @@
       },
       {
         "path": "src/modules/virtual/Weather",
-        "active": false
+        "active": true
       }
     ],
     "sensors": [
@@ -235,7 +230,7 @@
       },
       {
         "path": "src/modules/sensors/A02Distance",
-        "active": true
+        "active": false
       },
       {
         "path": "src/modules/sensors/Acs712",
@@ -263,7 +258,7 @@
       },
       {
         "path": "src/modules/sensors/Ble",
-        "active": false
+        "active": true
       },
       {
         "path": "src/modules/sensors/Ble_part1",
@@ -358,20 +353,8 @@
         "active": false
       },
       {
-        "path": "src/modules/sensors/ModbusRTU",
-        "active": false
-      },
-      {
-        "path": "src/modules/sensors/ModbusRTUasync",
-        "active": false
-      },
-      {
-        "path": "src/modules/sensors/Mercury",
-        "active": true
-      },
-      {
         "path": "src/modules/sensors/MQgas",
-        "active": false
+        "active": true
       },
       {
         "path": "src/modules/sensors/Ntc",
@@ -428,10 +411,6 @@
       {
         "path": "src/modules/sensors/UART",
         "active": true
-      },
-      {
-        "path": "src/modules/sensors/JHM1200",
-        "active": false
       }
     ],
     "executive_devices": [
@@ -457,7 +436,7 @@
       },
       {
         "path": "src/modules/exec/EctoControlAdapter",
-        "active": false
+        "active": true
       },
       {
         "path": "src/modules/exec/Enconder",
@@ -473,7 +452,7 @@
       },
       {
         "path": "src/modules/exec/HttpGet",
-        "active": false
+        "active": true
       },
       {
         "path": "src/modules/exec/IoTServo",
@@ -508,12 +487,8 @@
         "active": false
       },
       {
-        "path": "src/modules/exec/PressureRelay",
-        "active": false
-      },
-      {
         "path": "src/modules/exec/sysReset",
-        "active": false
+        "active": true
       },
       {
         "path": "src/modules/exec/Pcf8574",
@@ -525,7 +500,7 @@
       },
       {
         "path": "src/modules/exec/Pwm8266",
-        "active": true
+        "active": false
       },
       {
         "path": "src/modules/exec/SDcard",
@@ -553,7 +528,7 @@
       },
       {
         "path": "src/modules/exec/Telegram_v2",
-        "active": true
+        "active": false
       },
       {
         "path": "src/modules/exec/Thermostat",
@@ -604,10 +579,6 @@
       {
         "path": "src/modules/display/Ws2812b",
         "active": false
-      },
-      {
-        "path": "src/modules/display/LedFX",
-        "active": true
       }
     ]
   }
