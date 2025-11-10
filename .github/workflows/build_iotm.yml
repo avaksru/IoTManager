@@ -1,7 +1,10 @@
-name: PlatformIO CI
+name: PlatformIO Release
 
-on: [push, pull_request]
-workflow_dispatch:  # Добавь эту строку для ручного запуска
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:  # Ручной запуск
 
 jobs:
   build:
@@ -11,9 +14,11 @@ jobs:
         platform: [espressif8266, espressif32]
         board:
           - platform: espressif8266
-            board: nodemcu  # Пример для ESP8266 (NodeMCU)
+            board: nodemcu
+            artifact: firmware-esp8266.bin
           - platform: espressif32
-            board: esp32dev  # Пример для ESP32 (Dev Module)
+            board: esp32dev
+            artifact: firmware-esp32.bin
 
     steps:
       - uses: actions/checkout@v4
@@ -31,5 +36,25 @@ jobs:
 
       - name: Build PlatformIO Project
         run: pio run -e ${{ matrix.board }} -p ${{ matrix.platform }}
+
+      - name: Upload Firmware Binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: .pio/build/${{ matrix.board }}/firmware.bin
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            firmware-esp8266.bin
+            firmware-esp32.bin
+          draft: false
+          prerelease: false
         env:
-          PLATFORMIO_BUILD_FLAGS: -D PIOCI
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
