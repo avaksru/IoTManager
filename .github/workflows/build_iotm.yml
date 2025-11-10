@@ -1,34 +1,55 @@
-name: PlatformIO CI
+env:
+  BOARDS: '["esp8266_4mb", "esp8266_16mb", "esp32_4mb3f", "esp32c3m_4mb", "esp32s2_4mb", "esp32s3_16mb"]'
 
-on: [push, pull_request, workflow_dispatch]  # Исправлено: единый список событий
+name: Build Firmware
+
+on:
+  workflow_dispatch:
 
 jobs:
+  generate-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set_matrix.outputs.json }}
+    steps:
+      - name: Prepare matrix JSON Object
+        id: set_matrix
+        uses: nickofthyme/object-remap@v2.0.0
+        with:
+          __case: kebab
+          board: ${{ env.BOARDS }}
+
   build:
+    needs: [ generate-matrix ]
     runs-on: ubuntu-latest
     strategy:
-      matrix:
-        platform: [espressif8266, espressif32]
-        board:
-          - platform: espressif8266
-            board: nodemcu  # Пример для ESP8266 (NodeMCU)
-          - platform: espressif32
-            board: esp32dev  # Пример для ESP32 (Dev Module)
-
+      matrix: ${{ fromJSON(needs.generate-matrix.outputs.matrix) }}
+        
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cache/pip
-            ~/.platformio/.cache
-          key: ${{ runner.os }}-${{ hashFiles('**/platformio.ini') }}
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-      - name: Install PlatformIO Core
-        run: pip install --upgrade platformio
-
-      - name: Build PlatformIO Project
-        run: pio run -e ${{ matrix.board }} -p ${{ matrix.platform }}
-        env:
-          PLATFORMIO_BUILD_FLAGS: -D PIOCI
+    - uses: actions/checkout@v2
+      with:
+        ref: 'ver4dev'
+    - name: Run PrepareProject.py -b ${{ matrix.board }}
+      run: python3 ./PrepareProject.py -b ${{ matrix.board }}
+    - name: Set up Python
+      uses: actions/setup-python@v4
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install platformio
+    - name: Run PlatformIO
+      if: always()
+      run: platformio run 
+    - name: Build FS
+      if: always()
+      run: platformio run -t buildfs --disable-auto-clean
+    - name: Rearrange Artifacts
+      run: |
+        mkdir -p artifacts/${{ matrix.board }}
+        find .pio/build/${{ matrix.board }} -name "*.bin" -exec mv {} artifacts/${{ matrix.board }} \;
+      working-directory: ${{ github.workspace }}
+    - name: Attach artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: firmware-${{ matrix.board }}-${{ github.run_number }}
+        path: artifacts/${{ matrix.board }}
