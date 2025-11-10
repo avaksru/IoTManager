@@ -11,7 +11,8 @@
       "page": "",
       "descr": "",
       "topic": "homed",
-      "names":1
+      "toggle": 0,
+      "switch": 1
     }
   ],
   "about": {
@@ -28,9 +29,8 @@
     "title": "DiscoveryHomeD",
     "moduleDesc": "Модуль проброса данных в MQTT для HOMEd-Custom",
     "propInfo": {
-      "topic":"Топик службы HOMEd-Custom, например /myRoom/homed"
+      "topic": "Топик службы HOMEd-Custom, например /myRoom/homed"
     }
-    
   },
   "defActive": false,
   "usedLibs": {

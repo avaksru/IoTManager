@@ -27,9 +27,8 @@
     "title": "DiscoveryHA",
     "moduleDesc": "Модуль проброса данных в MQTT для HomeAssistant",
     "propInfo": {
-      "topic":"Топик HomeAssistant"
+      "topic": "Топик HomeAssistant"
     }
-    
   },
   "defActive": false,
   "usedLibs": {

@@ -125,6 +125,13 @@
     "icon": "speedometer"
   },
   {
+    "name": "anydataBar",
+    "label": "давление Bar",
+    "widget": "anydata",
+    "after": " Bar",
+    "icon": "speedometer"
+  },
+  {
     "name": "anydataHum",
     "label": "Влажность",
     "widget": "anydata",
@@ -260,7 +267,10 @@
     "name": "select",
     "label": "Выпадающий",
     "widget": "select",
-    "options": ["Выключен", "Включен"],
+    "options": [
+      "Выключен",
+      "Включен"
+    ],
     "status": 0
   },
   {
@@ -322,12 +332,5 @@
   {
     "name": "nil",
     "label": "Без виджета"
-  },
-  {
-    "name": "anydataBar",
-    "label": "давление Bar",
-    "widget": "anydata",
-    "after": " Bar",
-    "icon": "speedometer"
   }
 ]

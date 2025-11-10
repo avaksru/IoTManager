@@ -1,6 +1,6 @@
 {
-    "name": "PressureRelay",
-    "apssid": "SK_PumpRelay",
+    "name": "OpenTherm",
+    "apssid": "OpenTherm",
     "appass": "",
     "routerssid": "Mikro",
     "routerpass": "4455667788",

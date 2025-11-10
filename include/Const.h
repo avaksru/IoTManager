@@ -2,7 +2,7 @@
 #include "BuildTime.h"
 
 // Версия прошивки
-#define FIRMWARE_VERSION 478
+#define FIRMWARE_VERSION 481
 
 #ifdef esp8266_1mb_ota
 #define FIRMWARE_NAME "esp8266_1mb_ota"
@@ -33,7 +33,8 @@
 #endif
 
 #ifdef esp32_4mb3f
-#define FIRMWARE_NAME "ESP32_OT "
+#define FIRMWARE_NAME "ESP32_OT"
+// #define FIRMWARE_NAME "ESP32"
 #endif
 
 #ifdef esp32cam_4mb
@@ -53,7 +54,9 @@
 #endif
 
 #ifdef esp32s3_16mb
-#define FIRMWARE_NAME "esp32s3_16mb"
+// #define FIRMWARE_NAME "esp32s3_16mb"
+#define FIRMWARE_NAME "OTDisplay"
+// #define FIRMWARE_NAME "OTPanel"
 #endif
 
 #ifdef bk7231n
@@ -62,10 +65,13 @@
 
 #ifdef esp32c6_4mb
 #define FIRMWARE_NAME "ESP32_C6_4mb_OT"
+// #define FIRMWARE_NAME "NO_OTA_ESP32_C6_4mb_ST"
+// #define FIRMWARE_NAME "ESP32_C6_4mb_ST"
 #endif
 
 #ifdef esp32c6_8mb
 #define FIRMWARE_NAME "ESP32_C6_8mb_OT"
+// #define FIRMWARE_NAME "ESP32_C6_8mb_EC"
 // #define FIRMWARE_NAME "ESP32_C6_8mb_PR"
 #endif
 

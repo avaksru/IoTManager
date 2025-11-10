@@ -8,11 +8,13 @@ private:
     bool sendOk = false;
     // bool topicOk = false;
     bool HA = false;
+
     String ChipId = getChipId();
 
 public:
     DiscoveryHA(String parameters) : IoTDiscovery(parameters)
     {
+
         _topic = jsonReadStr(parameters, "topic");
         if (_topic && _topic != "" && _topic != "null")
         {
@@ -30,45 +32,10 @@ public:
             // mqttSubscribeExternal(_topic);
         }
     }
-    /*
-        void onMqttRecive(String &topic, String &msg)
-        {
-            if (!HA)
-                return;
-
-            if (msg.indexOf("HELLO") == -1)
-            {
-                String dev = selectToMarkerLast(topic, "/");
-                dev.toUpperCase();
-                dev.replace(":", "");
-                if (_topic != topic)
-                {
-                    //  SerialPrint("i", "ExternalMQTT", _id + " not equal: " + topic + " msg: " + msg);
-                    return;
-                }
-                // обработка топика, на который подписались
-            }
-        } */
 
     void doByInterval()
     {
-        /*         // периодически проверяем связь с MQTT брокером и если она появилась, то подписываемся на нужный топик
-                if (mqttIsConnect() && !sendOk && &&topicOk)
-                {
-                    sendOk = true;
-                    getlayoutHA();
-                    publishRetain(mqttRootDevice + "/state", "{\"status\":\"online\"}");
-                    //mqttSubscribeExternal(_topic);
-                }
-
-                // если нет коннектас брокером, то сбрасываем флаг подписки, что бы при реконекте заново подписаться
-                if (!mqttIsConnect())
-                    sendOk = false; */
     }
-    /*     String getMqttExterSub()
-        {
-            return _topic;
-        } */
 
     void mqttSubscribeDiscovery()
     {
@@ -135,7 +102,7 @@ public:
                     HAjson = HAjson + " \"unique_id\": \"" + mqttRootDevice + dev + "\",";
                     HAjson = HAjson + " \"device_class\": \"pressure\",";
                     HAjson = HAjson + " \"state_class\": \"measurement\",";
-                    HAjson = HAjson + " \"unit_of_measurement\": \"mm\"";
+                    HAjson = HAjson + " \"unit_of_measurement\": \"mmHg\"";
                 }
                 else if (value["name"].as<String>() == "anydataBar")
                 {
@@ -143,7 +110,7 @@ public:
                     HAjson = HAjson + " \"unique_id\": \"" + mqttRootDevice + dev + "\",";
                     HAjson = HAjson + " \"device_class\": \"pressure\",";
                     HAjson = HAjson + " \"state_class\": \"measurement\",";
-                    HAjson = HAjson + " \"unit_of_measurement\": \"Bar\"";
+                    HAjson = HAjson + " \"unit_of_measurement\": \"bar\"";
                 }
                 else if (value["name"].as<String>() == "anydataPpm")
                 {
@@ -183,7 +150,7 @@ public:
                     HAjson = HAjson + " \"state_off\": " + 0 + ",";
                     HAjson = HAjson + " \"state_on\": " + 1 + "";
                 }
-                else
+                else if (value["name"].as<String>() != "nil" && value["name"].as<String>() != "")
                 {
                     HAjson = HAjson + " \"value_template\": \"{{ value_json.status | default  }}\",";
                     // HAjson = HAjson + " \"state_class\": \"measurement\",";

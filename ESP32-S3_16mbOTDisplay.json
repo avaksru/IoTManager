@@ -368,7 +368,7 @@
       },
       {
         "path": "src/modules/sensors/AhtXX",
-        "active": false
+        "active": true
       },
       {
         "path": "src/modules/sensors/AnalogAdc",
@@ -400,7 +400,7 @@
       },
       {
         "path": "src/modules/sensors/Bmp280",
-        "active": false
+        "active": true
       },
       {
         "path": "src/modules/sensors/Dht1122",

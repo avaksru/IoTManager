@@ -1,7 +1,7 @@
 {
     "projectProp": {
         "platformio": {
-            "default_envs": "esp32c6_8mb"
+            "default_envs": "esp32_4mb3f"
         }
     },
     "modules": {
@@ -16,10 +16,6 @@
             },
             {
                 "path": "src/modules/virtual/DiscoveryHA",
-                "active": true
-            },
-            {
-                "path": "src/modules/virtual/DiscoverySprut",
                 "active": true
             },
             {
@@ -40,10 +36,6 @@
             },
             {
                 "path": "src/modules/virtual/LogingHourly",
-                "active": true
-            },
-            {
-                "path": "src/modules/virtual/Loging2",
                 "active": true
             },
             {
@@ -84,7 +76,7 @@
             },
             {
                 "path": "src/modules/virtual/Weather",
-                "active": false
+                "active": true
             }
         ],
         "sensors": [
@@ -94,7 +86,7 @@
             },
             {
                 "path": "src/modules/sensors/A02Distance",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/sensors/Acs712",
@@ -106,7 +98,7 @@
             },
             {
                 "path": "src/modules/sensors/AhtXX",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/sensors/AnalogAdc",
@@ -126,7 +118,7 @@
             },
             {
                 "path": "src/modules/sensors/Ble_part1",
-                "active": false
+                "active": true
             },
             {
                 "path": "src/modules/sensors/Ble_part2",
@@ -138,7 +130,7 @@
             },
             {
                 "path": "src/modules/sensors/Bmp280",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/sensors/Dht1122",
@@ -190,7 +182,7 @@
             },
             {
                 "path": "src/modules/sensors/Impulse",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/sensors/Ina219",
@@ -215,18 +207,6 @@
             {
                 "path": "src/modules/sensors/Mhz19",
                 "active": false
-            },
-            {
-                "path": "src/modules/sensors/ModbusRTU",
-                "active": false
-            },
-            {
-                "path": "src/modules/sensors/ModbusRTUasync",
-                "active": false
-            },
-            {
-                "path": "src/modules/sensors/Mercury",
-                "active": true
             },
             {
                 "path": "src/modules/sensors/MQgas",
@@ -274,11 +254,11 @@
             },
             {
                 "path": "src/modules/sensors/Sht20",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/sensors/Sht30",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/sensors/Sonar",
@@ -286,17 +266,13 @@
             },
             {
                 "path": "src/modules/sensors/UART",
-                "active": true
-            },
-            {
-                "path": "src/modules/sensors/JHM1200",
                 "active": false
             }
         ],
         "executive_devices": [
             {
                 "path": "src/modules/exec/AnalogBtn",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/exec/BrokerMQTT",
@@ -356,18 +332,10 @@
             },
             {
                 "path": "src/modules/exec/Multitouch",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/exec/MySensors",
-                "active": false
-            },
-            {
-                "path": "src/modules/exec/OpenThermMonitor",
-                "active": false
-            },
-            {
-                "path": "src/modules/exec/PressureRelay",
                 "active": false
             },
             {
@@ -380,11 +348,11 @@
             },
             {
                 "path": "src/modules/exec/Pwm32",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/exec/Pwm8266",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/exec/SDcard",
@@ -412,7 +380,7 @@
             },
             {
                 "path": "src/modules/exec/Telegram_v2",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/exec/Thermostat",
@@ -463,10 +431,6 @@
             {
                 "path": "src/modules/display/Ws2812b",
                 "active": false
-            },
-            {
-                "path": "src/modules/display/LedFX",
-                "active": true
             }
         ]
     }

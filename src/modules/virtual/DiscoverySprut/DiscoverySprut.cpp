@@ -148,9 +148,9 @@ public:
 
             devises = devises + "{\"type\" : \"TargetTemperature\",";
             devises = devises + "\"link\" : { \"type\": \"Double\",";
-            devises = devises + "\"topicGet\": \"" + mqttRootDevice + "/set_temperature/status\",";
+            devises = devises + "\"topicGet\": \"" + mqttRootDevice + "/setTemperature/status\",";
             devises = devises + "\"inFunc\": \"JSON.parse(value).status\",";
-            devises = devises + "\"topicSet\": \"" + mqttRootDevice + "/set_temperature/control\"},";
+            devises = devises + "\"topicSet\": \"" + mqttRootDevice + "/setTemperature/control\"},";
             devises = devises + "\"minValue\": 0.0,";
             devises = devises + "\"maxValue\": 35.0,";
             devises = devises + "\"minStep\": 0.1},";

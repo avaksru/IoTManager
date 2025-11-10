@@ -11,7 +11,7 @@
 #include <esp_task_wdt.h>
 #endif
 #if defined(esp32s2_4mb) || defined(esp32s3_16mb)
-#include <USB.h>
+//#include <USB.h>
 #endif
 
 IoTScenario iotScen;  // объект управления сценарием
@@ -89,7 +89,7 @@ void stopErrorMarker(int id) {
 
 void setup() {
 #if defined(esp32s2_4mb) || defined(esp32s3_16mb)
-    USB.begin();
+ //   USB.begin();
 #endif
 #if defined(esp32_4mb) || defined(esp32_4mb3f) || defined(esp32_16mb) || defined(esp32cam_4mb)
     My_timer = timerBegin(0, 80, true);

@@ -9,6 +9,8 @@ private:
     // bool topicOk = false;
     bool HOMEd = false;
     //    int _names = 0;
+    int _toggle = 0;
+    int _switch = 0;
     String ChipId = getChipId();
     //    String esp_id = ChipId;
 
@@ -17,96 +19,19 @@ public:
     {
         _topic = jsonReadStr(parameters, "topic");
         //        _names = jsonReadInt(parameters, "names");
+        _toggle = jsonReadInt(parameters, "toggle");
+        _switch = jsonReadInt(parameters, "switch");
         if (_topic && _topic != "" && _topic != "null")
         {
             HOMEd = true;
             HOMEdTopic = _topic;
         }
-        //        if (_names)
-        //        {
-        //            esp_id = jsonReadStr(settingsFlashJson, F("name"));
-        //            jsonWriteInt(settingsFlashJson, F("HOMEd_names"), 1);
-        //        }
-        //        else
-        //        {
-        //            jsonWriteInt(settingsFlashJson, F("HOMEd_names"), 0);
-        //        }
-
-        //        if (mqttIsConnect() && HOMEd)
-        //        {
-        //            mqttReconnect();
-        // sendOk = true;
-        // mqttSubscribeExternal(_topic);
-        //        }
     }
 
     void onMqttRecive(String &topic, String &payloadStr)
     {
         if (!HOMEd)
             return;
-        /*
-             if (payloadStr.indexOf("HELLO") == -1)
-             {
-                         String dev = selectToMarkerLast(topic, "/");
-                             dev.toUpperCase();
-                             dev.replace(":", "");
-                             if (_topic != topic)
-                             {
-                                 //  SerialPrint("i", "ExternalMQTT", _id + " not equal: " + topic + " msg: " + msg);
-                                 return;
-                             }
-                 // обработка топика, на который подписались
-                 if (topic.indexOf(F("/td/custom")) != -1)
-                 {
-
-                     // обрабатываем команды из HOMEd
-                     StaticJsonDocument<200> doc;
-                     deserializeJson(doc, payloadStr);
-                     for (JsonPair kvp : doc.as<JsonObject>())
-                     {
-
-                         String key = kvp.key().c_str();
-                         String value = kvp.value().as<const char *>();
-                         if (key.indexOf(F("status_")) != -1)
-                         {
-                             key.replace("status_", "");
-                             if (value == "on")
-                             {
-                                 generateOrder(key, "1");
-                             }
-                             else if (value == "off")
-                             {
-                                 generateOrder(key, "0");
-                             }
-                             else if (value == "toggle")
-                             {
-                                 String val = (String)(1 - getItemValue(key).toInt());
-                                 generateOrder(key, val);
-                             }
-                         }
-                         else
-                         {
-                             if (!value)
-                             {
-                                 float val = kvp.value();
-                                 generateOrder(key, (String)(val));
-                             }
-                             else
-                             {
-                                 generateOrder(key, value);
-                             }
-                         }
-                     }
-
-                     SerialPrint("i", F("=>MQTT"), "Msg from HOMEd: " + payloadStr);
-                 }
-
-             }
-             else
-             {
-                 //    publishRetain(HOMEdTopic + "/device/custom/" + esp_id, "{\"status\":\"online\"}");
-             }
-                  */
     }
 
     void doByInterval()
@@ -115,33 +40,6 @@ public:
 
     void publishStatusHOMEd(const String &topic, const String &data)
     {
-        /*
-        String path_h = HOMEdTopic + "/fd/custom/" + esp_id;
-        String json_h = "{}";
-        if (topic != "onStart")
-        {
-            if (data.toInt() == 1)
-            {
-                jsonWriteStr(json_h, "status_" + topic, "on");
-            }
-            else if (data.toInt() == 0)
-            {
-                jsonWriteStr(json_h, "status_" + topic, "off");
-            }
-            if (data.toFloat())
-            {
-                jsonWriteFloat(json_h, topic, data.toFloat());
-            }
-            else
-            {
-                jsonWriteStr(json_h, topic, data);
-            }
-            if (mqttIsConnect() && HOMEd)
-            {
-                mqtt.publish(path_h.c_str(), json_h.c_str(), false);
-            }
-        }
-            */
     }
 
     void mqttSubscribeDiscovery()
@@ -162,10 +60,11 @@ public:
         {
             String devName = jsonReadStr(settingsFlashJson, F("name"));
 
-            auto file = seekFile("layout.json");
+            // auto file = seekFile("layout.json");
+            auto file = seekFile("config.json");
             if (!file)
             {
-                SerialPrint("E", F("MQTT"), F("no file layout.json"));
+                SerialPrint("E", F("MQTT"), F("no file config.json"));
                 return;
             }
             size_t size = file.size();
@@ -192,41 +91,56 @@ public:
             HOMEdJSON = HOMEdJSON + "\"exposes\": [";
             String options = "";
             String bindings = "";
+            int switchCount = 0;
             for (JsonVariant value : arr)
             {
+                // print value
+                // SerialPrint("i", F("!!!!!!!"), String(i) + " " + value["widget"].as<String>() + " " + value["topic"].as<String>() + " " + value["descr"].as<String>());
                 String name = value["descr"];
-                String device = selectToMarkerLast(value["topic"].as<String>(), "/");
-                //            String id = ChipId + "-" + device;
-                String expose = value["name"];
-                if (value["name"].as<String>() == "toggle")
+                // String device = selectToMarkerLast(value["topic"].as<String>(), "/");
+                String device = value["id"];
+                String expose = value["widget"];
+                if (value["widget"].as<String>() == "toggle")
                 {
-
-                    HOMEdJSON = HOMEdJSON + "\"switch_" + device + "\",";
-                    bindings = bindings + "\"status_" + device + "\":{\"inTopic\": \"" + mqttRootDevice + "/" + device + "/status\", \"inPattern\": \"{{ on if json.status == 1 else off }}\", \"outTopic\": \"" + mqttRootDevice + "/" + device + "/control\", \"outPattern\": \"{{ 1 if value == on else 0 }}\"},";
+                    switchCount++;
+                    // Создаем toggle
+                    if (_toggle)
+                    {
+                        HOMEdJSON = HOMEdJSON + "\"" + device + "\",";
+                        options = options + "\"" + device + "\":{\"title\": \"" + name + "\",\"type\": \"toggle\"},";
+                        bindings = bindings + "\"" + device + "\":{\"inTopic\": \"" + mqttRootDevice + "/" + device + "/status\", \"inPattern\": \"{{ true if json.status == 1 else false }}\", \"outTopic\": \"" + mqttRootDevice + "/" + device + "/control\", \"outPattern\": \"{{ 1 if value == true else 0 }}\"},";
+                    }
+                    if (_switch)
+                    {
+                        HOMEdJSON = HOMEdJSON + "\"switch_" + switchCount + "\",";
+                        options = options + "\"switch_" + switchCount + "\":{\"title\": \"" + name + "\"},";
+                        bindings = bindings + "\"status_" + switchCount + "\":{\"inTopic\": \"" + mqttRootDevice + "/" + device + "/status\", \"inPattern\": \"{{ on if json.status == 1 else off }}\", \"outTopic\": \"" + mqttRootDevice + "/" + device + "/control\", \"outPattern\": \"{{ 1 if value == on else 0 }}\"},";
+                    }
                 }
-                else if (value["name"].as<String>() == "inputDgt" || value["name"].as<String>() == "inputTxt" || value["name"].as<String>() == "inputTm" || value["name"].as<String>() == "range")
+                else if (value["widget"].as<String>() == "inputDgt" || value["widget"].as<String>() == "inputTxt" || value["widget"].as<String>() == "inputTm" || value["widget"].as<String>() == "range")
                 {
                     HOMEdJSON = HOMEdJSON + "\"" + device + "\",";
-                    //                    bindings = bindings + "\"" + device + "\":{\"inTopic\": \"" + mqttRootDevice + "/" + device + "/status\", \"inPattern\": \"{{ json.status }}\"},";
                     bindings = bindings + "\"" + device + "\":{\"inTopic\": \"" + mqttRootDevice + "/" + device + "/status\", \"inPattern\": \"{{ json.status }}\", \"outTopic\": \"" + mqttRootDevice + "/" + device + "/control\"},";
+                    // options = options + "\"" + device + "\":{\"title\": \"" + name + "\"},";
+                    options = options + "\"" + device + "\":{\"title\": \"" + name + "\",\"type\": \"number\", \"min\": -10000, \"max\": 100000, \"step\": 0.1, \"round\": " + value["round"].as<String>() + "},";
                 }
-                else
+                else if (value["widget"].as<String>() == "anydataTmp")
                 {
                     HOMEdJSON = HOMEdJSON + "\"" + device + "\",";
                     bindings = bindings + "\"" + device + "\":{\"inTopic\": \"" + mqttRootDevice + "/" + device + "/status\", \"inPattern\": \"{{ json.status }}\"},";
+                    options = options + "\"" + device + "\":{\"title\": \"" + name + "\",\"type\": \"sensor\", \"class\": \"temperature\", \"state\": \"measurement\", \"unit\": \"°C\", \"round\": " + value["round"].as<String>() + "},";
                 }
-
-                if (value["name"].as<String>() == "anydataTmp")
+                else if (value["widget"].as<String>() == "anydataHum")
                 {
-                    options = options + "\"" + device + "\":{\"type\": \"sensor\", \"class\": \"temperature\", \"state\": \"measurement\", \"unit\": \"°C\", \"round\": 1},";
+                    HOMEdJSON = HOMEdJSON + "\"" + device + "\",";
+                    bindings = bindings + "\"" + device + "\":{\"inTopic\": \"" + mqttRootDevice + "/" + device + "/status\", \"inPattern\": \"{{ json.status }}\"},";
+                    options = options + "\"" + device + "\":{\"title\": \"" + name + "\",\"type\": \"sensor\", \"class\": \"humidity\", \"state\": \"measurement\", \"unit\": \"%\", \"round\": " + value["round"].as<String>() + "},";
                 }
-                if (value["name"].as<String>() == "anydataHum")
+                else if (value["widget"].as<String>() != "nil" && value["widget"].as<String>() != "" && value["widget"].as<String>())
                 {
-                    options = options + "\"" + device + "\":{\"type\": \"sensor\", \"class\": \"humidity\", \"state\": \"measurement\", \"unit\": \"%\", \"round\": 1},";
-                }
-                if (value["name"].as<String>() == "inputDgt")
-                {
-                    options = options + "\"" + device + "\":{\"type\": \"number\", \"min\": -10000, \"max\": 100000, \"step\": 0.1, \"round\": 1},";
+                    HOMEdJSON = HOMEdJSON + "\"" + device + "\",";
+                    bindings = bindings + "\"" + device + "\":{\"inTopic\": \"" + mqttRootDevice + "/" + device + "/status\", \"inPattern\": \"{{ json.status }}\"},";
+                    options = options + "\"" + device + "\":{\"title\": \"" + name + "\"},";
                 }
 
                 i++;
