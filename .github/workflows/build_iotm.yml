@@ -1,0 +1,35 @@
+name: PlatformIO CI
+
+on: [push, pull_request]
+workflow_dispatch:  # Добавь эту строку для ручного запуска
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        platform: [espressif8266, espressif32]
+        board:
+          - platform: espressif8266
+            board: nodemcu  # Пример для ESP8266 (NodeMCU)
+          - platform: espressif32
+            board: esp32dev  # Пример для ESP32 (Dev Module)
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/pip
+            ~/.platformio/.cache
+          key: ${{ runner.os }}-${{ hashFiles('**/platformio.ini') }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install PlatformIO Core
+        run: pip install --upgrade platformio
+
+      - name: Build PlatformIO Project
+        run: pio run -e ${{ matrix.board }} -p ${{ matrix.platform }}
+        env:
+          PLATFORMIO_BUILD_FLAGS: -D PIOCI
