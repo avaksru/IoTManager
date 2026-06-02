@@ -1,7 +1,7 @@
 # 🔥 IoTManager - OpenTherm Controller
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-![PlatformIO](https://img.shields.io/badge/PlatformIO-ESP32-C6%20%7C%20ESP32-green.svg)
+![PlatformIO](https://img.shields.io/badge/PlatformIO-ESP32%20%7C%20ESP32C6-green.svg)
 ![Version](https://img.shields.io/badge/Version-2025.03-blue.svg)
 
 > OpenTherm контроллер отопительного котла.  
