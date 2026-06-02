@@ -1,0 +1,67 @@
+{
+    "menuSection": "sensors",
+    "configItem": [
+        {
+            "global": 0,
+            "name": "MercuryNode",
+            "type": "Reading",
+            "subtype": "MercuryNode",
+            "id": "MercuryNode",
+            "widget": "anydataTmp",
+            "page": "Mercury",
+            "descr": "Чтение данных Mercury",
+            "int": 5,
+            "command": "",
+            "func": "0x03",
+            "addr": 1,
+            "reg": "0x0000",
+            "accessLevel": "0x02",
+            "password":"222222",
+            "count": 1,
+            "isFloat": 0,
+            "round": 0
+        },
+        {
+            "global": 0,
+            "name": "MercuryClient",
+            "type": "Reading",
+            "subtype": "MercuryClient",
+            "id": "Mercury",
+            "widget": "anydataTmp",
+            "page": "Mercury",
+            "descr": "Настройки и запись Mercury",
+            "int": 5,
+            "RX": 16,
+            "TX": 17,
+            "DIR_PIN": 4,
+            "baud": 9600,
+            "protocol": "SERIAL_8N2",
+            "debug": 1
+        }
+    ],
+    "about": {
+        "authorName": "AVAKS",
+        "authorContact": "https://t.me/@avaks",
+        "authorGit": "https://github.com/avaksru",
+        "specialThanks": "",
+        "moduleName": "Mercury",
+        "moduleVersion": "1.0",
+        "usedRam": {
+            "esp32_4mb": 15,
+            "esp8266_4mb": 15
+        },
+        "title": "Счетсик электроэнергии Меркурий",
+        "moduleDesc": "",
+        "propInfo": {
+            "pin": "",
+            "avgSteps": "Количество считываний для усреднения. При =1, считывается одно значение за каждый период опроса., при =0, int считается в миллисекундах",
+            "int": "Количество секунд между опросами датчика, если avgSteps > 0. Установите avgSteps = 0 и int будет считаться в миллисекундах (ВНИМАНИЕ! генерация событий чаще секунды может привести к нестабильности системы.)"
+        }
+    },
+    "defActive": true,
+    "usedLibs": {
+        "esp32*": [],
+        "esp82*": [],
+        "bk72*": []
+    }
+}

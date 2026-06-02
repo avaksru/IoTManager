@@ -1,0 +1,279 @@
+{
+    "mark": "iotm",
+    "config": [
+        {
+            "global": 0,
+            "type": "Writing",
+            "subtype": "Timer",
+            "id": "timerDisp",
+            "widget": "nil",
+            "page": "Таймеры",
+            "descr": "timerDisp",
+            "int": 1,
+            "countDown": "10",
+            "ticker": "0",
+            "repeat": "0",
+            "needSave": 0
+        },
+        {
+            "global": 0,
+            "type": "Writing",
+            "subtype": "Timer",
+            "id": "timer",
+            "widget": "nil",
+            "page": "Таймеры",
+            "descr": "timer",
+            "int": 1,
+            "countDown": "60",
+            "ticker": "0",
+            "repeat": "1",
+            "needSave": 0
+        },
+        {
+            "global": 0,
+            "type": "Reading",
+            "subtype": "Variable",
+            "id": "brightness",
+            "needSave": "1",
+            "widget": "inputDgt",
+            "page": "Установки",
+            "descr": "brightnessIDLE",
+            "int": "0",
+            "val": "20",
+            "map": "1024,1024,1,100",
+            "plus": 0,
+            "multiply": 1,
+            "round": 0
+        },
+        {
+            "global": 0,
+            "type": "Reading",
+            "subtype": "Variable",
+            "id": "brightnessActive",
+            "needSave": "1",
+            "widget": "inputDgt",
+            "page": "Установки",
+            "descr": "brightnessActive",
+            "int": "0",
+            "val": "80",
+            "map": "1024,1024,1,100",
+            "plus": 0,
+            "multiply": 1,
+            "round": 0
+        },
+        {
+            "global": 0,
+            "type": "Writing",
+            "subtype": "ButtonOut",
+            "needSave": "1",
+            "id": "relay1",
+            "widget": "toggle",
+            "page": "Кнопки",
+            "descr": "relay1",
+            "int": 0,
+            "inv": 0,
+            "pin": "40"
+        },
+        {
+            "global": 0,
+            "type": "Writing",
+            "subtype": "ButtonOut",
+            "needSave": "1",
+            "id": "relay2",
+            "widget": "toggle",
+            "page": "Кнопки",
+            "descr": "relay2",
+            "int": 0,
+            "inv": 0,
+            "pin": 2
+        },
+        {
+            "global": 0,
+            "type": "Writing",
+            "subtype": "ButtonOut",
+            "needSave": "1",
+            "id": "relay3",
+            "widget": "toggle",
+            "page": "Кнопки",
+            "descr": "relay3",
+            "int": 0,
+            "inv": 0,
+            "pin": "1"
+        },
+        {
+            "global": 0,
+            "type": "Reading",
+            "subtype": "VButton",
+            "id": "disp",
+            "needSave": "1",
+            "widget": "toggle",
+            "page": "Установки",
+            "descr": "Яркость по расписанию",
+            "int": "0",
+            "val": "0"
+        },
+        {
+            "global": 0,
+            "type": "Reading",
+            "subtype": "Weather",
+            "id": "temp_C",
+            "needSave": 0,
+            "widget": "anydataTmp",
+            "page": "Погода",
+            "descr": "temp_C",
+            "int": "1",
+            "location": "Moscow",
+            "param": "temp_C",
+            "round": 0,
+            "val": "...",
+            "moduleName": "Weather"
+        },
+        {
+            "global": 0,
+            "type": "Reading",
+            "subtype": "Weather",
+            "id": "rangetempC",
+            "needSave": 0,
+            "widget": "anydataDef",
+            "page": "Погода",
+            "descr": "rangetempC",
+            "int": "1",
+            "location": "Moscow",
+            "param": "rangetempC",
+            "round": 0,
+            "val": "...",
+            "moduleName": "Weather"
+        },
+        {
+            "global": 0,
+            "type": "Reading",
+            "subtype": "Weather",
+            "id": "weatherCode",
+            "needSave": 0,
+            "widget": "anydataDef",
+            "page": "Погода",
+            "descr": "weatherCode",
+            "int": "1",
+            "location": "Moscow",
+            "param": "weatherCode",
+            "round": 0,
+            "val": "...",
+            "moduleName": "Weather"
+        },
+        {
+            "global": 0,
+            "type": "Reading",
+            "subtype": "Variable",
+            "id": "customTemp_",
+            "needSave": 0,
+            "widget": "inputDgt",
+            "page": "Ввод",
+            "descr": "Введите число",
+            "int": "0",
+            "val": "0.0",
+            "map": "1024,1024,1,100",
+            "plus": 0,
+            "multiply": 1,
+            "round": 0,
+            "moduleName": "Variable"
+        },
+        {
+            "global": 0,
+            "type": "Reading",
+            "subtype": "OTDisplay",
+            "id": "OTDisplay",
+            "widget": "",
+            "page": "",
+            "descr": "",
+            "int": "20",
+            "rotation": 0,
+            "brightness_active": 80,
+            "brightness_idle": 40,
+            "controllerID": "",
+            "firmware": "LiveControl",
+            "prefix": "/dacha",
+            "relay1": "",
+            "relay2": "",
+            "relay3": "",
+            "log": 0,
+            "moduleName": "OTDisplay"
+        },
+        {
+            "global": 0,
+            "type": "Writing",
+            "subtype": "Timer",
+            "id": "weatherTimer",
+            "widget": "nil",
+            "page": "Таймеры",
+            "descr": "Таймер",
+            "int": 1,
+            "countDown": "20",
+            "ticker": "0",
+            "repeat": "0",
+            "needSave": 0,
+            "moduleName": "Timer"
+        },
+        {
+            "global": 0,
+            "type": "Writing",
+            "subtype": "Timer",
+            "id": "timerBrightness",
+            "widget": "anydataDef",
+            "page": "Таймеры",
+            "descr": "Таймер",
+            "int": "1",
+            "countDown": "100",
+            "ticker": 1,
+            "repeat": "0",
+            "needSave": 0,
+            "moduleName": "Timer"
+        }
+    ]
+}
+
+scenario=>if onStart then {
+timerBrightness = 0;
+OTDisplay.brightness(brightness);
+# надписи на кнопках реле
+OTDisplay.relay1("кухня");
+OTDisplay.relay2("спальня");
+OTDisplay.relay3("душ");
+}
+
+if weatherTimer == 0 then {
+temp_C.get();
+rangetempC.get();
+weatherCode.get();
+}
+
+if OTDisplay < 100 then {
+   # Увеличиваем яркость при касании экрана
+   OTDisplay.brightness(brightnessActive);
+   # Запускаем таймер
+   timerDisp.reset();  
+   timer.reset();
+timerBrightness.setInitCountDown(brightnessActive)
+timerBrightness.reset();
+}
+   # Плавно гасим яркость 
+if timerBrightness > brightness then OTDisplay.brightness(timerBrightness);
+
+if brightness then  OTDisplay.brightness(brightness);
+
+if timerDisp == 0 then {
+# переключаем экран когда таймер истек
+   OTDisplay.display(0); 
+    # включаем режим ожидания
+    #OTDisplay.brightness(brightness);
+}
+   
+if timer == 0 & disp then {
+# Утро яркость 20
+   if getHours() > 7 & getHours() < 10  then  {brightness = 20;  brightnessActive = 100;}
+# День яркость 30
+   if getHours() > 10 & getHours() < 18 then {brightness = 30;  brightnessActive = 100;}
+# Вечер яркость 
+   if getHours() > 18 & getHours() < 23 then {brightness = 20;  brightnessActive = 100;}
+# Ночь. яркость  
+   if getHours() > 23 | getHours() < 7 then {brightness = 10;  brightnessActive = 30;}
+}

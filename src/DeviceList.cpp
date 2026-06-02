@@ -101,7 +101,7 @@ void udpBroadcastInit() {
     ts.add(
         UDPt, 60000, [&](void*) {  // UDPP
             if (isNetworkActive()) {
-                SerialPrint("i", F("UDP"), F("Broadcast device presentation"));
+                // SerialPrint("i", F("UDP"), F("Broadcast device presentation"));
                 asyncUdp.broadcastTo(getThisDevice().c_str(), 4210);
                 // asyncUdp.broadcast("test");
                 // asyncUdp.print("Hello Server!");
@@ -113,7 +113,7 @@ void udpBroadcastInit() {
 }
 
 void jsonMergeArrays(String& existJson, String& incJson) {
-    DynamicJsonDocument incJsonDoc(4096);
+    JsonDocument incJsonDoc;
     DeserializationError incJsonError = deserializeJson(incJsonDoc, incJson);
     // if (incJsonError) {  // upd: devlist заведомо верный, зачем проверять еще раз?
     //     SerialPrint("E", F("UDP"), "Invailed json in incomming udp packet " + String(incJsonError.f_str()));
@@ -121,7 +121,7 @@ void jsonMergeArrays(String& existJson, String& incJson) {
     //     return;
     // }
 
-    DynamicJsonDocument existJsonDoc(4096);
+    JsonDocument existJsonDoc;
     DeserializationError existJsonError = deserializeJson(existJsonDoc, existJson);
     // if (existJsonError) {    // upd: полученный json уже проверен на целостность
     //     SerialPrint("E", F("UDP"), "Invailed json in existing udp dev list " + String(incJsonError.f_str()));

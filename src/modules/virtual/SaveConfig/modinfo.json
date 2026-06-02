@@ -1,0 +1,36 @@
+{
+  "menuSection": "virtual_elments",
+  "configItem": [
+    {
+      "global": 0,
+      "name": "SaveConfig",
+      "type": "Reading",
+      "subtype": "SaveConfig",
+      "id": "SaveConfig",
+      "needSave": 0,
+      "widget": "",
+      "page": "",
+      "descr": "",
+      "int": 0
+    }
+  ],
+  "about": {
+    "authorName": "AVAKS",
+    "authorContact": "https://t.me/@avaks",
+    "authorGit": "https://github.com/avaksru",
+    "specialThanks": "",
+    "moduleName": "SaveConfig",
+    "moduleVersion": "1",
+    "usedRam": {
+      "esp32_4mb": 15,
+      "esp8266_4mb": 15
+    },
+    "title": "SaveConfig",
+    "moduleDesc": "Сохранение конфигурации в интернет"
+  },
+  "defActive": false,
+  "usedLibs": {
+    "esp32*": [],
+    "esp82*": []
+  }
+}

@@ -17,6 +17,7 @@ void removeFile(const String& filename);
 void removeDirectory(const String& dir);
 void cleanDirectory(String path);
 void cleanLogs();
+void mkdir(const String& path);
 String saveDataDB(String id, String data);
 String readDataDB(String id);
 extern void onFlashWrite();

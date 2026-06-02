@@ -32,7 +32,7 @@ class RTC : public IoTItem {
         value.isDecimal = false;
         value.valS = _watch->gettime(_timeFormat);
 
-        if (_ticker) regEvent(value.valS, F("RTC tick"));
+        if (_ticker) regEvent(String(value.valS.c_str()), F("RTC tick"));
     }
 
     IoTItem* getRtcDriver() {
@@ -60,7 +60,7 @@ class RTC : public IoTItem {
             if (param.size() == 1) {
                 IoTValue valTmp;
                 valTmp.isDecimal = false;
-                valTmp.valS = _watch->gettime(param[0].valS + " ");
+                valTmp.valS = _watch->gettime(String(param[0].valS.c_str()) + " ");
                 return valTmp;
             }
         } else if (command == "setUnixTime") {
@@ -79,7 +79,7 @@ class RTC : public IoTItem {
                 IoTValue valTmp;
                 _watch->gettime();
                 valTmp.isDecimal = true;
-                String type = param[0].valS;
+                String type = String(param[0].valS.c_str());
                     if (type == "H") {
                         valTmp.valD = static_cast<float>(_watch->Hours);
                     } else if (type == "i") {

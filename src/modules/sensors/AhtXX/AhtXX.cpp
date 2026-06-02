@@ -49,7 +49,7 @@ class AhtXXt : public IoTItem {
         if (value.valD != AHTXX_ERROR) {
             regEvent(value.valD, "AhtXXt");
         } else {
-            SerialPrint("E", "Sensor AHTXX", getStatus(_aht), _id);
+            SerialPrint("E", "Sensor AHTXX", getStatus(_aht), String(_id.c_str()));
         }
     }
 
@@ -70,7 +70,7 @@ class AhtXXh : public IoTItem {
         if (value.valD != AHTXX_ERROR) {
             regEvent(value.valD, "AhtXXh");
         } else {
-            SerialPrint("E", "Sensor AHTXX", getStatus(_aht), _id);
+            SerialPrint("E", "Sensor AHTXX", getStatus(_aht), String(_id.c_str()));
         }
     }
 
@@ -88,7 +88,7 @@ void* getAPI_AhtXX(String subtype, String param) {
     
        if (ahts.find(addr) == ahts.end()) {
             int shtType;
-            jsonRead(param, "shtType", shtType);
+            jsonRead(param, "type", shtType);
 
             ahts[addr] = new AHTxx(hexStringToUint8(addr), (AHTXX_I2C_SENSOR)shtType);
 

@@ -29,7 +29,7 @@ public:
         if (value.valD != NAN && value.valD < 145)
             regEvent(value.valD, "Bme280t");
         else
-            SerialPrint("E", "Sensor Bme280t", "Error", _id);
+            SerialPrint("E", "Sensor Bme280t", "Error", _id.c_str());
     }
 
     ~Bme280t(){};
@@ -52,7 +52,7 @@ public:
         if (value.valD != NAN && value.valD < 100)
             regEvent(value.valD, "Bme280h");
         else
-            SerialPrint("E", "Sensor Bme280h", "Error", _id);
+            SerialPrint("E", "Sensor Bme280h", "Error", _id.c_str());
     }
 
     ~Bme280h(){};
@@ -78,7 +78,7 @@ public:
             regEvent(value.valD, "Bme280p");
         }
         else
-            SerialPrint("E", "Sensor Bme280p", "Error", _id);
+            SerialPrint("E", "Sensor Bme280p", "Error", _id.c_str());
     }
 
     ~Bme280p(){};
@@ -107,7 +107,7 @@ public:
             regEvent(value.valD, "Bme280dp");
         }
         else
-            SerialPrint("E", "Sensor Bme280dp", "Error", _id);
+            SerialPrint("E", "Sensor Bme280dp", "Error", _id.c_str());
     }
 
     ~Bme280dp(){};

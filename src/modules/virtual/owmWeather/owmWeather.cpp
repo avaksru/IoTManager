@@ -21,13 +21,13 @@ private:
     String _lon = "";
     String _lang = "";
     bool _debug = false;
-    DynamicJsonDocument Weatherdoc1;
+    JsonDocument Weatherdoc1;
     unsigned long _sunsetTime = 0;
     unsigned long _sunriseTime = 0;
     uint32_t _tzone = 0;
 
 public:
-    owmWeather(String parameters) : Weatherdoc1(1024), IoTItem(parameters)
+    owmWeather(String parameters) : IoTItem(parameters)
     {
         _API_key = jsonReadStr(parameters, "API_key");
         //    _ID_sity = jsonReadStr(parameters, "ID_sity");
@@ -68,7 +68,6 @@ public:
             WiFiClient client;
             HTTPClient http;
             String payload;
-            bool find = false;
             http.setTimeout(500);
             http.begin(client, urlReq); // urlCurrent
             // http.begin(client, "http://api.openweathermap.org/data/2.5/weather?id=" + _ID_sity + "&appid=" + _API_key + "&units=metric");
@@ -86,7 +85,7 @@ public:
                     deserializeJson(Weatherdoc1, payload);
                     // ret += payload;
                     if (_debug)
-                        SerialPrint("i", "Weatherdoc1", "memoryUsage: " + String(Weatherdoc1.memoryUsage()));
+                        SerialPrint("i", "Weatherdoc1", "parsed OK");
                 }
             }
             else
@@ -130,11 +129,11 @@ public:
             publishNew("sys", "sunset");
             publishNew("", "name");
 
-            if (_param == "temp" || _param == "temp_min" || _param == "temp_max" || _param == "feels_like")
-            {
-                value.valS = jsonReadStr(Weatherdoc1["main"], _param, true);
-                regEvent(value.valS, "owmWeather");
-            }
+                if (_param == "temp" || _param == "temp_min" || _param == "temp_max" || _param == "feels_like")
+                {
+                    value.valS = jsonReadStr(Weatherdoc1["main"], _param, true).c_str();
+                    regEvent(String(value.valS.c_str()), "owmWeather");
+                }
             else if (_param == "pressure")
             {
                 // value.valS = jsonReadStr(Weatherdoc1["main"], "pressure", true);
@@ -142,56 +141,56 @@ public:
                 jsonRead(Weatherdoc1["main"], "pressure", tval, true);
                 regEvent(tval / 1.333, "owmWeather");
             }
-            else if (_param == "humidity")
-            {
-                value.valS = jsonReadStr(Weatherdoc1["main"], "humidity", true);
-                regEvent(value.valS, "owmWeather");
-            }
-            else if (_param == "speed")
-            {
-                value.valS = jsonReadStr(Weatherdoc1["wind"], "speed", true);
-                regEvent(value.valS, "owmWeather");
-            }
-            else if (_param == "deg")
-            {
-                value.valS = jsonReadStr(Weatherdoc1["wind"], "deg", true);
-                regEvent(value.valS, "owmWeather");
-            }
-            else if (_param == "all")
-            {
-                value.valS = jsonReadStr(Weatherdoc1["clouds"], "all", true);
-                regEvent(value.valS, "owmWeather");
-            }
-            else if (_param == "main")
-            {
-                value.valS = jsonReadStr(Weatherdoc1["weather"][0], "main", true);
-                regEvent(value.valS, "owmWeather");
-            }
-            else if (_param == "description")
-            {
-                value.valS = jsonReadStr(Weatherdoc1["weather"][0], "description", true);
-                regEvent(value.valS, "owmWeather");
-            }
-            else if (_param == "icon")
-            {
-                value.valS = jsonReadStr(Weatherdoc1["weather"][0], "icon", true);
-                regEvent(value.valS, "owmWeather");
-            }
-            else if (_param == "sunrise")
-            {
-                value.valS = getTimeDotFormatedFromUnix(_sunriseTime);
-                regEvent(value.valS, "owmWeather");
-            }
-            else if (_param == "sunset")
-            {
-                value.valS = getTimeDotFormatedFromUnix(_sunsetTime);
-                regEvent(value.valS, "owmWeather");
-            }
-            else if (_param == "name")
-            {
-                value.valS = Weatherdoc1["name"].as<String>();
-                regEvent(value.valS, "owmWeather");
-            }
+                else if (_param == "humidity")
+                {
+                    value.valS = jsonReadStr(Weatherdoc1["main"], "humidity", true).c_str();
+                    regEvent(String(value.valS.c_str()), "owmWeather");
+                }
+                else if (_param == "speed")
+                {
+                    value.valS = jsonReadStr(Weatherdoc1["wind"], "speed", true).c_str();
+                    regEvent(String(value.valS.c_str()), "owmWeather");
+                }
+                else if (_param == "deg")
+                {
+                    value.valS = jsonReadStr(Weatherdoc1["wind"], "deg", true).c_str();
+                    regEvent(String(value.valS.c_str()), "owmWeather");
+                }
+                else if (_param == "all")
+                {
+                    value.valS = jsonReadStr(Weatherdoc1["clouds"], "all", true).c_str();
+                    regEvent(String(value.valS.c_str()), "owmWeather");
+                }
+                else if (_param == "main")
+                {
+                    value.valS = jsonReadStr(Weatherdoc1["weather"][0], "main", true).c_str();
+                    regEvent(String(value.valS.c_str()), "owmWeather");
+                }
+                else if (_param == "description")
+                {
+                    value.valS = jsonReadStr(Weatherdoc1["weather"][0], "description", true).c_str();
+                    regEvent(String(value.valS.c_str()), "owmWeather");
+                }
+                else if (_param == "icon")
+                {
+                    value.valS = jsonReadStr(Weatherdoc1["weather"][0], "icon", true).c_str();
+                    regEvent(String(value.valS.c_str()), "owmWeather");
+                }
+                else if (_param == "sunrise")
+                {
+                    value.valS = getTimeDotFormatedFromUnix(_sunriseTime).c_str();
+                    regEvent(String(value.valS.c_str()), "owmWeather");
+                }
+                else if (_param == "sunset")
+                {
+                    value.valS = getTimeDotFormatedFromUnix(_sunsetTime).c_str();
+                    regEvent(String(value.valS.c_str()), "owmWeather");
+                }
+                else if (_param == "name")
+                {
+                    value.valS = Weatherdoc1["name"].as<String>().c_str();
+                    regEvent(String(value.valS.c_str()), "owmWeather");
+                }
             // value.isDecimal = false;
 
             //     regEvent(value.valS, "owmWeather");
@@ -309,7 +308,7 @@ public:
                 icn = "❄";
             else
                 icn = "";
-            if (Weatherdoc1[root][0][param].as<String>() != tmp->value.valS)
+            if (Weatherdoc1[root][0][param].as<String>() != String(tmp->value.valS.c_str()))
             {
                 if (param == "description")
                     tmp->setValue(Weatherdoc1[root][0][param].as<String>() + icn, true);
@@ -319,14 +318,14 @@ public:
         }
         else if (root == "")
         {
-            if (Weatherdoc1[param].as<String>() != tmp->value.valS)
+            if (Weatherdoc1[param].as<String>() != String(tmp->value.valS.c_str()))
             {
                 tmp->setValue(Weatherdoc1[param].as<String>(), true);
             }
         }
         else if (root == "sys")
         {
-            if (Weatherdoc1[root][param].as<String>() != tmp->value.valS)
+            if (Weatherdoc1[root][param].as<String>() != String(tmp->value.valS.c_str()))
             {
                 if (param == "sunrise")
                 {
@@ -344,7 +343,7 @@ public:
         }
         else
         {
-            if (Weatherdoc1[root][param].as<String>() != tmp->value.valS)
+            if (Weatherdoc1[root][param].as<String>() != String(tmp->value.valS.c_str()))
             {
                 if (param == "pressure")
                 {

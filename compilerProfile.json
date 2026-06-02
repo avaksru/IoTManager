@@ -1,31 +1,44 @@
 {
     "iotmSettings": {
-        "name": "IoTmanagerVer4",
-        "apssid": "IoTmanager",
+        "name": "OTDisplay",
+        "apssid": "OTDisplay",
         "appass": "",
-        "routerssid": "iot",
-        "routerpass": "hostel3333",
-        "timezone": 2,
+        "routerssid": "Mikro",
+        "routerpass": "4455667788",
+        "timezone": 3,
         "ntp": "pool.ntp.org",
         "weblogin": "admin",
         "webpass": "admin",
         "mqttServer": "",
-        "mqttPort": 8021,
-        "mqttPrefix": "/risenew",
-        "mqttUser": "rise",
-        "mqttPass": "3hostel3",
-        "serverip": "http://iotmanager.org",
+        "mqttPort": 1883,
+        "mqttPrefix": "/demo",
+        "mqttUser": "",
+        "mqttPass": "",
+        "serverip": "http://live-control.com",
+        "serverlocal": "http://192.168.1.2:5500",
         "log": 0,
         "mqttin": 0,
         "pinSCL": 0,
         "pinSDA": 0,
         "i2cFreq": 100000,
-        "wg": "group1"
+        "wg": "group1",
+        "udps": false,
+        "debugTraceMsgTlgrm": 0,
+        "useEthernet": 0,
+        "ethCsPin": 10,
+        "ethIntPin": 4,
+        "ethRstPin": -1,
+        "ethDhcp": 0,
+        "ethIp": "192.168.0.200",
+        "ethGateway": "192.168.0.1",
+        "ethSubnet": "255.255.255.0",
+        "ethDns1": "8.8.8.8",
+        "ethDns2": "8.8.4.4"
     },
     "projectProp": {
         "platformio": {
-            "default_envs": "esp8266_4mb",
-            "comments_default_envs": "choose from: esp8266_4mb or esp32_4mb or esp32cam_4mb or esp32s2_4mb or esp32_4mb3f or esp32s3_16mb or esp32c3m_4mb or esp8266_1mb or esp8266_1mb_ota or esp8285_1mb or esp8285_1mb_ota",
+            "default_envs": "esp32s3_16mb",
+            "comments_default_envs": "choose from: esp8266_4mb, esp32_4mb, esp32_4mb3f, esp8266_16mb, esp32_16mb, esp32cam_4mb, esp32s2_4mb, esp32s3_16mb, esp32c3m_4mb, esp8266_1mb, esp8266_1mb_ota, esp8266_2mb, esp8266_2mb_ota, esp8285_1mb, esp8285_1mb_ota, esp32c6_4mb, esp32c6_8mb, bk7231n",
             "envs": [
                 {
                     "name": "esp8266_4mb",
@@ -122,6 +135,22 @@
                     "firmware": "0x10000",
                     "partitions": "0x8000",
                     "littlefs": "0x910000"
+                },
+                {
+                    "name": "esp32c6_4mb",
+                    "boot_app0": "0xe000",
+                    "bootloader_qio_80m": "0x1000",
+                    "firmware": "0x10000",
+                    "partitions": "0x8000",
+                    "littlefs": "0x310000"
+                },
+                {
+                    "name": "esp32c6_8mb",
+                    "boot_app0": "0xe000",
+                    "bootloader_qio_80m": "0x1000",
+                    "firmware": "0x10000",
+                    "partitions": "0x8000",
+                    "littlefs": "0x5ee000"
                 }
             ]
         }
@@ -129,385 +158,517 @@
     "modules": {
         "virtual_elments": [
             {
-                "path": "src/modules/virtual/Benchmark",
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/virtual/Benchmark",
                 "active": false
             },
             {
-                "path": "src/modules/virtual/Cron",
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/virtual/Cron",
                 "active": true
             },
             {
-                "path": "src/modules/virtual/GoogleSheet",
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/virtual/DiscoveryHA",
                 "active": false
             },
             {
-                "path": "src/modules/virtual/Loging",
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/virtual/DiscoveryHomeD",
+                "active": false
+            },
+            {
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/virtual/DiscoverySprut",
+                "active": false
+            },
+            {
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/virtual/GoogleSheet",
+                "active": false
+            },
+            {
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/virtual/Loging",
                 "active": true
             },
             {
-                "path": "src/modules/virtual/LogingDaily",
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/virtual/Loging2",
+                "active": false
+            },
+            {
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/virtual/Loging3",
+                "active": false
+            },
+            {
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/virtual/LogingDaily",
                 "active": true
             },
             {
-                "path": "src/modules/virtual/Math",
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/virtual/LogingHourly",
                 "active": true
             },
             {
-                "path": "src/modules/virtual/owmWeather",
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/virtual/Math",
                 "active": true
             },
             {
-                "path": "src/modules/virtual/Ping",
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/virtual/owmWeather",
                 "active": true
             },
             {
-                "path": "src/modules/virtual/Timer",
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/virtual/Ping",
                 "active": true
             },
             {
-                "path": "src/modules/virtual/Variable",
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/virtual/SaveConfig",
+                "active": false
+            },
+            {
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/virtual/SolarCalc",
+                "active": false
+            },
+            {
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/virtual/Timer",
                 "active": true
             },
             {
-                "path": "src/modules/virtual/VButton",
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/virtual/UpdateServer",
                 "active": true
             },
             {
-                "path": "src/modules/virtual/Weather",
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/virtual/Variable",
+                "active": true
+            },
+            {
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/virtual/VariableColor",
+                "active": true
+            },
+            {
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/virtual/VButton",
+                "active": true
+            },
+            {
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/virtual/Weather",
                 "active": false
             }
         ],
         "sensors": [
             {
-                "path": "src/modules/exec/Pcf8591",
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/exec/Pcf8591",
                 "active": false
             },
             {
-                "path": "src/modules/sensors/A02Distance",
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/exec/PressureRelay",
                 "active": true
             },
             {
-                "path": "src/modules/sensors/Acs712",
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/sensors/A02Distance",
+                "active": false
+            },
+            {
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/sensors/Acs712",
+                "active": false
+            },
+            {
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/sensors/Ads1115",
+                "active": false
+            },
+            {
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/sensors/AhtXX",
                 "active": true
             },
             {
-                "path": "src/modules/sensors/Ads1115",
-                "active": false
-            },
-            {
-                "path": "src/modules/sensors/AhtXX",
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/sensors/AnalogAdc",
                 "active": true
             },
             {
-                "path": "src/modules/sensors/AnalogAdc",
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/sensors/BH_1750",
+                "active": false
+            },
+            {
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/sensors/BL0937",
+                "active": false
+            },
+            {
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/sensors/BL0942",
+                "active": false
+            },
+            {
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/sensors/Ble",
+                "active": false
+            },
+            {
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/sensors/Ble_part1",
+                "active": false
+            },
+            {
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/sensors/Ble_part2",
+                "active": false
+            },
+            {
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/sensors/Bme280",
                 "active": true
             },
             {
-                "path": "src/modules/sensors/BH_1750",
-                "active": false
-            },
-            {
-                "path": "src/modules/sensors/BL0937",
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/sensors/Bmp280",
                 "active": true
             },
             {
-                "path": "src/modules/sensors/Ble",
-                "active": false
-            },
-            {
-                "path": "src/modules/sensors/Ble_part1",
-                "active": false
-            },
-            {
-                "path": "src/modules/sensors/Ble_part2",
-                "active": false
-            },
-            {
-                "path": "src/modules/sensors/Bme280",
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/sensors/Dht1122",
                 "active": true
             },
             {
-                "path": "src/modules/sensors/Bmp280",
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/sensors/Ds18b20",
                 "active": true
             },
             {
-                "path": "src/modules/sensors/Dht1122",
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/sensors/DS2401",
+                "active": false
+            },
+            {
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/sensors/Emon",
+                "active": false
+            },
+            {
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/sensors/EnergyMon485",
+                "active": false
+            },
+            {
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/sensors/ExampleModule",
+                "active": false
+            },
+            {
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/sensors/ExternalMQTT",
+                "active": false
+            },
+            {
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/sensors/FreqMeter",
+                "active": false
+            },
+            {
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/sensors/GY21",
+                "active": false
+            },
+            {
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/sensors/Hdc1080",
+                "active": false
+            },
+            {
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/sensors/Hx710",
+                "active": false
+            },
+            {
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/sensors/Hx711",
+                "active": false
+            },
+            {
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/sensors/Impulse",
                 "active": true
             },
             {
-                "path": "src/modules/sensors/Ds18b20",
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/sensors/Ina219",
+                "active": false
+            },
+            {
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/sensors/Ina226",
+                "active": false
+            },
+            {
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/sensors/IoTWiegand",
+                "active": false
+            },
+            {
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/sensors/JHM1200",
                 "active": true
             },
             {
-                "path": "src/modules/sensors/DS2401",
-                "active": false
-            },
-            {
-                "path": "src/modules/sensors/Emon",
-                "active": false
-            },
-            {
-                "path": "src/modules/sensors/EnergyMon485",
-                "active": false
-            },
-            {
-                "path": "src/modules/sensors/ExampleModule",
-                "active": false
-            },
-            {
-                "path": "src/modules/sensors/ExternalMQTT",
-                "active": false
-            },
-            {
-                "path": "src/modules/sensors/FreqMeter",
-                "active": false
-            },
-            {
-                "path": "src/modules/sensors/GY21",
-                "active": false
-            },
-            {
-                "path": "src/modules/sensors/Hdc1080",
-                "active": false
-            },
-            {
-                "path": "src/modules/sensors/Hx710",
-                "active": false
-            },
-            {
-                "path": "src/modules/sensors/Hx711",
-                "active": false
-            },
-            {
-                "path": "src/modules/sensors/Impulse",
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/sensors/JHM1200v2",
                 "active": true
             },
             {
-                "path": "src/modules/sensors/Ina219",
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/sensors/ld2410",
                 "active": false
             },
             {
-                "path": "src/modules/sensors/Ina226",
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/sensors/Max6675",
                 "active": false
             },
             {
-                "path": "src/modules/sensors/IoTWiegand",
-                "active": false
-            },
-            {
-                "path": "src/modules/sensors/ld2410",
-                "active": false
-            },
-            {
-                "path": "src/modules/sensors/Max6675",
-                "active": false
-            },
-            {
-                "path": "src/modules/sensors/Mhz19",
-                "active": false
-            },
-            {
-                "path": "src/modules/sensors/MQgas",
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/sensors/Mercury",
                 "active": true
             },
             {
-                "path": "src/modules/sensors/Ntc",
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/sensors/Mhz19",
                 "active": false
             },
             {
-                "path": "src/modules/sensors/Pzem004t",
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/sensors/ModbusEmelianov",
                 "active": false
             },
             {
-                "path": "src/modules/sensors/Pzem004t_v2",
-                "active": true
-            },
-            {
-                "path": "src/modules/sensors/RCswitch",
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/sensors/ModbusRTU",
                 "active": false
             },
             {
-                "path": "src/modules/sensors/RTC",
-                "active": true
-            },
-            {
-                "path": "src/modules/sensors/S8",
-                "active": true
-            },
-            {
-                "path": "src/modules/sensors/Scd40",
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/sensors/ModbusRTUasync",
                 "active": false
             },
             {
-                "path": "src/modules/sensors/Sds011",
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/sensors/MQgas",
                 "active": false
             },
             {
-                "path": "src/modules/sensors/Sgp30",
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/sensors/NoiseAdc",
                 "active": false
             },
             {
-                "path": "src/modules/sensors/Sht20",
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/sensors/Ntc",
                 "active": true
             },
             {
-                "path": "src/modules/sensors/Sht30",
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/sensors/Pcf8591",
+                "active": false
+            },
+            {
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/sensors/Presence",
+                "active": false
+            },
+            {
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/sensors/Pzem004t",
+                "active": false
+            },
+            {
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/sensors/Pzem004t_v2",
+                "active": false
+            },
+            {
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/sensors/RCswitch",
+                "active": false
+            },
+            {
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/sensors/RTC",
                 "active": true
             },
             {
-                "path": "src/modules/sensors/Sonar",
-                "active": true
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/sensors/S8",
+                "active": false
             },
             {
-                "path": "src/modules/sensors/UART",
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/sensors/Scd40",
+                "active": false
+            },
+            {
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/sensors/Sds011",
+                "active": false
+            },
+            {
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/sensors/Sgp30",
+                "active": false
+            },
+            {
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/sensors/Sht20",
+                "active": false
+            },
+            {
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/sensors/Sht30",
+                "active": false
+            },
+            {
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/sensors/SoftRTC",
+                "active": false
+            },
+            {
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/sensors/Sonar",
+                "active": false
+            },
+            {
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/sensors/UART",
                 "active": true
             }
         ],
         "executive_devices": [
             {
-                "path": "src/modules/exec/AnalogBtn",
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/exec/AnalogBtn",
                 "active": true
             },
             {
-                "path": "src/modules/exec/BrokerMQTT",
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/exec/BrokerMQTT",
                 "active": false
             },
             {
-                "path": "src/modules/exec/ButtonIn",
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/exec/ButtonIn",
                 "active": true
             },
             {
-                "path": "src/modules/exec/ButtonOut",
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/exec/ButtonOut",
                 "active": true
             },
             {
-                "path": "src/modules/exec/Buzzer",
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/exec/Buzzer",
+                "active": false
+            },
+            {
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/exec/EctoControlAdapter",
+                "active": false
+            },
+            {
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/exec/Enconder",
                 "active": true
             },
             {
-                "path": "src/modules/exec/Enconder",
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/exec/EspCam",
+                "active": false
+            },
+            {
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/exec/Ftp",
+                "active": false
+            },
+            {
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/exec/HttpGet",
+                "active": false
+            },
+            {
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/exec/IoTServo",
+                "active": false
+            },
+            {
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/exec/IRremote",
+                "active": false
+            },
+            {
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/exec/Mcp23008",
+                "active": false
+            },
+            {
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/exec/Mcp23017",
+                "active": false
+            },
+            {
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/exec/Mp3",
                 "active": true
             },
             {
-                "path": "src/modules/exec/EspCam",
-                "active": false
-            },
-            {
-                "path": "src/modules/exec/Ftp",
-                "active": false
-            },
-            {
-                "path": "src/modules/exec/HttpGet",
-                "active": false
-            },
-            {
-                "path": "src/modules/exec/IoTServo",
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/exec/Multitouch",
                 "active": true
             },
             {
-                "path": "src/modules/exec/Mcp23008",
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/exec/MySensors",
                 "active": false
             },
             {
-                "path": "src/modules/exec/Mcp23017",
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/exec/OpenThermMonitor",
                 "active": true
             },
             {
-                "path": "src/modules/exec/Mp3",
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/exec/Pcf8574",
                 "active": true
             },
             {
-                "path": "src/modules/exec/Multitouch",
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/exec/Pwm32",
                 "active": true
             },
             {
-                "path": "src/modules/exec/MySensors",
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/exec/Pwm8266",
                 "active": false
             },
             {
-                "path": "src/modules/exec/Pcf8574",
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/exec/SDcard",
+                "active": false
+            },
+            {
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/exec/SIM800",
+                "active": false
+            },
+            {
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/exec/SmartBoiler",
+                "active": false
+            },
+            {
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/exec/SysExt",
+                "active": false
+            },
+            {
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/exec/sysReset",
                 "active": true
             },
             {
-                "path": "src/modules/exec/Pwm32",
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/exec/Tca9555",
+                "active": false
+            },
+            {
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/exec/Telegram",
+                "active": false
+            },
+            {
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/exec/TelegramLT",
                 "active": true
             },
             {
-                "path": "src/modules/exec/Pwm8266",
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/exec/Telegram_v2",
+                "active": false
+            },
+            {
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/exec/Thermostat",
                 "active": true
             },
             {
-                "path": "src/modules/exec/SDcard",
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/exec/WakeOnLanModule",
                 "active": false
             },
             {
-                "path": "src/modules/exec/SIM800",
-                "active": false
-            },
-            {
-                "path": "src/modules/exec/SmartBoiler",
-                "active": false
-            },
-            {
-                "path": "src/modules/exec/SysExt",
-                "active": false
-            },
-            {
-                "path": "src/modules/exec/Telegram",
-                "active": false
-            },
-            {
-                "path": "src/modules/exec/TelegramLT",
-                "active": true
-            },
-            {
-                "path": "src/modules/exec/Telegram_v2",
-                "active": false
-            },
-            {
-                "path": "src/modules/exec/Thermostat",
-                "active": false
-            },
-            {
-                "path": "src/modules/sensors/Ds2423",
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/sensors/Ds2423",
                 "active": false
             }
         ],
         "screens": [
             {
-                "path": "src/modules/display/DwinI",
-                "active": true
-            },
-            {
-                "path": "src/modules/display/Lcd2004",
-                "active": true
-            },
-            {
-                "path": "src/modules/display/Nextion",
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/display/DwinI",
                 "active": false
             },
             {
-                "path": "src/modules/display/NextionUpload",
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/display/GyverLAMP",
                 "active": false
             },
             {
-                "path": "src/modules/display/Oled128",
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/display/Lcd2004",
                 "active": false
             },
             {
-                "path": "src/modules/display/Oled64",
-                "active": true
-            },
-            {
-                "path": "src/modules/display/Smi2_m",
-                "active": true
-            },
-            {
-                "path": "src/modules/display/TM16XX",
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/display/LedFX",
                 "active": false
             },
             {
-                "path": "src/modules/display/Ws2812b",
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/display/Nextion",
+                "active": false
+            },
+            {
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/display/NextionUpload",
+                "active": false
+            },
+            {
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/display/Oled128",
+                "active": false
+            },
+            {
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/display/Oled64",
+                "active": false
+            },
+            {
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/display/OTDisplay",
+                "active": false
+            },
+            {
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/display/OTPanel",
+                "active": false
+            },
+            {
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/display/Smi2_m",
+                "active": false
+            },
+            {
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/display/TM16XX",
+                "active": false
+            },
+            {
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/display/U8g2lib",
+                "active": false
+            },
+            {
+                "path": "C:/GitHub/AVAKS/IoTManager/src/modules/display/Ws2812b",
                 "active": false
             }
         ]

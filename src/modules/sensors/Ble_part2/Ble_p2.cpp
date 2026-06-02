@@ -338,7 +338,12 @@ public:
     }
   }
 
-  ~BleScan() { BleSensArray.clear(); };
+  ~BleScan() { 
+    if (pBLEScan) {
+      pBLEScan->setScanCallbacks(nullptr);
+    }
+    BleSensArray.clear(); 
+  };
 };
 
 //=======================================================================================================

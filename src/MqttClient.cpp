@@ -2,27 +2,28 @@
 #include "classes/IoTDiscovery.h"
 
 void mqttInit() {
+    mqtt.setBufferSize(1024); // Увеличиваем буфер до 1024 байт
     mqtt.setCallback(mqttCallback);
     ts.add(
         WIFI_MQTT_CONNECTION_CHECK, MQTT_RECONNECT_INTERVAL,
         [&](void*) {
             if (isNetworkActive()) {
-                SerialPrint("i", F("WIFI"), "http://" + jsonReadStr(settingsFlashJson, F("ip")));
+                SerialPrint("i", F("Net"), "http://" + jsonReadStr(settingsFlashJson, F("ip")));
                 wifiUptimeCalc();
                 if (mqtt.connected()) {
-                    SerialPrint("i", F("MQTT"), "OK");
+                    // SerialPrint("i", F("MQTT"), "OK");
                     mqttUptimeCalc();
                     handleMqttStatus(false);
 
                     // setLedStatus(LED_OFF);
                 } else {
-                    SerialPrint("E", F("MQTT"), F("✖ Connection lost"));
+                    SerialPrint("E", F("Net"), F("✖ Connection lost"));
                     handleMqttStatus(false);
                     mqttUptime = 0;
                     mqttConnect();
                 }
             } else {
-                SerialPrint("E", F("WIFI"), F("✖ Lost WiFi connection"));
+                SerialPrint("E", F("Net"), F("✖ Lost connection"));
                 ts.remove(WIFI_MQTT_CONNECTION_CHECK);
                 wifiUptime = 0;
                 startAPMode();
@@ -36,6 +37,16 @@ void mqttLoop() {
         return;
     }
     mqtt.loop();
+}
+
+boolean publishRetain(const String &topic, const String &data)
+{
+    if (mqtt.beginPublish(topic.c_str(), data.length(), true))
+    {
+        mqtt.print(data);
+        return mqtt.endPublish();
+    }
+    return false;
 }
 
 boolean mqttConnect() {
@@ -90,6 +101,12 @@ boolean mqttConnect() {
             handleMqttStatus(true);
             //   setLedStatus(LED_OFF);
             mqttSubscribe();
+             if (HOMEdDiscovery)
+            {
+                publishRetain((HOMEdDiscovery->HOMEdTopic + "/device/custom/" + nameId).c_str(), "{\"status\":\"online\"}");
+            }
+            publishRetain((mqttRootDevice + "/state").c_str(), "{\"status\":\"online\"}");
+
             res = true;
         } else {
             SerialPrint("E", F("MQTT"), "🡆 Could't connect, retry in " + String(MQTT_RECONNECT_INTERVAL / 1000) + "s");
@@ -158,7 +175,7 @@ void mqttSubscribe() {
         {
             if ((*it)->iAmLocal)
             {
-                publishStatusMqtt((*it)->getID(), (*it)->getValue());
+                publishStatusMqtt(String((*it)->getID().c_str()), (*it)->getValue());
                 (*it)->onMqttWsAppConnectEvent();
             }
         }
@@ -201,7 +218,7 @@ void mqttCallback(char* topic, uint8_t* payload, size_t length) {
         // публикация всех статус сообщений при подключении приложения и генерация события подключения приложения в модулях
         for (std::list<IoTItem*>::iterator it = IoTItems.begin(); it != IoTItems.end(); ++it) {
             if ((*it)->iAmLocal) {
-                publishStatusMqtt((*it)->getID(), (*it)->getValue());
+                publishStatusMqtt(String((*it)->getID().c_str()), (*it)->getValue());
                 (*it)->onMqttWsAppConnectEvent();
             }
         }
@@ -314,7 +331,7 @@ void publishWidgets() {
         return;
     }
     size_t size = file.size();
-    DynamicJsonDocument doc(size * 2);
+    JsonDocument doc;
     DeserializationError error = deserializeJson(doc, file);
     if (error) {
         SerialPrint("E", F("MQTT"), error.f_str());

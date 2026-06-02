@@ -8,13 +8,14 @@ class IoTDiscovery;
 
 struct IoTValue {
     float valD = 0;
-    String valS = "";
+    std::string valS = "";
 
     bool isDecimal = true;
 };
 
 class IoTItem {
    public:
+    IoTItem();
     IoTItem(const String& parameters);
     virtual ~IoTItem() {};
     virtual void loop();
@@ -26,10 +27,10 @@ class IoTItem {
     virtual void regEvent(const String& value, const String& consoleInfo, bool error = false, bool genEvent = true);
     virtual void regEvent(float value, const String& consoleInfo, bool error = false, bool genEvent = true);
 
-    String getSubtype();
+    const std::string& getSubtype();
 
-    String getID();
-    bool isStrInID(const String& str);
+    const std::string& getID();
+    bool isStrInID(const std::string& str);
     int getIntFromNet();
     virtual String getValue();
     long getInterval();
@@ -51,6 +52,9 @@ class IoTItem {
 
     // bool iAmDead = false;  // признак необходимости удалить объект из базы
     bool iAmLocal = true;  // признак того, что айтем был создан локально
+    bool _fromPool = false; // признак того, что объект выделен из пула
+
+    bool fromPool() const { return _fromPool; }
 
     bool enableDoByInt = true;
 
@@ -99,8 +103,8 @@ class IoTItem {
 
    protected:
     bool _needSave = false;  // признак необходимости сохранять и загружать значение элемента на flash
-    String _subtype = "";
-    String _id = "errorId";  // если будет попытка создания Item без указания id, то элемент оставит это значение
+    std::string _subtype = "";
+    std::string _id = "errorId";  // если будет попытка создания Item без указания id, то элемент оставит это значение
     long _interval = 0;
     int _intFromNet = -2;  // количество секунд доверия, пришедших из сети вместе с данными для текущего ИД
                            // -2 - данные не приходили, скорее всего, элемент локальный, доверие есть, в случае прихода сетевого значения с int=0, будет выключен механизм проверки доверия
@@ -129,6 +133,9 @@ bool isItemExist(const String& name);                         // существ�
 IoTItem* createItemFromNet(const String& itemId, const String& value, int interval);
 IoTItem* createItemFromNet(const String& msgFromNet);
 void analyzeMsgFromNet(const String& msg, String altId = "");
+
+#include "utils/PoolAllocator.h"
+extern PoolAllocator<IoTItem> iotItemPool;
 
 // class externalVariable : IoTItem {  // объект, создаваемый при получении информации о событии на другом контроллере для хранения информации о событии указанное время
 

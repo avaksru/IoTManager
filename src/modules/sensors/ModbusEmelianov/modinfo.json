@@ -1,0 +1,45 @@
+{
+  "menuSection": "sensors",
+  "configItem": [
+    {
+      "global": 0,
+      "name": "ModbusEmelianov",
+      "type": "Reading",
+      "subtype": "ModbusEm",
+      "id": "Modbus",
+      "widget": "anydataTmp",
+      "page": "Modbus",
+      "descr": "ModbusEmelianov",
+      "rx": 16,
+      "tx": 17,
+      "dir": 4,
+      "baud": 9600,
+      "addr": 0,
+      "protocol": "SERIAL_8N1",
+      "int": 15
+    }
+  ],
+  "about": {
+    "authorName": "Serg",
+    "authorContact": "https://t.me/serg",
+    "authorGit": "",
+    "specialThanks": "",
+    "moduleName": "ModbusEmelianov",
+    "moduleVersion": "1.0",
+    "usedRam": {
+      "esp32_4mb": 15,
+      "esp8266_4mb": 15
+    },
+    "subTypes": ["F63P1", "F63P3"],
+    "title": "Клапан управления очисткой",
+    "moduleDesc": "......",
+    "propInfo": {
+      "int": "Количество секунд между опросами датчика."
+    }
+  },
+  "defActive": false,
+  "usedLibs": {
+    "esp32*": ["https://github.com/emelianov/modbus-esp8266"],
+    "esp82*": ["https://github.com/emelianov/modbus-esp8266"]
+  }
+}

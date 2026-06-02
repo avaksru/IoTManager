@@ -1,0 +1,273 @@
+{
+    "mark": "iotm",
+    "config": [
+        {
+            "global": 0,
+            "needsave": "1",
+            "type": "Reading",
+            "subtype": "PressureRelayp",
+            "id": "pressure",
+            "widget": "anydataBar",
+            "page": "Водопровод",
+            "descr": "Давление",
+            "int": "1",
+            "sdaPin": "6",
+            "sclPin": "7",
+            "i2cSpeed": 10000,
+            "plus": 0,
+            "map": "1024,1024,1,100",
+            "addr": "0x78",
+            "rawData": "0",
+            "ZERO_OFFSET": "1751625.88",
+            "max_val": 16,
+            "round": 2,
+            "relay": "relay",
+            "setMIN": 1.5,
+            "setMAX": 3,
+            "moduleName": "PressureRelay",
+            "show": true
+        },
+        {
+            "global": 0,
+            "type": "Reading",
+            "subtype": "VButton",
+            "id": "auto",
+            "needSave": "1",
+            "widget": "toggle",
+            "page": "Водопровод",
+            "descr": "авто",
+            "int": "0",
+            "val": "1",
+            "moduleName": "VButton"
+        },
+        {
+            "global": 0,
+            "type": "Reading",
+            "subtype": "Variable",
+            "id": "min",
+            "needSave": "1",
+            "widget": "inputDgt",
+            "page": "Водопровод",
+            "descr": "min",
+            "int": "0",
+            "val": "1.5",
+            "map": "1024,1024,1,100",
+            "plus": 0,
+            "multiply": 1,
+            "round": "1",
+            "moduleName": "Variable"
+        },
+        {
+            "global": 0,
+            "type": "Reading",
+            "subtype": "Variable",
+            "id": "max",
+            "needSave": "1",
+            "widget": "inputDgt",
+            "page": "Водопровод",
+            "descr": "max",
+            "int": "0",
+            "val": "3",
+            "map": "1024,1024,1,100",
+            "plus": 0,
+            "multiply": 1,
+            "round": "1",
+            "moduleName": "Variable"
+        },
+        {
+            "global": 0,
+            "type": "Writing",
+            "subtype": "ButtonOut",
+            "needSave": 0,
+            "id": "relay",
+            "widget": "toggle",
+            "page": "Водопровод",
+            "descr": "насос",
+            "int": 0,
+            "inv": 0,
+            "pin": "15",
+            "val": 0,
+            "moduleName": "ButtonOut"
+        },
+        {
+            "global": 0,
+            "type": "Writing",
+            "subtype": "Timer",
+            "id": "timer",
+            "widget": "nil",
+            "page": "Таймеры",
+            "descr": "Таймер",
+            "int": 1,
+            "countDown": "60",
+            "ticker": "0",
+            "repeat": 1,
+            "needSave": 0,
+            "moduleName": "Timer"
+        },
+        {
+            "global": 0,
+            "type": "Reading",
+            "subtype": "Variable",
+            "id": "uptime",
+            "needSave": 0,
+            "widget": "anydataDef",
+            "page": "Водопровод",
+            "descr": "uptime",
+            "int": "0",
+            "val": "0.0",
+            "map": "1024,1024,1,100",
+            "plus": 0,
+            "multiply": 1,
+            "round": 0,
+            "moduleName": "Variable"
+        },
+        {
+            "global": 0,
+            "type": "Writing",
+            "subtype": "Pwm32",
+            "id": "pwm",
+            "widget": "nil",
+            "page": "Водопровод",
+            "descr": "PWM",
+            "int": 0,
+            "pin": "23",
+            "freq": "100",
+            "ledChannel": "0",
+            "PWM_resolution": 10,
+            "val": 0,
+            "apin": -1,
+            "moduleName": "Pwm32"
+        },
+        {
+            "global": 0,
+            "type": "Writing",
+            "subtype": "Timer",
+            "id": "timer_pwm",
+            "widget": "nil",
+            "page": "",
+            "descr": "Таймер PWM",
+            "int": "1",
+            "countDown": "3",
+            "ticker": 1,
+            "repeat": "0",
+            "needSave": 0,
+            "moduleName": "Timer"
+        },
+        {
+            "global": 0,
+            "type": "Writing",
+            "subtype": "ButtonOut",
+            "needSave": 0,
+            "id": "Led5",
+            "widget": "nil",
+            "page": "Кнопки",
+            "descr": "LED насоса",
+            "int": 0,
+            "inv": 0,
+            "pin": "5",
+            "moduleName": "ButtonOut"
+        },
+        {
+            "global": 0,
+            "type": "Writing",
+            "subtype": "TelegramLT",
+            "id": "tg",
+            "widget": "",
+            "page": "",
+            "descr": "",
+            "token": "",
+            "chatID": "",
+            "moduleName": "TelegramLT"
+        },
+        {
+            "global": 0,
+            "type": "Reading",
+            "subtype": "Variable",
+            "id": "dryRunning",
+            "needSave": "1",
+            "widget": "inputDgt",
+            "page": "Водопровод",
+            "descr": "Введите число",
+            "int": "0",
+            "val": "60",
+            "map": "1024,1024,1,100",
+            "plus": 0,
+            "multiply": 1,
+            "round": 0,
+            "moduleName": "Variable"
+        },
+        {
+            "global": 0,
+            "type": "Writing",
+            "subtype": "Timer",
+            "id": "dryRunningTimer",
+            "widget": "nil",
+            "page": "",
+            "descr": "",
+            "int": 1,
+            "countDown": "60",
+            "ticker": "0",
+            "repeat": "0",
+            "needSave": 0,
+            "moduleName": "Timer"
+        },
+        {
+            "global": 0,
+            "type": "Reading",
+            "subtype": "UpdateServer",
+            "id": "UpdateServer",
+            "widget": "",
+            "page": "",
+            "descr": "",
+            "btn-startUpdateAll": "http://live-control.com/iotm/ESP32_C6_8mb_PR/400",
+            "moduleName": "UpdateServer"
+        }
+    ]
+}
+
+scenario=>if onStart then {
+tg.sendMsg('Реле давления перезагружено  ' + getIP());
+pressure.enable(auto);
+pressure.setMIN(min);
+pressure.setMAX(max);
+timer_pwm.stop();
+pwm = 0;
+dryRunningTimer.setInitCountDown(dryRunning);  
+dryRunningTimer.stop();
+}
+
+if auto < 2 then pressure.enable(auto);
+if min then pressure.setMIN(min);
+if max then pressure.setMAX(max);
+
+# счетчик uptime
+if timer == 0 then uptime=getUptime()
+
+# если включилось реле запускаем таймер плавного пуска
+if relay then {
+timer_pwm.reset();  
+pressure.releState(relay);
+dryRunningTimer.setInitCountDown(dryRunning);  
+dryRunningTimer.reset();
+}
+if relay == 0 then {
+timer_pwm.stop();
+pwm = 0;
+pressure.releState(relay);
+dryRunningTimer.stop();
+}
+
+if dryRunningTimer == 0 then {
+auto = 0;
+relay = 0;
+tg.sendMsg('Реле давления 🆘 Сработала защита от сухого хода');
+}
+
+# Плавный пуск. Меняем напряжение на каждом тике таймера
+if timer_pwm == 3 & relay then  pwm = 800;
+if timer_pwm == 2 & relay then  pwm = 950;
+if timer_pwm == 1 & relay then  pwm = 1000;
+if timer_pwm == 0 & relay then  pwm = 1024;
+
+# Включаем светодиод, когда работает реле
+if relay < 2 then Led5 = relay;

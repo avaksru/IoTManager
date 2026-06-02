@@ -30,6 +30,10 @@
 #include <ESP8266httpUpdate.h>
 #endif
 
+#if defined(ESP32) || defined(ESP8266)
+#include "utils/EthernetUtils.h"
+#endif
+
 #ifdef ASYNC_WEB_SERVER
 #include <ESPAsyncWebServer.h>
 #include "AsyncWebServer.h"

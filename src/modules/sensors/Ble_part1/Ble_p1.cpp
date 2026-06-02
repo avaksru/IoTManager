@@ -56,7 +56,7 @@ public:
       {
         value.valS = "";
       }
-      regEvent(value.valS, _id);
+       regEvent(String(value.valS.c_str()), String(_id.c_str()));
     }
     else
     {
@@ -67,7 +67,7 @@ public:
         {
           value.isDecimal = 1;
           value.valD = valStr.toFloat();
-          regEvent(value.valD, _id);
+           regEvent(value.valD, String(_id.c_str()));
           dataFromNode = true;
           _minutesPassed = 0;
           setNewWidgetAttributes();
@@ -75,8 +75,8 @@ public:
         else
         {
           value.isDecimal = 0;
-          value.valS = valStr;
-          regEvent(value.valS, _id);
+           value.valS = std::string(valStr.c_str());
+           regEvent(String(value.valS.c_str()), String(_id.c_str()));
           dataFromNode = true;
           _minutesPassed = 0;
           setNewWidgetAttributes();
@@ -110,7 +110,7 @@ public:
       {
         value.valS = "";
       }
-      regEvent(value.valS, _id);
+       regEvent(String(value.valS.c_str()), String(_id.c_str()));
     }
     _minutesPassed++;
     setNewWidgetAttributes();
@@ -150,7 +150,9 @@ public:
     {
       jsonWriteStr(json, F("info"), F("awaiting"));
     }
-    sendSubWidgetsValues(_id, json);
+    String idStr = String(_id.c_str());
+    String jsonStr = json;
+    sendSubWidgetsValues(idStr, jsonStr);
   }
 
   BleSens(String parameters) : IoTItem(parameters)
@@ -338,7 +340,12 @@ public:
     }
   }
 
-  ~BleScan() { BleSensArray.clear(); };
+  ~BleScan() { 
+    if (pBLEScan) {
+      pBLEScan->setScanCallbacks(nullptr);
+    }
+    BleSensArray.clear(); 
+  };
 };
 
 //=======================================================================================================

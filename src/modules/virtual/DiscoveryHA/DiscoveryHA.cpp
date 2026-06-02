@@ -8,9 +8,13 @@ private:
     bool sendOk = false;
     // bool topicOk = false;
     bool HA = false;
+
+    String ChipId = getChipId();
+
 public:
     DiscoveryHA(String parameters) : IoTDiscovery(parameters)
     {
+
         _topic = jsonReadStr(parameters, "topic");
         if (_topic && _topic != "" && _topic != "null")
         {
@@ -28,49 +32,14 @@ public:
             // mqttSubscribeExternal(_topic);
         }
     }
-    /*
-        void onMqttRecive(String &topic, String &msg)
-        {
-            if (!HA)
-                return;
-
-            if (msg.indexOf("HELLO") == -1)
-            {
-                String dev = selectToMarkerLast(topic, "/");
-                dev.toUpperCase();
-                dev.replace(":", "");
-                if (_topic != topic)
-                {
-                    //  SerialPrint("i", "ExternalMQTT", _id + " not equal: " + topic + " msg: " + msg);
-                    return;
-                }
-                // обработка топика, на который подписались
-            }
-        } */
 
     void doByInterval()
     {
-        /*         // периодически проверяем связь с MQTT брокером и если она появилась, то подписываемся на нужный топик
-                if (mqttIsConnect() && !sendOk && &&topicOk)
-                {
-                    sendOk = true;
-                    getlayoutHA();
-                    publishRetain(mqttRootDevice + "/state", "{\"status\":\"online\"}");
-                    //mqttSubscribeExternal(_topic);
-                }
-
-                // если нет коннектас брокером, то сбрасываем флаг подписки, что бы при реконекте заново подписаться
-                if (!mqttIsConnect())
-                    sendOk = false; */
     }
-    /*     String getMqttExterSub()
-        {
-            return _topic;
-        } */
 
     void mqttSubscribeDiscovery()
     {
-        if (HA)
+        if (HA && mqttIsConnect())
         {
             getlayoutHA();
             publishRetain(mqttRootDevice + "/state", "{\"status\":\"online\"}");
@@ -79,7 +48,7 @@ public:
 
     void getlayoutHA()
     {
-        if (HA)
+        if (HA && mqttIsConnect())
         {
             auto file = seekFile("layout.json");
             if (!file)
@@ -88,7 +57,7 @@ public:
                 return;
             }
             size_t size = file.size();
-            DynamicJsonDocument doc(size * 2);
+            JsonDocument doc;
             DeserializationError error = deserializeJson(doc, file);
             if (error)
             {
@@ -115,30 +84,40 @@ public:
                 {
                     HAjson = HAjson + " \"value_template\": \"{{  float( value_json.status, default = 0) | default }}\",";
                     HAjson = HAjson + " \"unique_id\": \"" + mqttRootDevice + dev + "\",";
+                    HAjson = HAjson + " \"device_class\": \"temperature\",";
+                    HAjson = HAjson + " \"state_class\": \"measurement\",";
                     HAjson = HAjson + " \"unit_of_measurement\": \"°C\"";
                 }
                 else if (value["name"].as<String>() == "anydataHum")
                 {
                     HAjson = HAjson + " \"value_template\": \"{{  float( value_json.status, default = 0) | default  }}\",";
                     HAjson = HAjson + " \"unique_id\": \"" + mqttRootDevice + dev + "\",";
+                    HAjson = HAjson + " \"device_class\": \"humidity\",";
+                    HAjson = HAjson + " \"state_class\": \"measurement\",";
                     HAjson = HAjson + " \"unit_of_measurement\": \"%\"";
                 }
                 else if (value["name"].as<String>() == "anydataMm")
                 {
                     HAjson = HAjson + " \"value_template\": \"{{  float( value_json.status, default = 0) | default  }}\",";
                     HAjson = HAjson + " \"unique_id\": \"" + mqttRootDevice + dev + "\",";
-                    HAjson = HAjson + " \"unit_of_measurement\": \"mm\"";
+                    HAjson = HAjson + " \"device_class\": \"pressure\",";
+                    HAjson = HAjson + " \"state_class\": \"measurement\",";
+                    HAjson = HAjson + " \"unit_of_measurement\": \"mmHg\"";
                 }
                 else if (value["name"].as<String>() == "anydataBar")
                 {
                     HAjson = HAjson + " \"value_template\": \"{{  float( value_json.status, default = 0) | default  }}\",";
                     HAjson = HAjson + " \"unique_id\": \"" + mqttRootDevice + dev + "\",";
-                    HAjson = HAjson + " \"unit_of_measurement\": \"Bar\"";
+                    HAjson = HAjson + " \"device_class\": \"pressure\",";
+                    HAjson = HAjson + " \"state_class\": \"measurement\",";
+                    HAjson = HAjson + " \"unit_of_measurement\": \"bar\"";
                 }
                 else if (value["name"].as<String>() == "anydataPpm")
                 {
                     HAjson = HAjson + " \"value_template\": \"{{  float( value_json.status, default = 0) | default  }}\",";
                     HAjson = HAjson + " \"unique_id\": \"" + mqttRootDevice + dev + "\",";
+                    HAjson = HAjson + " \"device_class\": \"carbon_dioxide\",";
+                    HAjson = HAjson + " \"state_class\": \"measurement\",";
                     HAjson = HAjson + " \"unit_of_measurement\": \"ppm\"";
                 }
 
@@ -171,9 +150,10 @@ public:
                     HAjson = HAjson + " \"state_off\": " + 0 + ",";
                     HAjson = HAjson + " \"state_on\": " + 1 + "";
                 }
-                else
+                else if (value["name"].as<String>() != "nil" && value["name"].as<String>() != "")
                 {
                     HAjson = HAjson + " \"value_template\": \"{{ value_json.status | default  }}\",";
+                    // HAjson = HAjson + " \"state_class\": \"measurement\",";
                     HAjson = HAjson + " \"unique_id\": \"" + mqttRootDevice + dev + "\"";
                 }
 
@@ -185,7 +165,7 @@ public:
                 if (value["widget"].as<String>() == "anydata")
                 {
 
-                    if (!publishRetain(HATopic + "/sensor/" + chipId + "/" + dev + "/config", HAjson))
+                    if (!publishRetain(HATopic + "/sensor/" + ChipId + "/" + dev + "/config", HAjson))
                     {
                         SerialPrint("E", F("MQTT"), F("Failed publish  data to homeassitant"));
                     }
@@ -195,7 +175,7 @@ public:
                 if (value["name"].as<String>() == "inputDgt")
                 {
 
-                    if (!publishRetain(HATopic + "/number/" + chipId + "/" + dev + "/config", HAjson))
+                    if (!publishRetain(HATopic + "/number/" + ChipId + "/" + dev + "/config", HAjson))
                     {
                         SerialPrint("E", F("MQTT"), F("Failed publish  data to homeassitant"));
                     }
@@ -204,7 +184,7 @@ public:
                 if (value["name"].as<String>() == "inputTxt")
                 {
 
-                    if (!publishRetain(HATopic + "/text/" + chipId + "/" + dev + "/config", HAjson))
+                    if (!publishRetain(HATopic + "/text/" + ChipId + "/" + dev + "/config", HAjson))
                     {
                         SerialPrint("E", F("MQTT"), F("Failed publish  data to homeassitant"));
                     }
@@ -213,7 +193,7 @@ public:
                 if (value["name"].as<String>() == "toggle")
                 {
 
-                    if (!publishRetain(HATopic + "/switch/" + chipId + "/" + dev + "/config", HAjson))
+                    if (!publishRetain(HATopic + "/switch/" + ChipId + "/" + dev + "/config", HAjson))
                     {
                         SerialPrint("E", F("MQTT"), F("Failed publish  data to homeassitant"));
                     }
@@ -229,7 +209,7 @@ public:
             {
                 if ((*it)->iAmLocal)
                 {
-                    publishStatusMqtt((*it)->getID(), (*it)->getValue());
+                    // publishStatusMqtt((*it)->getID(), (*it)->getValue());
                     (*it)->onMqttWsAppConnectEvent();
                 }
             }
@@ -243,7 +223,7 @@ public:
         else
             return nullptr;
     }
-    ~DiscoveryHA(){};
+    ~DiscoveryHA() {};
 };
 
 void *getAPI_DiscoveryHA(String subtype, String param)

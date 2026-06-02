@@ -26,6 +26,7 @@
       "int": 30,
       "global": 0,
       "round": 1,
+      "plus": 0,
       "orange": 60,
       "red": 120,
       "offline": 180,
@@ -44,10 +45,7 @@
       "esp32_4mb": 314692,
       "esp8266_4mb": 0
     },
-    "subTypes": [
-      "BleSens",
-      "BleScan"
-    ],
+    "subTypes": ["BleSens", "BleScan"],
     "title": "Сканер Bluetooth",
     "moduleDesc": "Позволяет получить данные с Bluetooth часов и термометров и.т.д. Полный список (учитывать отстование нашей версии библиотеки) https://decoder.theengs.io/devices/devices.html Наш перечень в файле lib/decoder/devices.h  Здесь полный перечень датчиков, для уменьшения размера модуля рекомендуется использовать модули Ble_part1 и Ble_part2",
     "propInfo": {
@@ -64,17 +62,10 @@
   },
   "defActive": false,
   "usedLibs": {
-    "esp32c6_4mb": [
-      "https://github.com/Mit4el/NimBLE-Arduino.git#c6-build"      
-    ],
-    "esp32c6_8mb": [
-      "https://github.com/Mit4el/NimBLE-Arduino.git#c6-build"      
-    ],
-    "esp32*": [
-      "https://github.com/Mit4el/NimBLE-Arduino.git#release/2.2"
-    ],
-    "esp32s2_4mb": [
-      "exclude"
-    ]
+    "esp32c6_4mb": ["https://github.com/avaksru/NimBLE-Arduino.git#c6-build"],
+    "esp32c6_8mb": ["https://github.com/avaksru/NimBLE-Arduino.git#c6-build"],
+    "esp32_4mb3f": ["https://github.com/avaksru/NimBLE-Arduino.git"],
+    "esp32s3_16mb": ["https://github.com/avaksru/NimBLE-Arduino.git"],
+    "esp32s2_4mb": ["exclude"]
   }
 }

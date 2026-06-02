@@ -14,10 +14,10 @@
     }
   ],
   "about": {
-    "authorName": "Bubnov Mikhail",
-    "authorContact": "https://t.me/Mit4bmw",
-    "authorGit": "https://github.com/Mit4el",
-    "specialThanks": "@AVAKS",
+     "authorName": "AVAKS",
+    "authorContact": "https://t.me/avaks",
+    "authorGit": "https://github.com/avaksru",
+    "specialThanks": "",
     "moduleName": "DiscoveryHA",
     "moduleVersion": "1.0",
     "usedRam": {
@@ -27,9 +27,8 @@
     "title": "DiscoveryHA",
     "moduleDesc": "Модуль проброса данных в MQTT для HomeAssistant",
     "propInfo": {
-      "topic":"Топик HomeAssistant"
+      "topic": "Топик HomeAssistant"
     }
-    
   },
   "defActive": false,
   "usedLibs": {

@@ -1,15 +1,22 @@
 #include "utils/JsonUtils.h"
 #include "utils/SerialPrint.h"
+#include "utils/PoolAllocator.h"
 #include "classes/IoTItem.h"
 #include "WsServer.h"
 #include "ESPConfiguration.h"
 #include "EventsAndOrders.h"
 
+IoTItem::IoTItem() {
+    _id = "defaultId";
+}
+
 IoTItem::IoTItem(const String& parameters) {
     jsonRead(parameters, F("int"), _interval, false);
     setInterval(_interval);
-    jsonRead(parameters, F("subtype"), _subtype, false);
-    jsonRead(parameters, F("id"), _id);
+    String tempSubtype;
+    if (jsonRead(parameters, F("subtype"), tempSubtype, false)) _subtype = tempSubtype.c_str();
+    String tempId;
+    if (jsonRead(parameters, F("id"), tempId)) _id = tempId.c_str();
     if (!jsonRead(parameters, F("multiply"), _multiply, false)) _multiply = 1;
     if (!jsonRead(parameters, F("plus"), _plus, false)) _plus = 0;
     if (!jsonRead(parameters, F("round"), _round, false)) _round = -1;
@@ -32,7 +39,7 @@ IoTItem::IoTItem(const String& parameters) {
         setValue(valAsStr, false);
 
     jsonRead(parameters, F("needSave"), _needSave, false);
-    if (_needSave && jsonRead(valuesFlashJson, _id, valAsStr, false))  // пробуем достать из сохранения значение элемента, если указано, что нужно сохранять
+    if (_needSave && jsonRead(valuesFlashJson, _id.c_str(), valAsStr, false))  // пробуем достать из сохранения значение элемента, если указано, что нужно сохранять
         setValue(valAsStr, false);
 
     // проверяем нужно ли отслеживать значение другого элемента
@@ -62,7 +69,7 @@ String IoTItem::getValue() {
     if (value.isDecimal) {
         return getRoundValue();
     } else
-        return value.valS;
+        return String(value.valS.c_str());
 }
 
 long IoTItem::getInterval() { return _interval; }
@@ -76,7 +83,7 @@ void IoTItem::setValue(const String& valStr, bool genEvent) {
         value.valD = valStr.toFloat();
                 getRoundValue();
     } else {
-                value.valS = valStr;
+                value.valS = valStr.c_str();
     }
     setValue(value, genEvent);
 }
@@ -87,7 +94,7 @@ void IoTItem::setValue(const IoTValue& Value, bool genEvent) {
     if (value.isDecimal) {
         regEvent(value.valD, "", false, genEvent);
     } else {
-        regEvent(value.valS, "", false, genEvent);
+        regEvent(String(value.valS.c_str()), "", false, genEvent);
     }
 }
 
@@ -101,30 +108,33 @@ void IoTItem::sendSubWidgetsValues(String& id, String& json) {
 // когда событие случилось
 void IoTItem::regEvent(const String& value, const String& consoleInfo, bool error, bool genEvent) {
         if (_needSave) {
-        jsonWriteStr_(valuesFlashJson, _id, value);
+        jsonWriteStr_(valuesFlashJson, _id.c_str(), value);
         needSaveValues = true;
     }
-    publishStatusMqtt(_id, value);
-    publishStatusWs(_id, value);
+    publishStatusMqtt(_id.c_str(), value);
+    publishStatusWs(_id.c_str(), value);
     // SerialPrint("i", "Sensor", consoleInfo + " '" + _id + "' data: " + value + "'");
 
     if (genEvent) {
-        generateEvent(_id, value);
+        generateEvent(_id.c_str(), value);
 
         // отправка события другим устройствам в сети если не было ошибки
         if (_global && !error) {
-            String json = "{}";
-            jsonWriteStr_(json, "id", _id);
-            jsonWriteStr_(json, "val", value);
-            jsonWriteInt_(json, "int", _interval / 1000);
-            publishEvent(_id, json);
+            JsonDocument doc;
+            doc["id"] = _id.c_str();
+            doc["val"] = value;
+            doc["int"] = _interval / 1000;
+            
+            String json;
+            serializeJson(doc, json);
+            publishEvent(_id.c_str(), json);
             SerialPrint("i", F("<=MQTT"), "Broadcast event: " + json);
         }
     }
 }
 
 String IoTItem::getRoundValue() {
-    if (!value.isDecimal) return value.valS;
+    if (!value.isDecimal) return String(value.valS.c_str());
     
     if (_round >= 0 && _round <= 6) {
         int sot = _round ? pow(10, (int)_round) : 1;
@@ -132,11 +142,11 @@ String IoTItem::getRoundValue() {
         //todo: оптимизировать. Вынести расчет строки формата округления, чтоб использовать постоянно готовую
         char buf[15];
         sprintf(buf, ("%0" + (String)(_numDigits + _round) + "." + (String)_round + "f").c_str(), value.valD);
-        value.valS = (String)buf;
-        return value.valS;
+        value.valS = buf;
+        return String(value.valS.c_str());
     } else {
-        value.valS = (String)value.valD;
-        return value.valS;
+        value.valS = String(value.valD).c_str();
+        return String(value.valS.c_str());
     }
 }
 
@@ -154,7 +164,7 @@ void IoTItem::doByInterval() {}
 
 IoTValue IoTItem::execute(String command, std::vector<IoTValue>& param) { return {}; }
 
-String IoTItem::getSubtype() {
+const std::string& IoTItem::getSubtype() {
     return _subtype;
 }
 
@@ -163,10 +173,13 @@ int IoTItem::getIntFromNet() {
 }
 
 void IoTItem::getNetEvent(String& event) {
-    event = "{}";
-    jsonWriteStr_(event, "id", _id);
-    jsonWriteStr_(event, "val", getValue());
-    jsonWriteInt_(event, "int", _interval / 1000);
+    JsonDocument doc;
+    doc["id"] = _id.c_str();
+    doc["val"] = getValue();
+    doc["int"] = _interval / 1000;
+    
+    event = "";
+    serializeJson(doc, event);
 }
 
 void IoTItem::setIntFromNet(int interval) {
@@ -178,8 +191,8 @@ void IoTItem::checkIntFromNet() {
     if (_intFromNet >= 0) {
         // если время жизни истекло, то удаляем элемент чуть позже на следующем такте loop
         // если это было уведомление не об ошибке или начале работы, то сообщаем, что сетевое событие давно не приходило
-        if (_intFromNet == 0 && _id.indexOf("onError") == -1 && _id.indexOf("onStart") == -1 && _id.indexOf("onInit") == -1 && _id.indexOf("onWifi") == -1) {
-            SerialPrint("E", _id, "The new data did not come from the network. The level of trust is low.", _id);
+        if (_intFromNet == 0 && _id.find("onError") == std::string::npos && _id.find("onStart") == std::string::npos && _id.find("onInit") == std::string::npos && _id.find("onWifi") == std::string::npos) {
+            SerialPrint("E", _id.c_str(), "The new data did not come from the network. The level of trust is low.", _id.c_str());
         }
         _intFromNet--;
     }
@@ -216,12 +229,12 @@ void IoTItem::setPublishDestination(int publishType, int wsNum){};
 void IoTItem::clearHistory() {}
 void IoTItem::setTodayDate() {}
 
-String IoTItem::getID() {
+const std::string& IoTItem::getID() {
     return _id;
 };
 
-bool IoTItem::isStrInID(const String& str) {
-    return _id.indexOf(str) != -1; 
+bool IoTItem::isStrInID(const std::string& str) {
+    return _id.find(str) != std::string::npos; 
 }
 
 void IoTItem::setInterval(long interval) {
@@ -300,7 +313,7 @@ unsigned long IoTItem::getRtcUnixTime()
 IoTItem* findIoTItem(const String& name) {
     if (name == "") return nullptr;
     for (std::list<IoTItem*>::iterator it = IoTItems.begin(); it != IoTItems.end(); ++it) {
-        if ((*it)->getID() == name) return *it;
+        if ((*it)->getID() == name.c_str()) return *it;
     }
 
     return nullptr;
@@ -310,7 +323,7 @@ IoTItem* findIoTItem(const String& name) {
 IoTItem* findIoTItemByPartOfName(const String& partName) {
     if (partName == "") return nullptr;
     for (std::list<IoTItem*>::iterator it = IoTItems.begin(); it != IoTItems.end(); ++it) {
-        if ((*it)->isStrInID(partName)) return *it;
+        if ((*it)->isStrInID(partName.c_str())) return *it;
     }
 
     return nullptr;
@@ -347,16 +360,23 @@ IoTItem* createItemFromNet(const String& itemId, const String& value, int interv
     return createItemFromNet(jsonStr);
 }
 
+PoolAllocator<IoTItem> iotItemPool;
+
 // создаем временную копию элемента из сети на основе события
 IoTItem* createItemFromNet(const String& msgFromNet) {
-    IoTItem* tmpp = new IoTItem(msgFromNet);
+    IoTItem* tmpp = iotItemPool.construct(msgFromNet);
 
-    //Serial.println("vvvvvvvvvvv " + msgFromNet + " " + (String)tmpp->getInterval());
+    if (!tmpp) {
+        SerialPrint("E", F("IoTItem"), "Pool exhausted, falling back to heap for network item");
+        tmpp = new IoTItem(msgFromNet);
+    } else {
+        tmpp->_fromPool = true;
+    }
 
     if (tmpp->getInterval()) tmpp->setIntFromNet(tmpp->getInterval() / 1000 + 5);
     tmpp->iAmLocal = false;
     IoTItems.push_back(tmpp);
-    generateEvent(tmpp->getID(), tmpp->getValue());
+    generateEvent(String(tmpp->getID().c_str()), tmpp->getValue());
     return tmpp;
 }
 

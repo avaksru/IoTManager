@@ -2,13 +2,13 @@
 #include "utils/FileUtils.h"
 
 // new================================================================================
-String jsonReadStrDoc(DynamicJsonDocument &doc, String name) { return doc[name].as<String>(); }
+String jsonReadStrDoc(JsonDocument &doc, String name) { return doc[name].as<String>(); }
 
-void jsonWriteStrDoc(DynamicJsonDocument &doc, String name, String value) { doc[name] = value; }
+void jsonWriteStrDoc(JsonDocument &doc, String name, String value) { doc[name] = value; }
 
 // new==============================================================================
 bool jsonRead(const String &json, String key, long &value, bool e) {
-    DynamicJsonDocument doc(JSON_BUFFER_SIZE);
+    JsonDocument doc;
     DeserializationError error = deserializeJson(doc, json);
     if (error) {
         if (e) {
@@ -16,7 +16,7 @@ bool jsonRead(const String &json, String key, long &value, bool e) {
             jsonErrorDetected();
         }
         return false;
-    } else if (!doc.containsKey(key)) {
+    } else if (doc[key].isNull()) {
         if (e) {
             SerialPrint("E", F("jsonRead"), key + " missing in " + json);
             jsonErrorDetected();
@@ -28,7 +28,7 @@ bool jsonRead(const String &json, String key, long &value, bool e) {
 }
 
 bool jsonRead(const String &json, String key, float &value, bool e) {
-    DynamicJsonDocument doc(JSON_BUFFER_SIZE);
+    JsonDocument doc;
     DeserializationError error = deserializeJson(doc, json);
     if (error) {
         if (e) {
@@ -36,7 +36,7 @@ bool jsonRead(const String &json, String key, float &value, bool e) {
             jsonErrorDetected();
         }
         return false;
-    } else if (!doc.containsKey(key)) {
+    } else if (doc[key].isNull()) {
         if (e) {
             SerialPrint("E", F("jsonRead"), key + " missing in " + json);
             jsonErrorDetected();
@@ -48,7 +48,7 @@ bool jsonRead(const String &json, String key, float &value, bool e) {
 }
 
 bool jsonRead(const String &json, String key, String &value, bool e) {
-    DynamicJsonDocument doc(JSON_BUFFER_SIZE);
+    JsonDocument doc;
     DeserializationError error = deserializeJson(doc, json);
     if (error) {
         if (e) {
@@ -56,7 +56,7 @@ bool jsonRead(const String &json, String key, String &value, bool e) {
             jsonErrorDetected();
         }
         return false;
-    } else if (!doc.containsKey(key)) {
+    } else if (doc[key].isNull()) {
         if (e) {
             SerialPrint("E", F("jsonRead"), key + " missing in " + json);
             jsonErrorDetected();
@@ -75,7 +75,7 @@ bool jsonRead(const String &json, String key, bool &value, bool e) {
 }
 
 bool jsonRead(const String &json, String key, int &value, bool e) {
-    DynamicJsonDocument doc(JSON_BUFFER_SIZE);
+    JsonDocument doc;
     DeserializationError error = deserializeJson(doc, json);
     if (error) {
         if (e) {
@@ -83,7 +83,7 @@ bool jsonRead(const String &json, String key, int &value, bool e) {
             jsonErrorDetected();
         }
         return false;
-    } else if (!doc.containsKey(key)) {
+    } else if (doc[key].isNull()) {
         if (e) {
             SerialPrint("E", F("jsonRead"), key + " missing in " + json);
             jsonErrorDetected();
@@ -95,7 +95,7 @@ bool jsonRead(const String &json, String key, int &value, bool e) {
 }
 
 bool jsonReadArray(const String &json, String key, std::vector<String> &jArray, bool e) {
-    DynamicJsonDocument doc(JSON_BUFFER_SIZE);
+    JsonDocument doc;
     DeserializationError error = deserializeJson(doc, json);
     if (error) {
         if (e) {
@@ -103,7 +103,7 @@ bool jsonReadArray(const String &json, String key, std::vector<String> &jArray, 
             jsonErrorDetected();
         }
         return false;
-    } else if (!doc.containsKey(key)) {
+    } else if (doc[key].isNull()) {
         if (e) {
             SerialPrint("E", F("jsonReadArray"), key + " missing in " + json);
             jsonErrorDetected();
@@ -124,7 +124,7 @@ bool jsonReadArray(const String &json, String key, std::vector<String> &jArray, 
 // new==============================================================================
 bool jsonWriteStr_(String &json, const String &key, const String &value, bool e) {
     bool ret = true;
-    DynamicJsonDocument doc(JSON_BUFFER_SIZE);
+    JsonDocument doc;
     DeserializationError error = deserializeJson(doc, json);
     if (error) {
         if (e) {
@@ -141,7 +141,7 @@ bool jsonWriteStr_(String &json, const String &key, const String &value, bool e)
 
 bool jsonWriteBool_(String &json, const String &key, bool value, bool e) {
     bool ret = true;
-    DynamicJsonDocument doc(JSON_BUFFER_SIZE);
+    JsonDocument doc;
     DeserializationError error = deserializeJson(doc, json);
     if (error) {
         if (e) {
@@ -158,7 +158,7 @@ bool jsonWriteBool_(String &json, const String &key, bool value, bool e) {
 
 bool jsonWriteInt_(String &json, const String &key, int value, bool e) {
     bool ret = true;
-    DynamicJsonDocument doc(JSON_BUFFER_SIZE);
+    JsonDocument doc;
     DeserializationError error = deserializeJson(doc, json);
     if (error) {
         if (e) {
@@ -175,7 +175,7 @@ bool jsonWriteInt_(String &json, const String &key, int value, bool e) {
 
 bool jsonWriteFloat_(String &json, const String &key, float value, bool e) {
     bool ret = true;
-    DynamicJsonDocument doc(JSON_BUFFER_SIZE);
+    JsonDocument doc;
     DeserializationError error = deserializeJson(doc, json);
     if (error) {
         if (e) {
@@ -201,9 +201,9 @@ void writeUint8tValueToJsonString(uint8_t *payload, size_t length, size_t header
 
 bool jsonMergeObjects(String &json1, String &json2, bool e) {
     bool ret = true;
-    DynamicJsonDocument doc1(JSON_BUFFER_SIZE);
+    JsonDocument doc1;
     DeserializationError error1 = deserializeJson(doc1, json1);
-    DynamicJsonDocument doc2(JSON_BUFFER_SIZE);
+    JsonDocument doc2;
     DeserializationError error2 = deserializeJson(doc2, json2);
     jsonMergeDocs(doc1.as<JsonObject>(), doc2.as<JsonObject>());
     if (error1 || error2) {
@@ -226,7 +226,7 @@ void jsonMergeDocs(JsonObject dest, JsonObjectConst src) {
 
 // depricated======================================================================
 String jsonReadStr(const String &json, String name, bool e) {
-    DynamicJsonDocument doc(JSON_BUFFER_SIZE);
+    JsonDocument doc;
     DeserializationError error = deserializeJson(doc, json);
     if (error) {
         if (e) {
@@ -238,7 +238,7 @@ String jsonReadStr(const String &json, String name, bool e) {
 }
 
 boolean jsonReadBool(const String &json, String name, bool e) {
-    DynamicJsonDocument doc(JSON_BUFFER_SIZE);
+    JsonDocument doc;
     DeserializationError error = deserializeJson(doc, json);
     if (error) {
         if (e) {
@@ -250,19 +250,24 @@ boolean jsonReadBool(const String &json, String name, bool e) {
 }
 
 int jsonReadInt(const String &json, String name, bool e) {
-    DynamicJsonDocument doc(JSON_BUFFER_SIZE);
+    // Защита от пустого или некорректного JSON
+    if (json.isEmpty() || json == "failed" || json == "{}") {
+        return 0;
+    }
+    
+    JsonDocument doc;
     DeserializationError error = deserializeJson(doc, json);
     if (error) {
         if (e) {
             SerialPrint("E", F("jsonRead"), error.f_str());
-            jsonErrorDetected();
+            // jsonErrorDetected(); // убрано - может вызывать проблемы при ошибках ФС
         }
     }
     return doc[name].as<int>();
 }
 
 long int jsonReadLInt(const String &json, String name, bool e) {
-    DynamicJsonDocument doc(JSON_BUFFER_SIZE);
+    JsonDocument doc;
     DeserializationError error = deserializeJson(doc, json);
     if (error) {
         if (e) {
@@ -275,7 +280,7 @@ long int jsonReadLInt(const String &json, String name, bool e) {
 
 // depricated========================================================================
 String jsonWriteStr(String &json, String name, String value, bool e) {
-    DynamicJsonDocument doc(JSON_BUFFER_SIZE);
+    JsonDocument doc;
     DeserializationError error = deserializeJson(doc, json);
     if (error) {
         if (e) {
@@ -290,7 +295,7 @@ String jsonWriteStr(String &json, String name, String value, bool e) {
 }
 
 String jsonWriteBool(String &json, String name, boolean value, bool e) {
-    DynamicJsonDocument doc(JSON_BUFFER_SIZE);
+    JsonDocument doc;
     DeserializationError error = deserializeJson(doc, json);
     if (error) {
         if (e) {
@@ -305,7 +310,7 @@ String jsonWriteBool(String &json, String name, boolean value, bool e) {
 }
 
 String jsonWriteInt(String &json, String name, int value, bool e) {
-    DynamicJsonDocument doc(JSON_BUFFER_SIZE);
+    JsonDocument doc;
     DeserializationError error = deserializeJson(doc, json);
     if (error) {
         if (e) {
@@ -320,7 +325,7 @@ String jsonWriteInt(String &json, String name, int value, bool e) {
 }
 
 String jsonWriteFloat(String &json, String name, float value, bool e) {
-    DynamicJsonDocument doc(JSON_BUFFER_SIZE);
+    JsonDocument doc;
     DeserializationError error = deserializeJson(doc, json);
     if (error) {
         if (e) {

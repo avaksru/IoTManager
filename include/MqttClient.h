@@ -12,6 +12,7 @@ void getMqttData2();
 bool isSecondBrokerSet();
 boolean mqttConnect();
 void mqttReconnect();
+void mqttDisconnect();
 void mqttLoop();
 void mqttSubscribe();
 bool mqttIsConnect();

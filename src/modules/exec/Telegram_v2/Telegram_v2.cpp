@@ -158,7 +158,7 @@ public:
                 if (param[0].isDecimal)
                     strTmp = param[0].valD;
                 else
-                    strTmp = param[0].valS;
+                    strTmp = String(param[0].valS.c_str());
                 sendTelegramMsg(false, strTmp);
             }
         }
@@ -170,7 +170,7 @@ public:
                 if (param[0].isDecimal)
                     strTmp = param[0].valD;
                 else
-                    strTmp = param[0].valS;
+                    strTmp = String(param[0].valS.c_str());
                 sendTelegramMsg(true, strTmp);
             }
         }
@@ -182,7 +182,7 @@ public:
                 if (param[0].isDecimal)
                     strTmp = param[0].valD;
                 else
-                    strTmp = param[0].valS;
+                    strTmp = String(param[0].valS.c_str());
                 _myBot->sendMessage(strTmp, _chatID);
                 _myBot->pinMessage(_myBot->lastBotMsg());
 
@@ -202,7 +202,7 @@ public:
                 if (param[0].isDecimal)
                     strTmp = param[0].valD;
                 else
-                    strTmp = param[0].valS;
+                    strTmp = String(param[0].valS.c_str());
                 _myBot->editMessage(_myBot->lastBotMsg(), strTmp);
                 SerialPrint("i", F("Telegram"), "chat ID: " + _chatID + ", edit msg: " + strTmp);
             }
@@ -212,17 +212,17 @@ public:
             if (param.size() && !param[0].isDecimal)
             {
                 //     String path = filepath(filename);
-                auto file = FileFS.open(param[0].valS, FILE_READ);
+                auto file = FileFS.open(String(param[0].valS.c_str()), FILE_READ);
                 if (!file)
                 {
-                    SerialPrint("E", F("Telegram"), "Fail send file: " + param[0].valS);
+                    SerialPrint("E", F("Telegram"), "Fail send file: " + String(param[0].valS.c_str()));
                     return {};
                 }
                 //  File file = LittleFS.open(param[0].valS, "r"); // /test.png
                 // selectToMarkerLast(msg.text, "_")
-                uint8_t res = _myBot->sendFile(file, (FB_FileType)param[1].valD, selectToMarkerLast(param[0].valS, "/"), _chatID);
+                uint8_t res = _myBot->sendFile(file, (FB_FileType)param[1].valD, selectToMarkerLast(String(param[0].valS.c_str()), "/"), _chatID);
                 file.close();
-                SerialPrint("i", F("Telegram"), "chat ID: " + _chatID + ", sendFile: " + param[0].valS + " res: " + String(res));
+                SerialPrint("i", F("Telegram"), "chat ID: " + _chatID + ", sendFile: " + String(param[0].valS.c_str()) + " res: " + String(res));
             }
         }
         else if (command == "editFile")
@@ -230,42 +230,43 @@ public:
             if (param.size() && !param[0].isDecimal)
             {
                 //     String path = filepath(filename);
-                auto file = FileFS.open(param[0].valS, FILE_READ);
+                auto file = FileFS.open(String(param[0].valS.c_str()), FILE_READ);
                 if (!file)
                 {
-                    SerialPrint("E", F("Telegram"), "Fail edit file: " + param[0].valS);
+                    SerialPrint("E", F("Telegram"), "Fail edit file: " + String(param[0].valS.c_str()));
                     return {};
                 }
                 //  File file = LittleFS.open(param[0].valS, "r"); // /test.png
                 // selectToMarkerLast(msg.text, "_")
-                uint8_t res = _myBot->editFile(file, (FB_FileType)param[1].valD, selectToMarkerLast(param[0].valS, "/"), _myBot->lastBotMsg(), _chatID);
+                uint8_t res = _myBot->editFile(file, (FB_FileType)param[1].valD, selectToMarkerLast(String(param[0].valS.c_str()), "/"), _myBot->lastBotMsg(), _chatID);
                 file.close();
-                SerialPrint("i", F("Telegram"), "chat ID: " + _chatID + ", editFile: " + param[0].valS + " res: " + String(res));
+                SerialPrint("i", F("Telegram"), "chat ID: " + _chatID + ", editFile: " + String(param[0].valS.c_str()) + " res: " + String(res));
             }
         }
         else if (command == "btnMenu")
         {
-            mapBtnMenu[param[0].valS] = new ButtonMenu;
+            String btnName = String(param[0].valS.c_str());
+            mapBtnMenu[btnName] = new ButtonMenu;
             if (param.size() == 3) // btnMenu("Name", message, getId);
             {
                 // if (IoTItems.find(param[2].valS) != IoTItems.end())
                 //  {
-                mapBtnMenu[param[0].valS]->message = param[1].valS;
-                mapBtnMenu[param[0].valS]->getId = param[2].valS;
+                mapBtnMenu[btnName]->message = String(param[1].valS.c_str());
+                mapBtnMenu[btnName]->getId = String(param[2].valS.c_str());
                 // mapBtnMenu[param[0].valS] = btn;
-                SerialPrint("i", F("Telegram"), "add button menu: " + param[0].valS + ", get id: " + param[2].valS);
+                SerialPrint("i", F("Telegram"), "add button menu: " + btnName + ", get id: " + String(param[2].valS.c_str()));
                 // }
             }
             else if (param.size() == 5) // btnMenu("Name", message, getId, setId, value);
             {
                 //  if (IoTItems.find(param[2].valS) != IoTItems.end())
                 //  {
-                mapBtnMenu[param[0].valS]->message = param[1].valS;
-                mapBtnMenu[param[0].valS]->getId = param[2].valS;
-                mapBtnMenu[param[0].valS]->setId = param[3].valS;
-                mapBtnMenu[param[0].valS]->value = param[4].valS;
+                mapBtnMenu[btnName]->message = String(param[1].valS.c_str());
+                mapBtnMenu[btnName]->getId = String(param[2].valS.c_str());
+                mapBtnMenu[btnName]->setId = String(param[3].valS.c_str());
+                mapBtnMenu[btnName]->value = String(param[4].valS.c_str());
                 // mapBtnMenu[param[0].valS] = btn;
-                SerialPrint("i", F("Telegram"), "add button menu: " + param[0].valS + ",get id: " + param[2].valS + ",set id: " + param[3].valS + "=" + param[4].valS);
+                SerialPrint("i", F("Telegram"), "add button menu: " + btnName + ",get id: " + String(param[2].valS.c_str()) + ",set id: " + String(param[3].valS.c_str()) + "=" + String(param[4].valS.c_str()));
                 //  }
             }
         }
@@ -279,14 +280,14 @@ public:
                 cnt++;
                 if (cnt % 2 == 0)
                 {
-                    out += " \t " + it->first;
+                    out += " \t " + String(it->first.c_str());
                 }
                 else
                 {
                     if (it == mapBtnMenu.begin())
-                        out = it->first;
+                        out = String(it->first.c_str());
                     else
-                        out += " \n " + it->first;
+                        out += " \n " + String(it->first.c_str());
                 }
             }
             _myBot->showMenuText("Menu", out, true);
@@ -294,27 +295,28 @@ public:
         }
         else if (command == "btnInline")
         {
-            mapBtnInline[param[0].valS] = new ButtonMenu;
+            String btnName = String(param[0].valS.c_str());
+            mapBtnInline[btnName] = new ButtonMenu;
             if (param.size() == 3) // btnMenu("Name", message, getId);
             {
                 // if (IoTItems.find(param[2].valS) != IoTItems.end())
                 //  {
-                mapBtnInline[param[0].valS]->message = param[1].valS;
-                mapBtnInline[param[0].valS]->getId = param[2].valS;
+                mapBtnInline[btnName]->message = String(param[1].valS.c_str());
+                mapBtnInline[btnName]->getId = String(param[2].valS.c_str());
                 // mapBtnMenu[param[0].valS] = btn;
-                SerialPrint("i", "Telegram", "add button inline: " + param[0].valS + ", get id: " + param[2].valS);
+                SerialPrint("i", "Telegram", "add button inline: " + btnName + ", get id: " + String(param[2].valS.c_str()));
                 // }
             }
             else if (param.size() == 5) // btnMenu("Name", message, getId, setId, value);
             {
                 //  if (IoTItems.find(param[2].valS) != IoTItems.end())
                 //  {
-                mapBtnInline[param[0].valS]->message = param[1].valS;
-                mapBtnInline[param[0].valS]->getId = param[2].valS;
-                mapBtnInline[param[0].valS]->setId = param[3].valS;
-                mapBtnInline[param[0].valS]->value = param[4].valS;
+                mapBtnInline[btnName]->message = String(param[1].valS.c_str());
+                mapBtnInline[btnName]->getId = String(param[2].valS.c_str());
+                mapBtnInline[btnName]->setId = String(param[3].valS.c_str());
+                mapBtnInline[btnName]->value = String(param[4].valS.c_str());
                 // mapBtnMenu[param[0].valS] = btn;
-                SerialPrint("i", "Telegram", "add button inline: " + param[0].valS + ",get id: " + param[2].valS + ",set id: " + param[3].valS + "=" + param[4].valS);
+                SerialPrint("i", "Telegram", "add button inline: " + btnName + ",get id: " + String(param[2].valS.c_str()) + ",set id: " + String(param[3].valS.c_str()) + "=" + String(param[4].valS.c_str()));
                 //  }
             }
         }
@@ -328,14 +330,14 @@ public:
                 cnt++;
                 if (cnt % 2 == 0)
                 {
-                    out += " \t " + it->first;
+                    out += " \t " + String(it->first.c_str());
                 }
                 else
                 {
                     if (it == mapBtnInline.begin())
-                        out = it->first;
+                        out = String(it->first.c_str());
                     else
-                        out += " \n " + it->first;
+                        out += " \n " + String(it->first.c_str());
                 }
             }
             _myBot->inlineMenu("inline_menu", out);
@@ -576,14 +578,14 @@ public:
                     cnt++;
                     if (cnt % 2 == 0)
                     {
-                        out += " \t get_" + (*it)->getID();
+                        out += " \t get_" + String((*it)->getID().c_str());
                     }
                     else
                     {
                         if (it == IoTItems.begin())
-                            out = "get_" + (*it)->getID();
+                            out = "get_" + String((*it)->getID().c_str());
                         else
-                            out += " \n get_" + (*it)->getID();
+                            out += " \n get_" + String((*it)->getID().c_str());
                     }
                 }
             }
@@ -601,7 +603,7 @@ public:
             IoTItem *item = findIoTItem(out);
             if (item)
             {
-                _myBot->sendMessage(item->getID() + ": " + item->getValue(), _chatID);
+                _myBot->sendMessage(String(item->getID().c_str()) + ": " + item->getValue(), _chatID);
                 SerialPrint("i", F("Telegram"), "chat ID: " + _chatID + ", msg: " + out);
             }
         }
@@ -620,14 +622,14 @@ public:
                     cnt++;
                     if (cnt % 2 == 0)
                     {
-                        out += " \t get_" + (*it)->getID();
+                        out += " \t get_" + String((*it)->getID().c_str());
                     }
                     else
                     {
                         if (it == IoTItems.begin())
-                            out = "get_" + (*it)->getID();
+                            out = "get_" + String((*it)->getID().c_str());
                         else
-                            out += " \n get_" + (*it)->getID();
+                            out += " \n get_" + String((*it)->getID().c_str());
                     }
                 }
             }

@@ -1,4 +1,5 @@
 #include "PeriodicTasks.h"
+#include "utils/EthernetUtils.h"
 
 void periodicTasksInit() {
     //задачи редкого выполнения
@@ -26,6 +27,10 @@ void periodicTasksInit() {
             jsonWriteStr_(errorsHeapJson, F("wver"), getWebVersion());
             // reset reason
             jsonWriteStr_(errorsHeapJson, F("rst"), ESP_getResetReason());
+            // Проверяем подключение Ethernet (для ESP32)
+#if defined(ESP32)
+            checkEthernetConnection();
+#endif
             periodicWsSend();
         },
         nullptr, true);

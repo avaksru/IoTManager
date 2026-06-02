@@ -209,6 +209,22 @@ void removeDirectory(const String& dir) {
     }
 }
 
+void mkdir(const String& path) {
+    String p = filepath(path);
+    // Создаём директорию рекурсивно, проверяя каждый уровень
+    for (size_t i = 1; i < p.length(); i++) {
+        if (p[i] == '/') {
+            String partial = p.substring(0, i);
+            if (!FileFS.exists(partial)) {
+                FileFS.mkdir(partial);
+            }
+        }
+    }
+    if (!FileFS.exists(p)) {
+        FileFS.mkdir(p);
+    }
+}
+
 String saveDataDB(String id, String data) {
     String path = "/db/" + id + ".txt";
     return writeFile(path, data);
@@ -332,7 +348,7 @@ String createDataBaseSting() {
     String out;
     for (std::list<IoTItem*>::iterator it = IoTItems.begin(); it != IoTItems.end(); ++it) {
         if ((*it)->getSubtype() == "LogingDaily") {
-            String id = (*it)->getID();
+            String id = String((*it)->getID().c_str());
             String path = "/lgd/" + id + "/" + id + ".txt";
             String fileContent = readFile(path, 10000);
             if (fileContent == "failed") {

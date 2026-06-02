@@ -1,8 +1,11 @@
 #include "ESPConfiguration.h"
 #include "classes/IoTGpio.h"
+#include <algorithm>
+#include <set>
 //#include "classes/IoTDiscovery.h"
 
 extern IoTGpio IoTgpio;
+void clearDs18b20Resources();
 
 std::list<IoTItem*> IoTItems;
 void* getAPI(String subtype, String params);
@@ -49,7 +52,9 @@ void configure(String path) {
                     if (driver = myIoTItem->getHADiscovery()) HADiscovery = ((IoTDiscovery*)driver);
                     // пробуем спросить драйвер Telegram_v2
                     if (driver = myIoTItem->getTlgrmDriver()) tlgrmItem = (IoTItem*)driver;
-                    IoTItems.push_back(myIoTItem);
+                    if (std::find(IoTItems.begin(), IoTItems.end(), myIoTItem) == IoTItems.end()) {
+                        IoTItems.push_back(myIoTItem);
+                    }
                 }
             }
         }
@@ -69,7 +74,7 @@ void configure(String path) {
         {
             if ((*it)->iAmLocal)
             {
-                publishStatusMqtt((*it)->getID(), (*it)->getValue());
+                                    publishStatusMqtt(String((*it)->getID().c_str()), (*it)->getValue());
                 (*it)->onMqttWsAppConnectEvent();
             }
         }
@@ -80,17 +85,27 @@ void configure(String path) {
 
 void clearConfigure() {
     Serial.printf("Start clearing config\n");
+    clearDs18b20Resources();
 #ifdef mod_RtcDriver
     rtcItem = nullptr;
 #endif
     //camItem = nullptr;
     tlgrmItem = nullptr;
     IoTgpio.clearDrivers();
-    for (std::list<IoTItem*>::iterator it = IoTItems.begin(); it != IoTItems.end(); ++it) {
-        Serial.printf("Start delete iotitem %s \n", (*it)->getID().c_str());
-        if (*it) delete *it;
+
+    std::set<IoTItem*> uniqueItems;
+    for (IoTItem* item : IoTItems) {
+        if (item) uniqueItems.insert(item);
     }
     IoTItems.clear();
+
+    for (IoTItem* item : uniqueItems) {
+        Serial.printf("Start delete iotitem %s \n", item->getID().c_str());
+        if (!item->_fromPool) {
+            delete item;
+        }
+    }
+
 #ifdef LIBRETINY
     valuesFlashJson.remove(0, valuesFlashJson.length());
 #else

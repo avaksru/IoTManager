@@ -75,7 +75,7 @@ public:
         } else if(command == "nowInTimePeriod" && param.size() == 2) {
             IoTValue valTmp;
             valTmp.isDecimal = true;
-            valTmp.valD = nowInTimePeriod(param[0].valS, param[1].valS); 
+            valTmp.valD = nowInTimePeriod(String(param[0].valS.c_str()), String(param[1].valS.c_str()));
             return valTmp;
         }
 

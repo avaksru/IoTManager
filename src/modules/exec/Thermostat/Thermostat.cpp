@@ -54,8 +54,9 @@ public:
                     setValue("штатный режим");
                 }
                 // работаем по основному датчику
-                if (pv >= sp + _gist && enable)
+                if (pv >= sp + _gist - 0.0001 && enable)
                 {
+                    // SerialPrint("i", F("ThermostatPID"), "temp: " + String(pv) + " >= setpoint: " + String(sp + _gist));
                     tmp = findIoTItem(_rele);
                     if (tmp)
                     {
@@ -69,8 +70,9 @@ public:
                         }
                     }
                 }
-                if (pv <= sp - _gist && enable)
+                if (pv <= sp - _gist + 0.0001 && enable)
                 {
+                    // SerialPrint("i", F("ThermostatPID"), "temp: " + String(pv) + " <= setpoint: " + String(sp - _gist));
                     tmp = findIoTItem(_rele);
                     if (tmp)
                     {
@@ -103,7 +105,7 @@ public:
                         {
                             setValue("резервный датчик");
                         }
-                        if (pv2 >= sp + _gist && enable)
+                        if (pv2 >= sp + _gist - 0.0001 && enable)
                         {
                             tmp = findIoTItem(_rele);
                             if (tmp)
@@ -118,7 +120,7 @@ public:
                                 }
                             }
                         }
-                        if (pv2 <= sp - _gist && enable)
+                        if (pv2 <= sp - _gist + 0.0001 && enable)
                         {
                             tmp = findIoTItem(_rele);
                             if (tmp)
@@ -179,6 +181,13 @@ public:
                     }
                 }
             }
+            if (command == "setDirection")
+            {
+                if (param.size())
+                {
+                    _direction = param[0].valD;
+                }
+            }
         }
         return {};
     }
@@ -237,55 +246,11 @@ public:
         jsonRead(parameters, "setLimitsMIN", _setLimitsMIN);
         jsonRead(parameters, "setLimitsMAX", _setLimitsMAX);
 
-        // в процессе работы можно менять коэффициенты
-        // instanceregulator(_KP, _KI, _KD, interval)->Kp = _KP;
-        // instanceregulator(_KP, _KI, _KD, interval)->Ki = _KI;
-        // instanceregulator(_KP, _KI, _KD, interval)->Kd = _KD;
+       
     }
 
 protected:
-    //===============================================================
-    // Вычисляем температуру контура отпления, коэффициенты ПИД регулятора
-    //===============================================================
-    /*
-    float pid(float sp, float pv, float pv_last, float &ierr, float dt)
-    {
-        float Kc = _KP;   // K / %Heater 5
-        float tauI = _KI; // sec 50
-        float tauD = _KD; // sec 1
-        // ПИД коэффициенты
-        float KP = Kc; // 5
-        if (tauI == 0)
-        {
-            tauI = 50;
-        }
-        float KI = Kc / tauI; // 0.1
-        float KD = Kc * tauD; // 5
-        // верхняя и нижняя границы уровня нагрева
-        float ophi = 100;
-        float oplo = 0;
-        // вычислить ошибку
-        float error = sp - pv; // 0
-        // calculate the integral error
-        ierr = ierr + KI * error * dt; // 0
-        // вычислить производную измерения
-        float dpv = (pv - pv_last) / dt; // 0
-        // рассчитать выход ПИД регулятора
-        float P = KP * error; // пропорциональная составляющая
-        float I = ierr;       // интегральная составляющая
-        float D = -KD * dpv;  // дифференциальная составляющая
-        float op = P + I + D;
-        // защита от сброса
-        if ((op < oplo) || (op > ophi))
-        {
-            I = I - KI * error * dt;
-            // выход регулятора, он же уставка для ID-1 (температура теплоносителя контура СО котла)
-            op = constrain(op, oplo, ophi);
-        }
-        ierr = I;
-        return op;
-    }
-*/
+   
     void
     doByInterval()
     {
@@ -305,10 +270,7 @@ protected:
         }
         if (enable)
         {
-            // regEvent(pid(sp, pv, pv_last, ierr, _int), "ThermostatPID", false, true);
-            // instanceregulator(_KP, _KI, _KD, interval,_setDirection,_setLimitsMIN,_setLimitsMAX)->setDirection(_setDirection);             // направление регулирования (NORMAL/REVERSE). ПО УМОЛЧАНИЮ СТОИТ NORMAL
-            // instanceregulator(_KP, _KI, _KD, interval,_setDirection,_setLimitsMIN,_setLimitsMAX)->setLimits(_setLimitsMIN, _setLimitsMAX); // пределы. ПО УМОЛЧАНИЮ СТОЯТ 0 И 100
-            // instanceregulator(_KP, _KI, _KD, interval)->setMode(1);
+          
             instanceregulator(_KP, _KI, _KD, interval, _setDirection, _setLimitsMIN, _setLimitsMAX)->setpoint = sp;
             instanceregulator(_KP, _KI, _KD, interval, _setDirection, _setLimitsMIN, _setLimitsMAX)->input = pv;
             value.valD = instanceregulator(_KP, _KI, _KD, interval, _setDirection, _setLimitsMIN, _setLimitsMAX)->getResult();
@@ -380,9 +342,11 @@ protected:
                 if (param.size())
                 {
                     _setLimitsMIN = param[0].valD;
-                    //    delete regulator;
-                    //    regulator = nullptr;
-                    //    instanceregulator(_KP, _KI, _KD, interval, _setDirection, _setLimitsMIN, _setLimitsMAX);
+                    if (regulator)
+                    {
+                        regulator->setLimits(_setLimitsMIN, _setLimitsMAX);
+                        regulator->integral = constrain(regulator->integral, _setLimitsMIN, _setLimitsMAX);
+                    }
                 }
             }
             if (command == "setLimitsMAX")
@@ -390,9 +354,11 @@ protected:
                 if (param.size())
                 {
                     _setLimitsMAX = param[0].valD;
-                    //    delete regulator;
-                    //    regulator = nullptr;
-                    //    instanceregulator(_KP, _KI, _KD, interval, _setDirection, _setLimitsMIN, _setLimitsMAX);
+                    if (regulator)
+                    {
+                        regulator->setLimits(_setLimitsMIN, _setLimitsMAX);
+                        regulator->integral = constrain(regulator->integral, _setLimitsMIN, _setLimitsMAX);
+                    }
                 }
             }
             if (command == "KP")
@@ -400,9 +366,14 @@ protected:
                 if (param.size())
                 {
                     _KP = param[0].valD;
-                    delete regulator;
-                    regulator = nullptr;
-                    instanceregulator(_KP, _KI, _KD, interval, _setDirection, _setLimitsMIN, _setLimitsMAX);
+                    if (regulator)
+                    {
+                        regulator->Kp = _KP;
+                    }
+                    else
+                    {
+                        instanceregulator(_KP, _KI, _KD, interval, _setDirection, _setLimitsMIN, _setLimitsMAX);
+                    }
                 }
             }
             if (command == "KI")
@@ -410,9 +381,23 @@ protected:
                 if (param.size())
                 {
                     _KI = param[0].valD;
-                    delete regulator;
-                    regulator = nullptr;
-                    instanceregulator(_KP, _KI, _KD, interval, _setDirection, _setLimitsMIN, _setLimitsMAX);
+                    if (regulator)
+                    {
+                        float oldKi = regulator->Ki;
+                        float oldIntegral = regulator->integral;
+                        // Preserve current controller output to avoid abrupt jumps when changing Ki.
+                        // Compute non-integral part (P + D). We cannot access prevInput (D term) so use just P-term.
+                        float nonI = (regulator->setpoint - regulator->input) * regulator->Kp;
+                        float desiredIntegral = regulator->output - nonI;
+                        if (!isfinite(desiredIntegral)) desiredIntegral = 0;
+                        regulator->integral = constrain(desiredIntegral, _setLimitsMIN, _setLimitsMAX);
+                        regulator->Ki = _KI;
+                        SerialPrint("i", F("ThermostatPID"), "KI changed from " + String(oldKi) + " to " + String(_KI) + ", integral: " + String(oldIntegral) + " -> " + String(regulator->integral));
+                    }
+                    else
+                    {
+                        instanceregulator(_KP, _KI, _KD, interval, _setDirection, _setLimitsMIN, _setLimitsMAX);
+                    }
                 }
             }
             if (command == "KD")
@@ -420,9 +405,14 @@ protected:
                 if (param.size())
                 {
                     _KD = param[0].valD;
-                    delete regulator;
-                    regulator = nullptr;
-                    instanceregulator(_KP, _KI, _KD, interval, _setDirection, _setLimitsMIN, _setLimitsMAX);
+                    if (regulator)
+                    {
+                        regulator->Kd = _KD;
+                    }
+                    else
+                    {
+                        instanceregulator(_KP, _KI, _KD, interval, _setDirection, _setLimitsMIN, _setLimitsMAX);
+                    }
                 }
             }
 
@@ -431,9 +421,16 @@ protected:
                 if (param.size())
                 {
                     _setDirection = param[0].valD;
-                    delete regulator;
-                    regulator = nullptr;
-                    instanceregulator(_KP, _KI, _KD, interval, _setDirection, _setLimitsMIN, _setLimitsMAX);
+                    if (regulator)
+                    {
+                        regulator->setDirection(_setDirection);
+                        // invert integral when direction flips to preserve control state
+                        regulator->integral = -regulator->integral;
+                    }
+                    else
+                    {
+                        instanceregulator(_KP, _KI, _KD, interval, _setDirection, _setLimitsMIN, _setLimitsMAX);
+                    }
                 }
             }
         }
@@ -500,7 +497,20 @@ protected:
             regEvent(value.valD, "ThermostatETK");
         }
     }
-
+    IoTValue execute(String command, std::vector<IoTValue> &param)
+    {
+        if (param.size() == 1)
+        {
+            if (command == "set_iv_k")
+            {
+                if (param.size())
+                {
+                    _iv_k = param[0].valD;
+                }
+            }
+        }
+        return {};
+    }
     ~ThermostatETK() {};
 };
 
@@ -576,7 +586,20 @@ protected:
             regEvent(value.valD, "ThermostatETK2");
         }
     }
-
+    IoTValue execute(String command, std::vector<IoTValue> &param)
+    {
+        if (param.size() == 1)
+        {
+            if (command == "set_iv_k")
+            {
+                if (param.size())
+                {
+                    _iv_k = param[0].valD;
+                }
+            }
+        }
+        return {};
+    }
     ~ThermostatETK2() {};
 };
 

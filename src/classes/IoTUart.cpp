@@ -92,17 +92,17 @@ IoTValue IoTUart::execute(String command, std::vector<IoTValue> &param) {
         if (param.size() == 1) {
             //if (param[0].isDecimal) uartPrintln((String)param[0].valD);
             //else uartPrintln(param[0].valS);
-            uartPrintln(param[0].valS);
+            uartPrintln(String(param[0].valS.c_str()));
         }
     } else if (command == "print") { 
         if (param.size() == 1) {
             //if (param[0].isDecimal) uartPrint((String)param[0].valD);
             //else uartPrint(param[0].valS);
-            uartPrint(param[0].valS);
+            uartPrint(String(param[0].valS.c_str()));
         }
     } else if (command == "printHex") {
         if (param.size() == 1) {
-            uartPrintHex(param[0].valS);
+            uartPrintHex(String(param[0].valS.c_str()));
         }
     } 
 

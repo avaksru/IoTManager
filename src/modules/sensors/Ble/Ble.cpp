@@ -14,6 +14,10 @@
 class BleSens;
 std::vector<BleSens *> BleSensArray;
 
+// Защита от множественной инициализации BLE на ESP32-C6
+static bool bleInitialized = false;
+static SemaphoreHandle_t bleInitMutex = NULL;
+
 class BleSens : public IoTItem
 {
 private:
@@ -56,7 +60,7 @@ public:
       {
         value.valS = "";
       }
-      regEvent(value.valS, _id);
+       regEvent(String(value.valS.c_str()), String(_id.c_str()));
     }
     else
     {
@@ -67,7 +71,7 @@ public:
         {
           value.isDecimal = 1;
           value.valD = valStr.toFloat();
-          regEvent(value.valD, _id);
+          regEvent(value.valD, String(_id.c_str()));
           dataFromNode = true;
           _minutesPassed = 0;
           setNewWidgetAttributes();
@@ -75,8 +79,8 @@ public:
         else
         {
           value.isDecimal = 0;
-          value.valS = valStr;
-          regEvent(value.valS, _id);
+          value.valS = valStr.c_str();
+          regEvent(String(value.valS.c_str()), String(_id.c_str()));
           dataFromNode = true;
           _minutesPassed = 0;
           setNewWidgetAttributes();
@@ -110,7 +114,7 @@ public:
       {
         value.valS = "";
       }
-      regEvent(value.valS, _id);
+       regEvent(String(value.valS.c_str()), String(_id.c_str()));
     }
     _minutesPassed++;
     setNewWidgetAttributes();
@@ -150,7 +154,8 @@ public:
     {
       jsonWriteStr(json, F("info"), F("awaiting"));
     }
-    sendSubWidgetsValues(_id, json);
+    String idStr = String(_id.c_str());
+    sendSubWidgetsValues(idStr, json);
   }
 
   BleSens(String parameters) : IoTItem(parameters)
@@ -165,24 +170,12 @@ public:
     BleSensArray.push_back(this);
   }
 
-  ~BleSens(){};
+  ~BleSens() {};
 };
 
 //=======================================================================================================
 
-/** Callback to process the results of the last scan or restart it */
-void scanEndedCB(NimBLEScanResults results)
-{
-  int count = results.getCount();
-  SerialPrint("i", F("BLE"), "Scan done! "); // +"Devices found: " + String(count));
-  // pBLEScan->clearResults();
-}
-
-//#if defined (esp32c6_4mb) || defined (esp32c6_8mb)
-//class BleScan : public IoTItem, NimBLEScanCallbacks
-//#else
-class BleScan : public IoTItem, NimBLEScanCallbacks //BLEAdvertisedDeviceCallbacks //NimBLEScanCallbacks
-//#endif
+class BleScan : public IoTItem, BLEAdvertisedDeviceCallbacks
 {
 private:
   // описание параметров передаваемых из настроек датчика из веба
@@ -190,7 +183,7 @@ private:
   String _filter;
   bool _debug;
 
-  StaticJsonDocument<512> doc;
+  JsonDocument doc;
   BLEScan *pBLEScan;
   TheengsDecoder decoder;
 
@@ -205,48 +198,80 @@ public:
     return spr;
   }
 
-  void onResult(const NimBLEAdvertisedDevice *advertisedDevice) override
+  void onResult(BLEAdvertisedDevice *advertisedDevice)
   {
+    // Защита от nullptr и валидация данных на ESP32-C6
+    if (advertisedDevice == nullptr) {
+      return;
+    }
+    
+    // Проверяем, что BLE инициализирован
+    if (!bleInitialized || pBLEScan == nullptr) {
+      return;
+    }
+    
     JsonObject BLEdata = doc.to<JsonObject>();
-    String mac_adress_ = advertisedDevice->getAddress().toString().c_str();
-    mac_adress_.toUpperCase();
+    String mac_adress_ = "";
+    
+    // Безопасное получение MAC адреса
+    try {
+      BLEAddress addr = advertisedDevice->getAddress();
+      if (addr.isNull()) {
+        return;
+      }
+      mac_adress_ = addr.toString().c_str();
+      mac_adress_.toUpperCase();
+    } catch (...) {
+      return;
+    }
+    
     BLEdata["id"] = (char *)mac_adress_.c_str();
-
-    if (advertisedDevice->haveName())
-    {
-      BLEdata["name"] = (char *)advertisedDevice->getName().c_str();
-    }
-    if (advertisedDevice->haveManufacturerData())
-    {
-#if defined (esp32c6_4mb) || defined (esp32c6_8mb)  
-      char *manufacturerdata = BLEUtils::buildHexData(NULL, (uint8_t *)advertisedDevice->getManufacturerData().data(), advertisedDevice->getManufacturerData().length());
-#else
-      std::string manufacturerdata = NimBLEUtils::dataToHexString((uint8_t *)advertisedDevice->getManufacturerData().data(), advertisedDevice->getManufacturerData().length());
-#endif       
-
-      BLEdata["manufacturerdata"] = manufacturerdata;
-      #if defined (esp32c6_4mb) || defined (esp32c6_8mb) 
-      free(manufacturerdata);
-      #endif 
-    }
-//#if !defined (esp32c6_4mb) && !defined (esp32c6_8mb) //&& !defined (esp32_4mb3f)
-//    if (advertisedDevice->haveRSSI())
-//#endif    
-      BLEdata["rssi"] = (int)advertisedDevice->getRSSI();
-    if (advertisedDevice->haveTXPower())
-      BLEdata["txpower"] = (int8_t)advertisedDevice->getTXPower();
-    if (advertisedDevice->haveServiceData())
-    {
-      int serviceDataCount = advertisedDevice->getServiceDataCount();
-      for (int j = 0; j < serviceDataCount; j++)
-      {
-        std::string service_data = convertServiceData(advertisedDevice->getServiceData(j));
-        BLEdata["servicedata"] = (char *)service_data.c_str();
-        std::string serviceDatauuid = advertisedDevice->getServiceDataUUID(j).toString();
-        BLEdata["servicedatauuid"] = (char *)serviceDatauuid.c_str();
+    
+    // Безопасное получение имени
+    if (advertisedDevice->haveName()) {
+      String devName = advertisedDevice->getName().c_str();
+      if (devName.length() > 0 && devName.length() < 64) {
+        BLEdata["name"] = (char *)devName.c_str();
       }
     }
-
+    
+    // Безопасное получение RSSI
+    int rssi = 0;
+    try {
+      rssi = advertisedDevice->getRSSI();
+      if (rssi != 0) {
+        BLEdata["rssi"] = rssi;
+      }
+    } catch (...) {
+      // RSSI недоступен
+    }
+    
+    // Безопасное получение TX Power
+    if (advertisedDevice->haveTXPower()) {
+      try {
+        BLEdata["txpower"] = (int8_t)advertisedDevice->getTXPower();
+      } catch (...) {
+        // TX Power недоступен
+      }
+    }
+    
+    // Безопасное получение Service Data
+    if (advertisedDevice->haveServiceData()) {
+      try {
+        int serviceDataCount = advertisedDevice->getServiceDataCount();
+        if (serviceDataCount > 0 && serviceDataCount < 10) {
+          for (int j = 0; j < serviceDataCount; j++) {
+            std::string service_data = convertServiceData(advertisedDevice->getServiceData(j));
+            BLEdata["servicedata"] = (char *)service_data.c_str();
+            std::string serviceDatauuid = advertisedDevice->getServiceDataUUID(j).toString();
+            BLEdata["servicedatauuid"] = (char *)serviceDatauuid.c_str();
+          }
+        }
+      } catch (...) {
+        // Service Data недоступен
+      }
+    }
+    
     if (decoder.decodeBLEJson(BLEdata))
     {
       String mac_address = BLEdata["mac"].as<const char *>();
@@ -256,6 +281,7 @@ public:
         mac_address = BLEdata["id"].as<const char *>();
       }
       mac_address.replace(":", "");
+
       if (_debug < 2)
       {
         BLEdata.remove("manufacturerdata");
@@ -285,8 +311,9 @@ public:
           SerialPrint("i", F("BLE"), mac_address + " " + output);
           //}
         }
-
+        if (_debug > 1){
         SerialPrint("i", F("BLE"), "found: " + String(BLEdata["mac"].as<const char *>()));
+        }
       }
 
       // Перебираем все зарегистрированные сенсоры BleSens
@@ -294,46 +321,80 @@ public:
            it != BleSensArray.end(); ++it)
       {
         // Если это данные для нужного сенсора (по его МАКУ)
-        if ((*it)->whoIAm() == mac_address)
+        if ((*it)->whoIAm() == mac_address){
           // то передаем ему json, дальше он сам разберется
           (*it)->setBLEdata(BLEdata);
+     
+        }
       }
     }
   }
-
+  /** Callback to process the results of the last scan or restart it */
+  void onScanEnd(NimBLEScanResults results)
+  {
+    int count = results.getCount();
+    SerialPrint("i", F("BLE"), "Scan done! "); // +"Devices found: " + String(count));
+    SerialPrint("i", F("BLE"), "Devices found: " + String(count));
+    // pBLEScan->clearResults();
+  }
   BleScan(String parameters) : IoTItem(parameters)
   {
-    _scanDuration = jsonReadInt(parameters, "scanDuration");
-    _scanDuration = _scanDuration * 1000;
+    _scanDuration = jsonReadInt(parameters, "scanDuration") * 1000;
     _filter = jsonReadStr(parameters, "filter");
     jsonRead(parameters, "debug", _debug);
+    pBLEScan = nullptr;
 
-    BLEDevice::init("");
-    pBLEScan = BLEDevice::getScan(); // create new scan
-//#if defined (esp32c6_4mb) || defined (esp32c6_8mb) //|| defined (esp32_4mb3f)
-    pBLEScan->setScanCallbacks(this);
-//#else
-//    pBLEScan->setAdvertisedDeviceCallbacks(this);
-//#endif
-    pBLEScan->setActiveScan(false); // active scan uses more power, but get results faster
-    pBLEScan->setInterval(100);
-    pBLEScan->setWindow(99);    // less or equal setInterval value
-    pBLEScan->setMaxResults(0); // do not store the scan results, use callback only.
+    // Защита от множественной инициализации BLE на ESP32-C6
+    // Используем мьютекс для предотвращения race condition
+    if (bleInitMutex == NULL) {
+      bleInitMutex = xSemaphoreCreateMutex();
+    }
+    
+    if (bleInitMutex != NULL && xSemaphoreTake(bleInitMutex, pdMS_TO_TICKS(1000)) == pdTRUE) {
+      if (!bleInitialized) {
+        // Инициализируем BLEDevice с именем устройства
+        String devName = jsonReadStr(settingsFlashJson, F("name"));
+        if (devName == "" || devName == "null") {
+          devName = "IoTManager";
+        }
+        BLEDevice::init(devName.c_str());
+        bleInitialized = true;
+        SerialPrint("i", F("BLE"), "NimBLE initialized");
+      }
+      xSemaphoreGive(bleInitMutex);
+    }
+
+    // Создаем сканер
+    pBLEScan = BLEDevice::getScan();
+    if (pBLEScan != nullptr) {
+      pBLEScan->setScanCallbacks(this, false); // false = не копировать callback'и
+      pBLEScan->setActiveScan(false); // Пассивное сканирование стабильнее на ESP32-C6
+      pBLEScan->setInterval(160); // 100ms в единицах 0.625ms
+      pBLEScan->setWindow(80); // 50ms - меньше или равно interval
+      pBLEScan->setMaxResults(0); // Не хранить результаты, только callback
+    } else {
+      SerialPrint("E", F("BLE"), "Failed to get BLE scan");
+    }
   }
 
   // doByInterval()
   void doByInterval()
   {
+    // Защита от nullptr на ESP32-C6
+    if (pBLEScan == nullptr) {
+      return;
+    }
+    
     if (pBLEScan->isScanning() == false)
     {
       if (_scanDuration > 0)
       {
         SerialPrint("i", F("BLE"), "Start Scanning...");
-//#if defined (esp32c6_4mb) || defined (esp32c6_8mb) //|| defined (esp32_4mb3f)
         pBLEScan->start(_scanDuration, false);
-//#else        
-//        pBLEScan->start(_scanDuration, scanEndedCB, false);
-//#endif
+        // BLEScanResults foundDevices = pBLEScan->getResults(_scanDuration, false);
+        // SerialPrint("i", F("BLE"), "Scan done!");
+        // SerialPrint("i", F("BLE"), "Devices found: " + String(foundDevices.getCount()));
+        // pBLEScan->clearResults(); // delete results fromBLEScan buffer to release memory
       }
     }
   }

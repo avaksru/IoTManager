@@ -30,7 +30,7 @@
         },
         "title": "Расширитель портов Pcf8574"
     },
-    "defActive": false,
+    "defActive": true,
     "usedLibs": {
         "esp32*": [
             "adafruit/Adafruit BusIO @ ^1.13.2"

@@ -168,28 +168,28 @@ public:
         {
             if (_idTempSensor != "")
             {
-                if (_idTempSensor == eventItem->getID())
+                if (_idTempSensor == String(eventItem->getID().c_str()))
                 {
                     String _idTempSensorString = eventItem->getValue();
                     Temp = _idTempSensorString.toFloat();
                     if (debug)
                     {
                         String output = " got via eventItem: Temp = " + String(Temp);
-                        SerialPrint("I", "MQgas", output, _id);
+                        SerialPrint("I", "MQgas", output, String(_id.c_str()));
                     }
                 }
             }
 
             if (_idHumSensor != "")
             {
-                if (_idHumSensor == eventItem->getID())
+                if (_idHumSensor == String(eventItem->getID().c_str()))
                 {
                     String _idHumSensorSting = eventItem->getValue();
                     Hum = _idHumSensorSting.toFloat();
                     if (debug)
                     {
                         String output = " got via eventItem: Hum = " + String(Hum);
-                        SerialPrint("I", "MQgas", output, _id);
+                        SerialPrint("I", "MQgas", output, String(_id.c_str()));
                     }
                 }
             }
@@ -205,14 +205,14 @@ public:
             RlR0CleanAir = RlR0CleanAirDefault;
             ppmCleanAir = ppmCleanAirDefault;
             calibrate();
-            SerialPrint("I", "MQgas", "calibrate() with default values", _id);
+            SerialPrint("I", "MQgas", "calibrate() with default values", String(_id.c_str()));
         }
         else if (command == "calibrateR0")
         {
             R0CleanAir = param[0].valD;
             calibrate();
             String output = "calibrateR0(), R0CleanAir = " + String(R0CleanAir);
-            SerialPrint("I", "MQgas", output, _id);
+            SerialPrint("I", "MQgas", output, String(_id.c_str()));
         }
         else if (command == "calibrateRlRo")
         {
@@ -221,7 +221,7 @@ public:
             RlR0CleanAir = param[0].valD;
             calibrate();
             String output = "calibrateRlRo(), RlR0CleanAir = " + String(RlR0CleanAir);
-            SerialPrint("I", "MQgas", output, _id);
+            SerialPrint("I", "MQgas", output, String(_id.c_str()));
         }
         else if (command == "calibratePPM")
         {
@@ -230,7 +230,7 @@ public:
             ppmCleanAir = param[0].valD;
             calibrate();
             String output = "calibratePPM(), ppmCleanAir = " + String(ppmCleanAir);
-            SerialPrint("I", "MQgas", output, _id);
+            SerialPrint("I", "MQgas", output, String(_id.c_str()));
         }
         else if (command == "setAutoCalibration")
         {
@@ -239,7 +239,7 @@ public:
                 autoCalibrationEnable = param[0].valD;
             }
             String output = "setAutoCalibration = " + String(autoCalibrationEnable);
-            SerialPrint("I", "MQgas", output, _id);
+            SerialPrint("I", "MQgas", output, String(_id.c_str()));
         }
         else if (command == "runAutoCalibration")
         {
@@ -264,9 +264,9 @@ public:
                 lastCalibration = String(days) + "d " + String(hours) + ":" + String(minutes) + ":" + String(seconds);
             }
 
-            valTmp.valS = lastCalibration;
-            String output = "By request: lastCalibration = " + String(valTmp.valS);
-            SerialPrint("I", "MQgas", output, _id);
+            valTmp.valS = lastCalibration.c_str();
+            String output = "By request: lastCalibration = " + String(valTmp.valS.c_str());
+            SerialPrint("I", "MQgas", output, String(_id.c_str()));
             return valTmp;
         }
         /*
@@ -276,7 +276,7 @@ public:
             valTmp.isDecimal = true;
             valTmp.valD = autoCalibrationEnable;
             String output = "By request: enabledAutoCalibration = " + String(valTmp.valD);
-            SerialPrint("I", "MQgas", output, _id);
+            SerialPrint("I", "MQgas", output, String(_id.c_str()));
             return valTmp;
         }
         */
@@ -287,7 +287,7 @@ public:
             if (param[1].isDecimal)
                 Hum = param[1].valD;
             String output = "TempHumCorrection()  temperature = " + String(Temp) + "  humidity = " + String(Hum);
-            SerialPrint("I", "MQgas", output, _id);
+            SerialPrint("I", "MQgas", output, String(_id.c_str()));
         }
         
         return {}; // команда поддерживает возвращаемое значения. Т.е. по итогу выполнения команды или общения с внешней системой, можно вернуть значение в сценарий для дальнейшей обработки
@@ -333,13 +333,13 @@ public:
             lastCalibrationMillis = millis();
             String output = "Calibration successful!  Ro in Clean Air = " + String(_ro);
             Serial.println();
-            SerialPrint("I", "MQgas", output, _id);
+            SerialPrint("I", "MQgas", output, String(_id.c_str()));
             calibrationTH();
         }
         else
         {
             Serial.println();
-            SerialPrint("E", "MQgas", " Calibration failed! Fill one of Setting 'in clean air', check wiring ", _id);
+            SerialPrint("E", "MQgas", " Calibration failed! Fill one of Setting 'in clean air', check wiring ", String(_id.c_str()));
         }
     }
 
@@ -355,7 +355,7 @@ public:
             lastCalibrationMillis = millis();
             String output = "autoCalibration successful!, R0 =  " + String(_ro);
             Serial.println();
-            SerialPrint("I", "MQgas", output, _id);
+            SerialPrint("I", "MQgas", output, String(_id.c_str()));
             calibrationTH();
             autoCalibTimer = millis();
             highRs = 0;
@@ -363,7 +363,7 @@ public:
         else
         {
             Serial.println();
-            SerialPrint("E", "MQgas", " autoCalibration failed! Fill one of Setting 'in clean air', check wiring ", _id);
+            SerialPrint("E", "MQgas", " autoCalibration failed! Fill one of Setting 'in clean air', check wiring ", String(_id.c_str()));
         }
     }
 
@@ -377,12 +377,12 @@ public:
             _stateCalibrateTH = true;
             String output = "TH Calibration successful!  Ro_TH in Clean Air = " + String(ro_TH);
             Serial.println();
-            SerialPrint("I", "MQgas", output, _id);
+            SerialPrint("I", "MQgas", output, String(_id.c_str()));
         }
         else
         {
             Serial.println();
-            SerialPrint("E", "MQgas", "TH Calibration failed! Fill Temp and Hum at Settings or add Temp and Hum sensors!", _id);
+            SerialPrint("E", "MQgas", "TH Calibration failed! Fill Temp and Hum at Settings or add Temp and Hum sensors!", String(_id.c_str()));
         }
     }
 
@@ -411,14 +411,14 @@ public:
                 if (debug)
                 {
                     String output = "Check wiring, analogRead(_pin) =  " + String(sensorADC);
-                    SerialPrint("E", "MQgas", output, _id);
+                    SerialPrint("E", "MQgas", output, String(_id.c_str()));
                 }
             }
             else if (sensorADC == 0)
             {
                 error0 = 1;
                 if (debug)
-                    SerialPrint("E", "MQgas", "Check sensor, analogRead(_pin) = 0", _id);
+                    SerialPrint("E", "MQgas", "Check sensor, analogRead(_pin) = 0", String(_id.c_str()));
             }
             else
             {
@@ -440,10 +440,10 @@ public:
             if (errorMax)
             {
                 String output = "Check wiring, analogRead(_pin) =  " + String(sensorADC);
-                SerialPrint("E", "MQgas", output, _id);
+                SerialPrint("E", "MQgas", output, String(_id.c_str()));
             }
             if (error0)
-                SerialPrint("E", "MQgas", "Check sensor, analogRead(_pin) = 0", _id);
+                SerialPrint("E", "MQgas", "Check sensor, analogRead(_pin) = 0", String(_id.c_str()));
         }
 
         if (debug)
@@ -548,7 +548,7 @@ public:
             if (debug)
             {
                 Serial.println();
-                SerialPrint("E", "MQgas", "Wrong data from Temperature and Humidity sensor or from Settings", _id);
+                SerialPrint("E", "MQgas", "Wrong data from Temperature and Humidity sensor or from Settings", String(_id.c_str()));
             }
             return false;
         }

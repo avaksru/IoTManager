@@ -165,7 +165,7 @@ public:
 
             if (_isJson)
             {
-                DynamicJsonDocument doc(JSON_BUFFER_SIZE);
+                JsonDocument doc;
                 DeserializationError err = deserializeJson(doc, msg);
 
                 if (err)

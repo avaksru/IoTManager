@@ -10,10 +10,11 @@
             "widget": "anydataTmp",
             "page": "Сенсоры",
             "descr": "DS Температура",
-            "int": 15,
-            "pin": 2,
+            "int": 60,
+            "pin": 0,
             "index": 0,
             "addr": "",
+            "plus":0,
             "round": 1
         }
     ],
@@ -40,7 +41,7 @@
     "defActive": true,
     "usedLibs": {
         "esp32*": [
-            "milesburton/DallasTemperature @ ^4.0.4"
+            "https://github.com/milesburton/Arduino-Temperature-Control-Library"
         ],
         "esp32c6_4mb": [
             "https://github.com/pstolarz/Arduino-Temperature-Control-Library.git#OneWireNg"
@@ -49,7 +50,7 @@
             "https://github.com/pstolarz/Arduino-Temperature-Control-Library.git#OneWireNg"
         ],        
         "esp82*": [
-            "milesburton/DallasTemperature @ ^4.0.4"
+            "https://github.com/milesburton/Arduino-Temperature-Control-Library"
         ]
     }
 }

@@ -26,7 +26,7 @@ class Dht1122t : public IoTItem {
         if (String(value.valD) != "nan")
             regEvent(value.valD, "Dht1122t");
         else
-            SerialPrint("E", "Sensor DHTt", "Error", _id);
+            SerialPrint("E", "Sensor DHTt", "Error", String(_id.c_str()));
     }
 
     ~Dht1122t(){};
@@ -46,7 +46,7 @@ class Dht1122h : public IoTItem {
         if (String(value.valD) != "nan")
             regEvent(value.valD, "Dht1122h");
         else
-            SerialPrint("E", "Sensor DHTh", "Error", _id);
+            SerialPrint("E", "Sensor DHTh", "Error", String(_id.c_str()));
     }
 
     ~Dht1122h(){};

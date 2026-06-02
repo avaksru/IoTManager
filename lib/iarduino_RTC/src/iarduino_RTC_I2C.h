@@ -442,16 +442,16 @@ class iarduino_I2C: public iarduino_I2C_BASE{										//	Определяем �
 //		функция установки уровня на линии SCL:										//	Определяем функцию установки уровня на линии SCL.
 		bool	setSCL(bool f){														//	Аргумент: логический уровень.
 					uint16_t i=60000L;												//	Определяем счётчик ожидания освобождения линии SCL.
-					if(!f)	{*mod_SCL |=  mask_SCL; *out_SCL &= ~mask_SCL;}			//	Устанавливаем «0» на линии SCL (Спад тактирубщего импульса)		pinMode(pin_SCL, OUTPUT); digitalWrite(pin_SCL, LOW );
-					else	{*mod_SCL &= ~mask_SCL; *out_SCL |=  mask_SCL;			//	Устанавливаем «1» на линии SCL (Фронт тактирующего импульса)	pinMode(pin_SCL, INPUT ); digitalWrite(pin_SCL, HIGH);
+					if(!f)	{*mod_SCL = *mod_SCL | mask_SCL; *out_SCL = *out_SCL & ~mask_SCL;}			//	Устанавливаем «0» на линии SCL (Спад тактирубщего импульса)		pinMode(pin_SCL, OUTPUT); digitalWrite(pin_SCL, LOW );
+					else	{*mod_SCL = *mod_SCL & ~mask_SCL; *out_SCL = *out_SCL | mask_SCL;			//	Устанавливаем «1» на линии SCL (Фронт тактирующего импульса)	pinMode(pin_SCL, INPUT ); digitalWrite(pin_SCL, HIGH);
 					          while((*inp_SCL & mask_SCL)==0 && i){i--;}  }			//	Ждём поднятия логического уровня на линии SCL					while(digitalRead(pin_SCL)==0 && i){ цикл выполняется пока на линии 0 или пока i не сброситя d 0}
 					return i;														//
 		}																			//
 																					//
 //		Функция установки уровня на линии SDA:										//	Определяем функцию установки уровня на линии SDA.
 		void	setSDA(bool f){														//	Аргумент: логический уровень.
-					if(!f)	{*mod_SDA |=  mask_SDA; *out_SDA &= ~mask_SDA;}			//	Устанавливаем «0» на линии SDA (если бит RW=«0»)				pinMode(pin_SDA, OUTPUT); digitalWrite(pin_SDA, LOW  );
-					else	{*mod_SDA &= ~mask_SDA; *out_SDA |=  mask_SDA;}			//	Устанавливаем «1» на линии SDA (если бит RW=«1»)				pinMode(pin_SDA, INPUT ); digitalWrite(pin_SDA, HIGH );
+					if(!f)	{*mod_SDA = *mod_SDA | mask_SDA; *out_SDA = *out_SDA & ~mask_SDA;}			//	Устанавливаем «0» на линии SDA (если бит RW=«0»)				pinMode(pin_SDA, OUTPUT); digitalWrite(pin_SDA, LOW  );
+					else	{*mod_SDA = *mod_SDA & ~mask_SDA; *out_SDA = *out_SDA | mask_SDA;}			//	Устанавливаем «1» на линии SDA (если бит RW=«1»)				pinMode(pin_SDA, INPUT ); digitalWrite(pin_SDA, HIGH );
 		}																			//
 																					//
 //		Функция чтения уровня с линии SDA:											//	Определяем функцию чтения уровня с линии SDA.					Перед чтением необходимо вызвать функцию setSDA(1) которая переведёт вывод SDA в режим входа

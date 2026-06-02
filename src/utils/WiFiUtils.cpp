@@ -4,6 +4,7 @@
 #include <esp_task_wdt.h>
 #endif
 #include "DebugTrace.h"
+#include <ESPmDNS.h>
 #define TRIESONE 20 // количество секунд ожидания подключения к одной сети из несколких
 #define TRIES 30    // количество секунд ожидания подключения сети если она одна
 
@@ -44,9 +45,9 @@ void addPortMap(String TCP_UDP, String maddr, u16_t mport, String daddr, u16_t d
 std::vector<String> _ssidList;
 std::vector<String> _passwordList;
 // номер сети, для перебирания в момент подключения к сетям из массива
-volatile uint8_t currentNetwork = 0;
-volatile bool wifiConnecting = false;
-volatile uint8_t connectionAttempts = 0;
+uint8_t currentNetwork = 0;
+bool wifiConnecting = false;
+uint8_t connectionAttempts = 0;
 //------------------------------------------
 // Обработчики событий Wi-Fi
 //------------------------------------------
@@ -76,7 +77,7 @@ void WiFiEvent(arduino_event_t *event)
     SerialPrint("i", "WIFI", "http://" + ipToString(WiFi.localIP()));
     jsonWriteStr(settingsFlashJson, "ip", ipToString(WiFi.localIP()));
 #else
-    SerialPrint("i", "WIFI", "http://" + WiFi.localIP().toString());
+    //SerialPrint("i", "WIFI", "http://" + WiFi.localIP().toString());
     jsonWriteStr(settingsFlashJson, "ip", WiFi.localIP().toString());
 #endif
     createItemFromNet("onWifi", "1", 1);
@@ -187,10 +188,19 @@ void WiFiUtilsItit()
 #else
   WiFi.setAutoConnect(false);
 #endif
-  WiFi.persistent(true); // Сохраняет текущую сеть при сканировании
+  WiFi.persistent(false); // Не загружать старые параметры из flash
   WiFi.setSleep(true);
 #endif
+  WiFi.disconnect(true);  // Очистить сохранённые WiFi параметры
   WiFi.mode(WIFI_STA);
+  //WiFi.config(INADDR_NONE, INADDR_NONE, INADDR_NONE, INADDR_NONE);  // сброс DHCP-имени
+  String deviceName = jsonReadStr(settingsFlashJson, "name");  // Получаем имя в String
+  Serial.print("[WiFi] Setting hostname: ");
+  Serial.println(deviceName);
+  deviceName.trim();
+  WiFi.setHostname(deviceName.c_str());
+  Serial.print("[WiFi] Actual hostname: ");
+  Serial.println(WiFi.getHostname());
   WiFi.onEvent(WiFiEvent);
   _ssidList.clear();
   _passwordList.clear();
@@ -226,7 +236,25 @@ void connectToNextNetwork()
   const char *pass = _passwordList[currentNetwork].c_str();
   // Пробуем подключиться к сети
   SerialPrint("i", "WIFI", "Connecting to: " + String(ssid));
+  String deviceName = jsonReadStr(settingsFlashJson, "name");  // Получаем имя в String
+  Serial.print("[WiFi] Setting hostname: ");
+  Serial.println(deviceName);
+  deviceName.trim();
+  WiFi.setHostname(deviceName.c_str());
+  Serial.print("[WiFi] Actual hostname: ");
+  Serial.println(WiFi.getHostname());
+  
+  // Сбрасываем WDT перед длительной операцией
+  #if defined(ESP32)
+  esp_task_wdt_reset();
+  #endif
+  
   WiFi.begin(ssid, pass);
+  
+  // Сбрасываем WDT после WiFi.begin
+  #if defined(ESP32)
+  esp_task_wdt_reset();
+  #endif
 
 #if defined(ESP32)
   WiFi.setTxPower(WIFI_POWER_19_5dBm);
@@ -236,6 +264,11 @@ void connectToNextNetwork()
   // проверяем статус подключения и перебираем сети если таймаут не вышел
   checkConnection();
 
+if (!MDNS.begin(deviceName.c_str())) {
+        Serial.println("Error starting mDNS!");
+    } else {
+        Serial.println("mDNS started: " + deviceName + ".local");
+    }
   // wifiReconnectTicker.once_ms(WIFI_CHECK_INTERVAL, checkConnection);
 }
 
@@ -245,6 +278,11 @@ void checkConnection()
       WIFI_CONN, 1000,
       [&](void *)
       {
+        // Сбрасываем WDT при каждой проверке соединения
+        #if defined(ESP32)
+        esp_task_wdt_reset();
+        #endif
+        
         connectionAttempts++;
         if (WiFi.status() == WL_CONNECTED)
         {
@@ -295,12 +333,22 @@ void connectToSTA(const char *ssid, const char *pass)
     return;
   SerialPrint("i", "WIFI", "Connecting to ... " + String(ssid));
   // SerialPrint("i", "WIFI", "pass connect: " + _passwordList[i]);
+  String deviceName = jsonReadStr(settingsFlashJson, "name");  // Получаем имя в String
+  deviceName.trim();
+  WiFi.setHostname(deviceName.c_str());
   WiFi.begin(ssid, pass);
 #if defined(ESP32)
   WiFi.setTxPower(WIFI_POWER_19_5dBm);
 #elif defined(ESP8266)
   WiFi.setOutputPower(20.5);
 #endif
+        
+
+if (!MDNS.begin(deviceName.c_str())) {
+        Serial.println("Error starting mDNS!");
+    } else {
+        Serial.println("mDNS started: " + deviceName + ".local");
+    }
 }
 
 void ScanAsync()
@@ -458,9 +506,7 @@ void routerConnect()
       }
 #if defined(ESP32)
       //SerialPrint("i", "Task", "Resetting WDT...");
-       #if !defined(esp32c6_4mb) && !defined(esp32c6_8mb) //TODO esp32-c6 переписать esp_task_wdt_init
       esp_task_wdt_reset();
-      #endif
 #endif
       Serial.print(".");
       delay(1000);
@@ -610,7 +656,19 @@ boolean RouterFind(std::vector<String> jArray)
 
 boolean isNetworkActive()
 {
-  return WiFi.status() == WL_CONNECTED;
+  // Проверяем WiFi
+  if (WiFi.status() == WL_CONNECTED) {
+    return true;
+  }
+  
+  // Проверяем Ethernet если доступен
+#if defined(ESP32) || defined(ESP8266)
+  if (isEthernetConnected()) {
+    return true;
+  }
+#endif
+  
+  return false;
 }
 
 uint8_t getNumAPClients()

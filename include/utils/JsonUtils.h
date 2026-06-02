@@ -2,8 +2,8 @@
 
 #include "Global.h"
 
-extern String jsonReadStrDoc(DynamicJsonDocument& doc, String name);
-extern void jsonWriteStrDoc(DynamicJsonDocument& doc, String name, String value);
+extern String jsonReadStrDoc(JsonDocument& doc, String name);
+extern void jsonWriteStrDoc(JsonDocument& doc, String name, String value);
 
 extern String jsonWriteStr(String& json, String name, String value, bool e = true);
 extern String jsonWriteInt(String& json, String name, int value, bool e = true);

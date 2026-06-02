@@ -16,10 +16,10 @@ bool fileSystemInit()
 
 void globalVarsSync()
 {
-    settingsFlashJson = readFile(F("settings.json"), 4096);
+    settingsFlashJson = readFile(F("settings.json"), 4096 * 8);
     settingsFlashJson.replace("\r\n", "");
 
-    valuesFlashJson = readFile(F("values.json"), 4096);
+    valuesFlashJson = readFile(F("values.json"), 4096 * 8);
     valuesFlashJson.replace("\r\n", "");
     if (settingsFlashJson  ==  "failed")
         return;
@@ -66,6 +66,19 @@ void syncValuesFlashJson()
 }
 
 const String getChipId()
+{
+#ifdef ESP32
+    uint64_t chipid = ESP.getEfuseMac();
+    String chip = String(chipid);
+    String firstSix = chip.substring(0, 8);
+    int length = chip.length();
+    String lastSix = (length > 8) ? chip.substring(length - 8) : chip;
+    return String(firstSix + "-" + lastSix);
+#else
+    return String(ESP.getChipId()) + "-" + String(getFlashChipIdNew());
+#endif
+}
+const String getChipId_old()
 {
     return String(ESP_getChipId()) + "-" + String(getFlashChipIdNew()); // + "v" + String(FIRMWARE_VERSION);
 }

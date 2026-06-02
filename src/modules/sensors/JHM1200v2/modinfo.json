@@ -1,0 +1,69 @@
+{
+  "menuSection": "sensors",
+  "configItem": [
+    {
+      "global": 0,
+      "name": "JHM1200 Температура",
+      "type": "Reading",
+      "subtype": "JHM1200t",
+      "id": "jhmt",
+      "widget": "anydataTmp",
+      "page": "Сенсоры",
+      "descr": "Температура",
+      "int": 63,
+      "sdaPin": 21,
+      "sclPin": 22,
+      "plus": 0,
+      "map": "1024,1024,1,100",
+      "TEMP_MIN": 0,
+      "TEMP_MAX": 80,
+      "raw_corection": 65536,
+      "addr": "0x78",
+      "round": 1
+    },
+    {
+      "global": 0,
+      "name": "JHM1200 Давление",
+      "type": "Reading",
+      "subtype": "JHM1200p",
+      "id": "jhmp",
+      "widget": "anydataBar",
+      "page": "Сенсоры",
+      "descr": "Давление",
+      "int": 60,
+      "sdaPin": 21,
+      "sclPin": 22,
+      "plus": 0,
+      "map": "1024,1024,1,100",
+      "PRES_MIN": 0,
+      "PRES_MAX": 8.5,
+      "raw_corection": 16777216,
+      "addr": "0x78",
+      "round": 2
+    }
+  ],
+  "about": {
+    "authorName": "AVAKS",
+    "authorContact": "https://t.me/AVAKS",
+    "authorGit": "https://github.com/avaksru",
+    "specialThanks": "",
+    "moduleName": "JHM1200",
+    "moduleVersion": "1.0",
+    "usedRam": {
+      "esp32_4mb": 15,
+      "esp8266_4mb": 15
+    },
+    "subTypes": ["jhmt", "jhmp"],
+    "title": "Датчик давления KY-3V3-IIC-16Bar",
+    "moduleDesc": "Позволяет получить значения температуры и давления жидксти, газа.",
+    "propInfo": {
+      "addr": "Адрес датчика на шине 0x78. SDA, SCL, пожалуйста, добавьте резистор 2-10 кОм.",
+      "int": "Количество секунд между опросами датчика."
+    }
+  },
+  "defActive": true,
+  "usedLibs": {
+    "esp32*": [],
+    "esp82*": []
+  }
+}

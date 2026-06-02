@@ -52,7 +52,7 @@ void ntpInit() {
                 String dateAndTime = getDateTimeDotFormated();
                 dateAndTime = deleteToMarkerLast(dateAndTime, ":");
                 jsonWriteStr_(errorsHeapJson, F("timenow"), dateAndTime);
-                SerialPrint("I", F("NTP"), "✔ " + dateAndTime);
+                // SerialPrint("I", F("NTP"), "✔ " + dateAndTime);
                 onDayChange();
             }
             _time_isTrust = true;  // доверяем значению времени

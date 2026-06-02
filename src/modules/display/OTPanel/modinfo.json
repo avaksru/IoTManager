@@ -1,0 +1,48 @@
+{
+  "menuSection": "screens",
+  "configItem": [
+    {
+      "global": 0,
+      "name": "OTPanel",
+      "type": "Reading",
+      "subtype": "OTPanel",
+      "id": "OTPanel",
+      "widget": "",
+      "page": "",
+      "descr": "",
+      "int": 60,
+      "rotation": 0,
+      "brightness_active": 80,
+      "brightness_idle": 40,
+      "log": 0
+    }
+  ],
+  "about": {
+    "authorName": "",
+    "authorContact": "",
+    "authorGit": "https://github.com/biveraxe",
+    "exampleURL": "https://iotmanager.org/wiki",
+    "specialThanks": "",
+    "moduleName": "OTPanel",
+    "moduleVersion": "1.0",
+    "usedRam": {
+      "esp32_4mb": 15,
+      "esp8266_4mb": 15
+    },
+    "title": "Аналоговый сенсор",
+    "moduleDesc": "Позволяет получить текущее значение на аналоговом GPIO или усредненное для avgSteps измерений каждого вызова loop.",
+    "propInfo": {
+      "pin": "Аналоговый GPIO номер, к которому подключен датчик.",
+      "avgSteps": "Количество считываний для усреднения. При =1, считывается одно значение за каждый период опроса., при =0, int считается в миллисекундах",
+      "int": "Количество секунд между опросами датчика, если avgSteps > 0. Установите avgSteps = 0 и int будет считаться в миллисекундах (ВНИМАНИЕ! генерация событий чаще секунды может привести к нестабильности системы.)"
+    }
+  },
+  "defActive": false,
+  "usedLibs": {
+    "esp32*": [
+      "https://github.com/rzeldent/esp32-smartdisplay.git#2.1.0"
+    ],
+    "esp82*": [],
+    "bk72*": []
+  }
+}

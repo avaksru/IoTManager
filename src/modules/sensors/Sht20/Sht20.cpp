@@ -16,7 +16,7 @@ class Sht20t : public IoTItem {
         if (value.valD > -46.85F)
             regEvent(value.valD, "Sht20t");
         else
-            SerialPrint("E", "Sensor Sht20t", "Error", _id);
+            SerialPrint("E", "Sensor Sht20t", "Error", String(_id.c_str()));
     }
 
     ~Sht20t(){};
@@ -32,7 +32,7 @@ class Sht20h : public IoTItem {
         if (value.valD != -6)
             regEvent(value.valD, "Sht20h");
         else
-            SerialPrint("E", "Sensor Sht20h", "Error", _id);
+            SerialPrint("E", "Sensor Sht20h", "Error", String(_id.c_str()));
     }
 
     ~Sht20h(){};

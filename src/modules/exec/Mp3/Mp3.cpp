@@ -39,45 +39,45 @@ class Mp3 : public IoTItem {
         if (myMP3 && myMP3->available()) {
             switch (myMP3->readType()) {
                 case TimeOut:
-                value.valS = F("Time Out!");
+                value.valS = "Time Out!";
                 break;
                 case WrongStack:
-                value.valS = F("Stack Wrong!");
+                value.valS = "Stack Wrong!";
                 break;
                 case DFPlayerCardInserted:
-                value.valS = F("Card Inserted!");
+                value.valS = "Card Inserted!";
                 break;
                 case DFPlayerCardRemoved:
-                value.valS = F("Card Removed!");
+                value.valS = "Card Removed!";
                 break;
                 case DFPlayerCardOnline:
-                value.valS = F("Card Online!");
+                value.valS = "Card Online!";
                 break;
                 case DFPlayerPlayFinished:
-                value.valS = F("Play Finished!");
+                value.valS = "Play Finished!";
                 break;
                 case DFPlayerError:
                     switch (myMP3->read()) {
                         case Busy:
-                        value.valS = F("Card not found");
+                        value.valS = "Card not found";
                         break;
                         case Sleeping:
-                        value.valS = F("Sleeping");
+                        value.valS = "Sleeping";
                         break;
                         case SerialWrongStack:
-                        value.valS = F("Get Wrong Stack");
+                        value.valS = "Get Wrong Stack";
                         break;
                         case CheckSumNotMatch:
-                        value.valS = F("Check Sum Not Match");
+                        value.valS = "Check Sum Not Match";
                         break;
                         case FileIndexOut:
-                        value.valS = F("File Index Out of Bound");
+                        value.valS = "File Index Out of Bound";
                         break;
                         case FileMismatch:
-                        value.valS = F("Cannot Find File");
+                        value.valS = "Cannot Find File";
                         break;
                         case Advertise:
-                        value.valS = F("In Advertise");
+                        value.valS = "In Advertise";
                         break;
                         default:
                         break;

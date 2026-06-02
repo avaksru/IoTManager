@@ -88,7 +88,7 @@ class IoTmUART : public IoTUart {
             break;
             
             case 2:             // формат событий для Nextion ID=Value0xFF0xFF0xFF
-                printStr += eventItem->getID();
+                printStr += String(eventItem->getID().c_str());
                 indexOf_ = printStr.indexOf("_");
                 if (indexOf_ == -1) return;  // пропускаем событие, если нет используемого признака типа данных - _txt или _vol
                 
@@ -116,7 +116,7 @@ class IoTmUART : public IoTUart {
         if (command == "printFFF") {
             if (param.size() == 2) {
                 String strToUart = "";
-                strToUart = param[0].valS;
+                strToUart = String(param[0].valS.c_str());
 
                 if (param[1].valD) 
                     uartPrintFFF("\"" + strToUart + "\"");

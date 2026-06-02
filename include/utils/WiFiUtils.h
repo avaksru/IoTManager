@@ -5,6 +5,7 @@
 
 void addPortMap(String TCP_UDP, String maddr, u16_t mport, String daddr, u16_t dport);
 
+// Проверка активности сети (WiFi или Ethernet)
 boolean isNetworkActive();
 uint8_t getNumAPClients();
 bool startAPMode();

@@ -122,7 +122,9 @@ class LogingDaily : public IoTItem {
     void createNewFileWithData(String &logData) {
         logData = logData + ",";
 
-        String path = "/lgd/" + id + "/" + id + ".txt";  // создадим путь вида /lgd/id/id.txt
+        String dirPath = "/lgd/" + id;
+        mkdir(dirPath);  // Создаём директорию, если её нет
+        String path = dirPath + "/" + id + ".txt";  // создадим путь вида /lgd/id/id.txt
         // создадим пустой файл
         if (writeEmptyFile(path) != "success") {
             SerialPrint("E", F("LogingDaily"), "'" + id + "' file writing error, return");

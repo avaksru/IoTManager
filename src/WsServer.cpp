@@ -1,5 +1,6 @@
 #include "WsServer.h"
 #include "classes/IoTScenario.h"
+#include <esp_task_wdt.h>
 extern IoTScenario iotScen;
 
 #ifdef STANDARD_WEB_SOCKETS
@@ -61,7 +62,7 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t* payload, size_t length)
             //----------------------------------------------------------------------//
             if (headerStr == "/pi|") {
                 standWebSocket.sendTXT(num, "/po|");
-                Serial.printf("Ping client: %u\n", num);
+                //Serial.printf("Ping client: %u\n", num);
                 ws_clients[num]=1;
             }
             // публикация всех виджетов
@@ -73,10 +74,9 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t* payload, size_t length)
                 // публикация всех статус сообщений при подключении svelte приложения
                 String params = "{}";
                 for (std::list<IoTItem*>::iterator it = IoTItems.begin(); it != IoTItems.end(); ++it) {
-                    if ((*it)->getSubtype() != "Loging") {
-                        if ((*it)->getSubtype() != "LogingDaily") {
-                            if ((*it)->iAmLocal) jsonWriteStr(params, (*it)->getID(), (*it)->getValue());
-                        }
+                    const std::string& subtype = (*it)->getSubtype();
+                    if (subtype != "Loging" && subtype != "LogingDaily") {
+                        if ((*it)->iAmLocal) jsonWriteStr(params, String((*it)->getID().c_str()), (*it)->getValue());
                     }
                 }
                 sendStringToWs("params", params, num);
@@ -132,6 +132,22 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t* payload, size_t length)
                 // создаем событие завершения конфигурирования для возможности
                 // выполнения блока кода при загрузке
                 createItemFromNet("onStart", "1", 1);
+                if (HOMEdDiscovery)
+                    HOMEdDiscovery->mqttSubscribeDiscovery();
+                if (HADiscovery)
+                    HADiscovery->mqttSubscribeDiscovery();
+                // оттправляем все статусы
+                if (HOMEdDiscovery || HADiscovery)
+                {
+                    for (std::list<IoTItem *>::iterator it = IoTItems.begin(); it != IoTItems.end(); ++it)
+                        {
+                                if ((*it)->iAmLocal)
+                                {
+                                    publishStatusMqtt(String((*it)->getID().c_str()), (*it)->getValue());
+                                    (*it)->onMqttWsAppConnectEvent();
+                                }
+                        }
+                }
             }
 
             //----------------------------------------------------------------------//
@@ -162,10 +178,10 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t* payload, size_t length)
                 // если не было создано приема данных по udp - то создадим его
                 addThisDeviceToList();
 #ifdef WIFI_ASYNC                
-                settingsFlashJson = readFile(F("settings.json"), 4096);
+settingsFlashJson = readFile(F("settings.json"), 4096 * 8);
                 settingsFlashJson.replace("\r\n", "");
-                Serial.println(settingsFlashJson);
-                WiFiUtilsItit();
+                //Serial.println(settingsFlashJson);
+                //WiFiUtilsItit();
 #endif                
             }
 
@@ -356,7 +372,7 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t* payload, size_t length)
                 SerialPrint("i", F("=>WS"), "Msg from module, id: " + id);
 
                 for (std::list<IoTItem*>::iterator it = IoTItems.begin(); it != IoTItems.end(); ++it) {
-                    if ((*it)->getID() == id) {
+                    if ((*it)->getID() == id.c_str()) {
                         (*it)->onModuleOrder(key, value);
                     }
                 }
@@ -387,11 +403,11 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t* payload, size_t length)
         } break;
 
         case WStype_PING: {
-            Serial.printf("[%u] ping: %u\n", num, length);
+        //    Serial.printf("[%u] ping: %u\n", num, length);
         } break;
 
         case WStype_PONG: {
-            Serial.printf("[%u] pong: %u\n", num, length);
+        //    Serial.printf("[%u] pong: %u\n", num, length);
         } break;
 
         default: {
@@ -473,6 +489,11 @@ void sendFileToWsByFrames(const String& filename, const String& header, const St
 
     int i = 0;
     while (file.available()) {
+        // Сбрасываем watchdog во время длительной операции чтения/отправки
+#if defined(ESP32) && CONFIG_ESP_TASK_WDT_INIT
+        esp_task_wdt_reset();
+#endif
+        
         if (i == 0) {
             data.toCharArray((char*)frameBuf, frameSize);
             payloadBuf = &frameBuf[headerSize];

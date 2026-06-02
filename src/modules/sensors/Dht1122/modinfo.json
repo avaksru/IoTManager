@@ -10,8 +10,8 @@
             "widget": "anydataTmp",
             "page": "Сенсоры",
             "descr": "Температура",
-            "int": 15,
-            "pin": 0,
+            "int": 60,
+            "pin": 19,
             "senstype": "dht11"
         },
         {
@@ -23,8 +23,8 @@
             "widget": "anydataHum",
             "page": "Сенсоры",
             "descr": "Влажность",
-            "int": 15,
-            "pin": 0,
+            "int": 60,
+            "pin": 19,
             "senstype": "dht11"
         }
     ],

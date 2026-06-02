@@ -299,11 +299,30 @@ extern "C" void __wrap_esp_panic_handler(void *info)
 // 3 seconds WDT, reset in 1 seconds
 #define WDT_TIMEOUT 180
 
+static bool wdt_initialized = false;
+
 void startWatchDog()
 {
-#if !defined(esp32c6_4mb) && !defined(esp32c6_8mb) //TODO esp32-c6 переписать esp_task_wdt_init
-  esp_task_wdt_init(WDT_TIMEOUT, true); // enable panic so ESP32 restarts
-  esp_task_wdt_add(NULL);               // add current thread to WDT watch
+#if CONFIG_ESP_TASK_WDT_INIT
+  if (wdt_initialized) {
+    return; // Уже инициализировано
+  }
+  wdt_initialized = true;
+  
+#if defined(esp32c6_4mb) || defined(esp32c6_8mb) || defined(esp32s3_16mb)
+  // Для ESP32-C6 и ESP32-S3 watchdog отключен в setup() через esp_task_wdt_deinit()
+  // Serial.printf("[WDT] Task Watchdog disabled for ESP32-C6/S3\n");
+#else
+  // Для ESP32 (Xtensa классический) - инициализируем если ещё не инициализирован
+  esp_err_t err = esp_task_wdt_init(WDT_TIMEOUT, true);
+  if (err == ESP_ERR_INVALID_STATE) {
+    // TWDT уже инициализирован, это нормально
+  } else if (err != ESP_OK) {
+    Serial.printf("[WDT] init error: %d\n", err);
+  }
+  // Добавляем текущую задачу (loopTask) к наблюдению watchdog
+  esp_task_wdt_add(NULL);
+#endif
 #endif
 }
 

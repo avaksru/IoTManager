@@ -197,7 +197,9 @@ public:
     void createNewFileWithData(String &logData)
     {
         logData = logData + ",";
-        String path = "/lg3/" + id + "/" + String(unixTimeShort) + ".txt"; // создадим путь вида /lg/id/133256622333.txt
+        String dirPath = "/lg3/" + id;
+        mkdir(dirPath);  // Создаём директорию, если её нет
+        String path = dirPath + "/" + String(unixTimeShort) + ".txt"; // создадим путь вида /lg/id/133256622333.txt
         // создадим пустой файл
         if (writeEmptyFile(path) != "success")
         {

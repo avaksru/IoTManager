@@ -87,7 +87,7 @@
             }
         ]
     },
-    "defActive": false,
+    "defActive": true,
     "usedLibs": {
         "esp32*": [
             "dfrobot/DFRobotDFPlayerMini @ ^1.0.5"

@@ -57,14 +57,14 @@ public:
             {
                 if (_debug)
                 {
-                    SerialPrint("i", "ExternalMQTT", _id + " not equal: " + topic + " msg: " + msg);
+                    SerialPrint("i", "ExternalMQTT", String(_id.c_str()) + " not equal: " + topic + " msg: " + msg);
                 }
                 return;
             }
 
             if (_isJson)
             {
-                DynamicJsonDocument doc(JSON_BUFFER_SIZE);
+                JsonDocument doc;
                 DeserializationError error = deserializeJson(doc, msg);
                 if (error)
                 {
@@ -145,7 +145,7 @@ public:
                 if (_minutesPassed >= offline)
                 {
                     jsonWriteStr(json, F("info"), F("offline"));
-                    SerialPrint("i", "ExternalMQTT", _id + " - offline");
+                    SerialPrint("i", "ExternalMQTT", String(_id.c_str()) + " - offline");
                 }
             }
         }
@@ -153,7 +153,8 @@ public:
         {
             jsonWriteStr(json, F("info"), F("awaiting"));
         }
-        sendSubWidgetsValues(_id, json);
+        String idStr = String(_id.c_str());
+        sendSubWidgetsValues(idStr, json);
     }
     ~ExternalMQTT(){};
 };

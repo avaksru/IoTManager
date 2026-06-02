@@ -15,13 +15,13 @@ class HttpGet : public IoTItem {
             int httpResponseCode = http.POST(httpRequestData);
             String payload = http.getString();
             SerialPrint("<-", F("HttpPOST"), "URL: " + url + ", msg: " + msg);
-            SerialPrint("->", F("HttpPOST"), "URL: " + url + ", server: " + httpResponseCode);
+             SerialPrint("->", F("HttpPOST"), "URL: " + url + ", server: " + String(httpResponseCode));
 
             if (httpResponseCode > 0) {
-                value.valS = payload;
+                value.valS = payload.c_str();
                 value.isDecimal = false;
                 SerialPrint("->", F("HttpPOST"), "msg from server: " + (String)payload.c_str());
-                regEvent(value.valS, "HttpGet");
+                regEvent(String(value.valS.c_str()), "HttpGet");
             }
             http.end();
         }
@@ -42,12 +42,12 @@ class HttpGet : public IoTItem {
         int httpResponseCode = http.GET();
         String payload = http.getString();
         SerialPrint("<-", F("HttpGET"), "URL: " + url);
-        SerialPrint("->", F("HttpGET"), "URL: " + url + ", server: " + httpResponseCode);
+         SerialPrint("->", F("HttpGET"), "URL: " + url + ", server: " + String(httpResponseCode));
         if (httpResponseCode > 0) {
-            value.valS = payload;
+            value.valS = payload.c_str();
             value.isDecimal = false;
             SerialPrint("->", F("HttpGET"), "msg from server: " + (String)payload.c_str());
-            regEvent(value.valS, "HttpGet");
+            regEvent(String(value.valS.c_str()), "HttpGet");
         }
         http.end();
     }
@@ -56,11 +56,11 @@ class HttpGet : public IoTItem {
         if (param.size() > 0) {
             if (command == "get") {
                 if (param.size()) {
-                    sendHttpGET(param[0].valS);
+                    sendHttpGET(String(param[0].valS.c_str()));
                 }
             } else if (command == "post") {
                 if (param.size()) {
-                    sendHttpPOST(param[0].valS, param[1].valS);
+                    sendHttpPOST(String(param[0].valS.c_str()), String(param[1].valS.c_str()));
                 }
             }
         }

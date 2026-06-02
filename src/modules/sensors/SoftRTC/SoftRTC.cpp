@@ -274,8 +274,8 @@ public:
 
             IoTValue valTmp;
             valTmp.isDecimal = false;
-            valTmp.valS = (String)ut;
-            regEvent(valTmp.valS, F("SoftRTC"), _debug, true);
+            valTmp.valS = String(ut).c_str();
+            regEvent(String(valTmp.valS.c_str()), F("SoftRTC"), _debug, true);
         }
 #endif
 
@@ -391,10 +391,10 @@ public:
         }
         else if (syncStatus == SoftRTC_SYNC_STATUS_NOT_SET)
         {
-            valuesFlashJson = readFile(F("values.json"), 4096);
+valuesFlashJson = readFile(F("values.json"), 4096 * 8);
             valuesFlashJson.replace("\r\n", "");
             String valAsStr = "";
-            if (jsonRead(valuesFlashJson, _id, valAsStr, _debug))
+            if (jsonRead(valuesFlashJson, String(_id.c_str()), valAsStr, _debug))
             {
                 recovered_unixTime = valAsStr.toInt();
                 if (_debug)
@@ -435,8 +435,8 @@ public:
             if (_debug)
                 SerialPrint("I", F("SoftRTC"), "Сохраняем время: " + (String)unixTime);
             value.isDecimal = false;
-            value.valS = (String)unixTime;
-            regEvent(value.valS, F("SoftRTC"), _debug, _ticker);
+            value.valS = String(unixTime).c_str();
+            regEvent(String(value.valS.c_str()), F("SoftRTC"), _debug, _ticker);
         }
     }
 
@@ -460,8 +460,8 @@ public:
 
             IoTValue valTmp;
             valTmp.isDecimal = false;
-            valTmp.valS = (String)ut;
-            regEvent(valTmp.valS, F("SoftRTC"), _debug, _ticker);
+            valTmp.valS = String(ut).c_str();
+            regEvent(String(valTmp.valS.c_str()), F("SoftRTC"), _debug, _ticker);
         }
         else if (key == "setSysTime")
         {
@@ -481,8 +481,8 @@ public:
 
             IoTValue valTmp;
             valTmp.isDecimal = false;
-            valTmp.valS = (String)ut;
-            regEvent(valTmp.valS, F("SoftRTC"), _debug, _ticker);
+            valTmp.valS = String(ut).c_str();
+            regEvent(String(valTmp.valS.c_str()), F("SoftRTC"), _debug, _ticker);
         }
     }
 
@@ -519,7 +519,7 @@ public:
 
             IoTValue valTmp;
             valTmp.isDecimal = false;
-            valTmp.valS = localDateTime;
+            valTmp.valS = localDateTime.c_str();
             return valTmp;
         }
         else if (command == "getUTShort")
@@ -548,8 +548,8 @@ public:
 
                 IoTValue valTmp;
                 valTmp.isDecimal = false;
-                valTmp.valS = (String)ut;
-                regEvent(valTmp.valS, F("SoftRTC"), _debug, _ticker);
+                valTmp.valS = String(ut).c_str();
+                regEvent(String(valTmp.valS.c_str()), F("SoftRTC"), _debug, _ticker);
 
                 return {};
             }
@@ -573,8 +573,8 @@ public:
 
                 IoTValue valTmp;
                 valTmp.isDecimal = false;
-                valTmp.valS = (String)ut;
-                regEvent(valTmp.valS, F("SoftRTC"), _debug, _ticker);
+                valTmp.valS = String(ut).c_str();
+                regEvent(String(valTmp.valS.c_str()), F("SoftRTC"), _debug, _ticker);
 
                 return {};
             }
@@ -646,7 +646,7 @@ public:
         
             IoTValue valTmp;
             valTmp.isDecimal = false;
-            valTmp.valS = String(buf);   
+            valTmp.valS = String(buf).c_str();   
             return valTmp;
         }
         else if (command == "isOrthodoxEaster")

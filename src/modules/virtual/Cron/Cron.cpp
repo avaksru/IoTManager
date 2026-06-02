@@ -30,7 +30,7 @@ class Cron : public IoTItem {
             _pause = true;
             _nextAlarm = 0;
             memset(&_expr, 0, sizeof(_expr));
-            SerialPrint("E", "Cron", F("The Cron string did not apply."), _id);
+            SerialPrint("E", "Cron", F("The Cron string did not apply."), String(_id.c_str()));
         } else 
             updateNextAlarm(true);
     }
@@ -67,7 +67,7 @@ class Cron : public IoTItem {
         initCron();
         
         if (_needSave) {
-            jsonWriteStr_(valuesFlashJson, _id, value.valS);
+            jsonWriteStr_(valuesFlashJson, String(_id.c_str()), String(value.valS.c_str()));
             needSaveValues = true;
         }
 

@@ -45,7 +45,7 @@ class DwinI : public IoTUart {
                 IoTItem* item = findIoTItemByPartOfName(id);
                 if (item) {
                     //Serial.printf("received data: %s for VP: %s for ID: %s\n", valStr, buf, item->getID());
-                    generateOrder(item->getID(), valStr);
+                    generateOrder(String(item->getID().c_str()), valStr);
                 }
                 
                 _headerIndex = 0;
@@ -61,7 +61,7 @@ class DwinI : public IoTUart {
         int indexOf_;
         String printStr = "";
         
-        printStr = eventItem->getID();
+        printStr = String(eventItem->getID().c_str());
         indexOf_ = printStr.indexOf("_");
         uint8_t sizeOfVPPart = printStr.length() - indexOf_ - 1;
         if (indexOf_ == -1 || !_myUART || sizeOfVPPart < 4 || indexOf_ == 0)  return;  // пропускаем событие, если нет признака _ или признак пустой
@@ -93,7 +93,7 @@ class DwinI : public IoTUart {
 
         if (typeOfVP == 's') {
             if (eventItem->value.isDecimal) {
-                eventItem->value.valS = eventItem->getValue();
+                eventItem->value.valS = eventItem->getValue().c_str();
             }
 
             // подсчитываем количество символов отличающихся от ASCII, для понимания сколько символов состоит из дух байт

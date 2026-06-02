@@ -194,7 +194,9 @@ public:
     void createNewFileWithData(String &logData)
     {
         logData = logData + ",";
-        String path = "/lg/" + id + "/" + String(unixTimeShort) + ".txt"; // создадим путь вида /lg/id/133256622333.txt
+        String dirPath = "/lg/" + id;
+        mkdir(dirPath);  // Создаём директорию, если её нет
+        String path = dirPath + "/" + String(unixTimeShort) + ".txt"; // создадим путь вида /lg/id/133256622333.txt
         // создадим пустой файл
         if (writeEmptyFile(path) != "success")
         {
@@ -460,7 +462,7 @@ public:
         value = Value;
         this->SetDoByInterval(String(value.valD));
         SerialPrint("i", "Loging", "setValue:" + String(value.valD));
-        regEvent(value.valS, "Loging", false, genEvent);
+        regEvent(String(value.valS.c_str()), "Loging", false, genEvent);
     }
 };
 
@@ -491,20 +493,20 @@ public:
 
     void setValue(const String &valStr, bool genEvent = true)
     {
-        value.valS = valStr;
+        value.valS = valStr.c_str();
         setValue(value, genEvent);
     }
 
     void setValue(const IoTValue &Value, bool genEvent = true)
     {
         value = Value;
-        regEvent(value.valS, "", false, genEvent);
+        regEvent(String(value.valS.c_str()), "", false, genEvent);
         // отправка данных при изменении даты
         for (std::list<IoTItem *>::iterator it = IoTItems.begin(); it != IoTItems.end(); ++it)
         {
             if ((*it)->getSubtype() == "Loging")
             {
-                if ((*it)->getID() == selectToMarker(id, "-"))
+                if (String((*it)->getID().c_str()) == selectToMarker(id, "-"))
                 {
                     (*it)->setPublishDestination(TO_MQTT_WS, -1);
                     (*it)->publishValue();
