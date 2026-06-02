@@ -96,5 +96,3 @@
 |--------|--------|
 | 💬 **Telegram канал** | [@live_control](https://t.me/live_control) |
 | 🌐 **Wiki** | [live-control.com](https://live-control.com/wiki/) |
-
-
