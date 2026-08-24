@@ -1,5 +1,4 @@
 #include <SPI.h>
-#include "driver/spi_master.h"
 #include "utils/EthernetUtils.h"
 #include "utils/SerialPrint.h"
 #include "utils/JsonUtils.h"
@@ -38,6 +37,8 @@ void onEthEvent(WiFiEvent_t event) {
 }
 
 #elif defined(ESP32)
+
+#include "driver/spi_master.h"
 
 static EthernetStatus ethStatus = ETH_DISCONNECTED;
 static bool ethInitialized = false;

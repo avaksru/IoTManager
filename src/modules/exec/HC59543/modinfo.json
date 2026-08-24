@@ -1,0 +1,46 @@
+{
+    "menuSection": "executive_devices",
+    "configItem": [
+        {
+            "global": 0,
+            "name": "Сдвиговый регистр 74HC595",
+            "type": "Reading",
+            "subtype": "HC59543",
+            "id": "Hc5",
+            "widget": "",
+            "page": "",
+            "descr": "",
+            "int": "0",
+            "data": 14,
+            "clock": 13,
+            "latch": 12,
+            "oepin": 5,
+            "index": 1,
+            "chips": 1
+        }
+    ],
+    "about": {
+        "authorName": "IoTManager Community",
+        "authorContact": "",
+        "authorGit": "",
+        "specialThanks": "",
+        "moduleName": "HC59543",
+        "moduleVersion": "1.0",
+        "moduleDesc": "Добавляет в систему дополнительные GPIO через сдвиговый регистр 74HC595 (Serial-In Parallel-Out). Позволяет каскадировать до 4 микросхем, получая до 32 дополнительных выходов.",
+        "propInfo": {
+            "int": "Не используется",
+            "data": "GPIO пин для данных (DS, Serial Data Input)",
+            "clock": "GPIO пин для тактов сдвига (SH_CP, Shift Register Clock)",
+            "latch": "GPIO пин для защёлки (ST_CP, Storage Register / Latch Clock)",
+            "oepin": "GPIO пин для Output Enable (OE, active LOW). 0 = не используется / OE на GND",
+            "index": "Значения от 1 до 4, где при выборе 1 будет нумерация pin 100-107, при выборе 2 200-207 и т.д.",
+            "chips": "Количество каскадированных чипов 74HC595 (1-4). Каждый чип добавляет 8 выходов."
+        },
+        "title": "Расширитель портов 74HC595"
+    },
+    "defActive": true,
+    "usedLibs": {
+        "esp32*": [],
+        "esp82*": []
+    }
+}

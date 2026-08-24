@@ -1,0 +1,1443 @@
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from include/AsyncWebServer.h:2,
+                 from src\AsyncWebServer.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:39: warning: "MAX_SOCK_NUM" redefined
+   39 | #define MAX_SOCK_NUM 8
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/ESP8266WiFi.h:28,
+                 from include/Global.h:29,
+                 from include/AsyncWebServer.h:2,
+                 from src\AsyncWebServer.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/wl_definitions.h:42: note: this is the location of the previous definition
+   42 | #define MAX_SOCK_NUM  4
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from include/AsyncWebServer.h:2,
+                 from src\AsyncWebServer.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:150: warning: "UDP_TX_PACKET_MAX_SIZE" redefined
+  150 | #define UDP_TX_PACKET_MAX_SIZE 24
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266httpUpdate\src/ESP8266httpUpdate.h:32,
+                 from include/Global.h:30,
+                 from include/AsyncWebServer.h:2,
+                 from src\AsyncWebServer.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/WiFiUdp.h:28: note: this is the location of the previous definition
+   28 | #define UDP_TX_PACKET_MAX_SIZE 8192
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from include/DebugTrace.h:8,
+                 from src\DebugTrace.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:39: warning: "MAX_SOCK_NUM" redefined
+   39 | #define MAX_SOCK_NUM 8
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/ESP8266WiFi.h:28,
+                 from include/Global.h:29,
+                 from include/DebugTrace.h:8,
+                 from src\DebugTrace.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/wl_definitions.h:42: note: this is the location of the previous definition
+   42 | #define MAX_SOCK_NUM  4
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from include/DebugTrace.h:8,
+                 from src\DebugTrace.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:150: warning: "UDP_TX_PACKET_MAX_SIZE" redefined
+  150 | #define UDP_TX_PACKET_MAX_SIZE 24
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266httpUpdate\src/ESP8266httpUpdate.h:32,
+                 from include/Global.h:30,
+                 from include/DebugTrace.h:8,
+                 from src\DebugTrace.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/WiFiUdp.h:28: note: this is the location of the previous definition
+   28 | #define UDP_TX_PACKET_MAX_SIZE 8192
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from include/DeviceList.h:2,
+                 from src\DeviceList.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:39: warning: "MAX_SOCK_NUM" redefined
+   39 | #define MAX_SOCK_NUM 8
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/ESP8266WiFi.h:28,
+                 from include/Global.h:29,
+                 from include/DeviceList.h:2,
+                 from src\DeviceList.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/wl_definitions.h:42: note: this is the location of the previous definition
+   42 | #define MAX_SOCK_NUM  4
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from include/DeviceList.h:2,
+                 from src\DeviceList.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:150: warning: "UDP_TX_PACKET_MAX_SIZE" redefined
+  150 | #define UDP_TX_PACKET_MAX_SIZE 24
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266httpUpdate\src/ESP8266httpUpdate.h:32,
+                 from include/Global.h:30,
+                 from include/DeviceList.h:2,
+                 from src\DeviceList.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/WiFiUdp.h:28: note: this is the location of the previous definition
+   28 | #define UDP_TX_PACKET_MAX_SIZE 8192
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from include/EspFileSystem.h:2,
+                 from src\EspFileSystem.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:39: warning: "MAX_SOCK_NUM" redefined
+   39 | #define MAX_SOCK_NUM 8
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/ESP8266WiFi.h:28,
+                 from include/Global.h:29,
+                 from include/EspFileSystem.h:2,
+                 from src\EspFileSystem.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/wl_definitions.h:42: note: this is the location of the previous definition
+   42 | #define MAX_SOCK_NUM  4
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from include/EspFileSystem.h:2,
+                 from src\EspFileSystem.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:150: warning: "UDP_TX_PACKET_MAX_SIZE" redefined
+  150 | #define UDP_TX_PACKET_MAX_SIZE 24
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266httpUpdate\src/ESP8266httpUpdate.h:32,
+                 from include/Global.h:30,
+                 from include/EspFileSystem.h:2,
+                 from src\EspFileSystem.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/WiFiUdp.h:28: note: this is the location of the previous definition
+   28 | #define UDP_TX_PACKET_MAX_SIZE 8192
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from include/ESPConfiguration.h:2,
+                 from src\ESPConfiguration.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:39: warning: "MAX_SOCK_NUM" redefined
+   39 | #define MAX_SOCK_NUM 8
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/ESP8266WiFi.h:28,
+                 from include/Global.h:29,
+                 from include/ESPConfiguration.h:2,
+                 from src\ESPConfiguration.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/wl_definitions.h:42: note: this is the location of the previous definition
+   42 | #define MAX_SOCK_NUM  4
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from include/ESPConfiguration.h:2,
+                 from src\ESPConfiguration.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:150: warning: "UDP_TX_PACKET_MAX_SIZE" redefined
+  150 | #define UDP_TX_PACKET_MAX_SIZE 24
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266httpUpdate\src/ESP8266httpUpdate.h:32,
+                 from include/Global.h:30,
+                 from include/ESPConfiguration.h:2,
+                 from src\ESPConfiguration.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/WiFiUdp.h:28: note: this is the location of the previous definition
+   28 | #define UDP_TX_PACKET_MAX_SIZE 8192
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from include/EventsAndOrders.h:2,
+                 from src\EventsAndOrders.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:39: warning: "MAX_SOCK_NUM" redefined
+   39 | #define MAX_SOCK_NUM 8
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/ESP8266WiFi.h:28,
+                 from include/Global.h:29,
+                 from include/EventsAndOrders.h:2,
+                 from src\EventsAndOrders.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/wl_definitions.h:42: note: this is the location of the previous definition
+   42 | #define MAX_SOCK_NUM  4
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from include/EventsAndOrders.h:2,
+                 from src\EventsAndOrders.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:150: warning: "UDP_TX_PACKET_MAX_SIZE" redefined
+  150 | #define UDP_TX_PACKET_MAX_SIZE 24
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266httpUpdate\src/ESP8266httpUpdate.h:32,
+                 from include/Global.h:30,
+                 from include/EventsAndOrders.h:2,
+                 from src\EventsAndOrders.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/WiFiUdp.h:28: note: this is the location of the previous definition
+   28 | #define UDP_TX_PACKET_MAX_SIZE 8192
+      | 
+src\DeviceList.cpp: In function 'void jsonMergeArrays(String&, String&)':
+src\DeviceList.cpp:117:26: warning: variable 'incJsonError' set but not used [-Wunused-but-set-variable]
+  117 |     DeserializationError incJsonError = deserializeJson(incJsonDoc, incJson);
+      |                          ^~~~~~~~~~~~
+src\DeviceList.cpp:125:26: warning: variable 'existJsonError' set but not used [-Wunused-but-set-variable]
+  125 |     DeserializationError existJsonError = deserializeJson(existJsonDoc, existJson);
+      |                          ^~~~~~~~~~~~~~
+src\ESPConfiguration.cpp: In function 'void configure(String)':
+src\ESPConfiguration.cpp:40:32: warning: suggest parentheses around assignment used as truth value [-Wparentheses]
+   40 |                     if (driver = myIoTItem->getGpioDriver()) IoTgpio.regDriver((IoTGpio*)driver);
+      |                         ~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+src\ESPConfiguration.cpp:48:32: warning: suggest parentheses around assignment used as truth value [-Wparentheses]
+   48 |                     if (driver = myIoTItem->getBenchmarkTask()) benchTaskItem = ((IoTBench*)driver);
+      |                         ~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+src\ESPConfiguration.cpp:49:32: warning: suggest parentheses around assignment used as truth value [-Wparentheses]
+   49 |                     if (driver = myIoTItem->getBenchmarkLoad()) benchLoadItem = ((IoTBench*)driver);
+      |                         ~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+src\ESPConfiguration.cpp:51:32: warning: suggest parentheses around assignment used as truth value [-Wparentheses]
+   51 |                     if (driver = myIoTItem->getHOMEdDiscovery()) HOMEdDiscovery = ((IoTDiscovery*)driver);
+      |                         ~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+src\ESPConfiguration.cpp:52:32: warning: suggest parentheses around assignment used as truth value [-Wparentheses]
+   52 |                     if (driver = myIoTItem->getHADiscovery()) HADiscovery = ((IoTDiscovery*)driver);
+      |                         ~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+src\ESPConfiguration.cpp:54:32: warning: suggest parentheses around assignment used as truth value [-Wparentheses]
+   54 |                     if (driver = myIoTItem->getTlgrmDriver()) tlgrmItem = (IoTItem*)driver;
+      |                         ~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\tools\sdk\lwip2\include/glue.h:60,
+                 from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\tools\sdk\lwip2\include/arch/cc.h:61,
+                 from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\tools\sdk\lwip2\include/lwip/arch.h:48,
+                 from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\tools\sdk\lwip2\include/lwip/debug.h:40,
+                 from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\tools\sdk\lwip2\include/lwipopts.h:3632,
+                 from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\tools\sdk\lwip2\include/lwip/opt.h:51,
+                 from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\tools\sdk\lwip2\include/lwip/init.h:40,
+                 from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/IPAddress.h:27,
+                 from .pio\libdeps\esp8266_4mb\PubSubClient\src/PubSubClient.h:11,
+                 from include/Global.h:9,
+                 from include/EspFileSystem.h:2,
+                 from src\EspFileSystem.cpp:1:
+src\EspFileSystem.cpp: In function 'const String getMacAddress()':
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\tools\sdk\include/user_interface.h:48:16: warning: '%02x' directive writing 2 bytes into a region of size 1 [-Wformat-overflow=]
+   48 | #define MACSTR "%02x:%02x:%02x:%02x:%02x:%02x"
+      |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+src\EspFileSystem.cpp:168:18: note: in expansion of macro 'MACSTR'
+  168 |     sprintf(buf, MACSTR, MAC2STR(mac));
+      |                  ^~~~~~
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\tools\sdk\include/user_interface.h:48:37: note: format string is defined here
+   48 | #define MACSTR "%02x:%02x:%02x:%02x:%02x:%02x"
+      |                                     ^~~~
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\tools\sdk\include/user_interface.h:48:16: note: directive argument in the range [0, 255]
+   48 | #define MACSTR "%02x:%02x:%02x:%02x:%02x:%02x"
+      |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+src\EspFileSystem.cpp:168:18: note: in expansion of macro 'MACSTR'
+  168 |     sprintf(buf, MACSTR, MAC2STR(mac));
+      |                  ^~~~~~
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\tools\sdk\include/user_interface.h:48:16: note: directive argument in the range [0, 255]
+   48 | #define MACSTR "%02x:%02x:%02x:%02x:%02x:%02x"
+      |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+src\EspFileSystem.cpp:168:18: note: in expansion of macro 'MACSTR'
+  168 |     sprintf(buf, MACSTR, MAC2STR(mac));
+      |                  ^~~~~~
+src\EspFileSystem.cpp:168:12: note: 'sprintf' output 18 bytes into a destination of size 13
+  168 |     sprintf(buf, MACSTR, MAC2STR(mac));
+      |     ~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from src\Global.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:39: warning: "MAX_SOCK_NUM" redefined
+   39 | #define MAX_SOCK_NUM 8
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/ESP8266WiFi.h:28,
+                 from include/Global.h:29,
+                 from src\Global.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/wl_definitions.h:42: note: this is the location of the previous definition
+   42 | #define MAX_SOCK_NUM  4
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from src\Global.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:150: warning: "UDP_TX_PACKET_MAX_SIZE" redefined
+  150 | #define UDP_TX_PACKET_MAX_SIZE 24
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266httpUpdate\src/ESP8266httpUpdate.h:32,
+                 from include/Global.h:30,
+                 from src\Global.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/WiFiUdp.h:28: note: this is the location of the previous definition
+   28 | #define UDP_TX_PACKET_MAX_SIZE 8192
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from include/EspFileSystem.h:2,
+                 from include/Main.h:3,
+                 from src\Main.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:39: warning: "MAX_SOCK_NUM" redefined
+   39 | #define MAX_SOCK_NUM 8
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/ESP8266WiFi.h:28,
+                 from include/Global.h:29,
+                 from include/EspFileSystem.h:2,
+                 from include/Main.h:3,
+                 from src\Main.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/wl_definitions.h:42: note: this is the location of the previous definition
+   42 | #define MAX_SOCK_NUM  4
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from include/EspFileSystem.h:2,
+                 from include/Main.h:3,
+                 from src\Main.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:150: warning: "UDP_TX_PACKET_MAX_SIZE" redefined
+  150 | #define UDP_TX_PACKET_MAX_SIZE 24
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266httpUpdate\src/ESP8266httpUpdate.h:32,
+                 from include/Global.h:30,
+                 from include/EspFileSystem.h:2,
+                 from include/Main.h:3,
+                 from src\Main.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/WiFiUdp.h:28: note: this is the location of the previous definition
+   28 | #define UDP_TX_PACKET_MAX_SIZE 8192
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from include/MqttClient.h:4,
+                 from src\MqttClient.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:39: warning: "MAX_SOCK_NUM" redefined
+   39 | #define MAX_SOCK_NUM 8
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/ESP8266WiFi.h:28,
+                 from include/Global.h:29,
+                 from include/MqttClient.h:4,
+                 from src\MqttClient.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/wl_definitions.h:42: note: this is the location of the previous definition
+   42 | #define MAX_SOCK_NUM  4
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from include/MqttClient.h:4,
+                 from src\MqttClient.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:150: warning: "UDP_TX_PACKET_MAX_SIZE" redefined
+  150 | #define UDP_TX_PACKET_MAX_SIZE 24
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266httpUpdate\src/ESP8266httpUpdate.h:32,
+                 from include/Global.h:30,
+                 from include/MqttClient.h:4,
+                 from src\MqttClient.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/WiFiUdp.h:28: note: this is the location of the previous definition
+   28 | #define UDP_TX_PACKET_MAX_SIZE 8192
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from include/PeriodicTasks.h:2,
+                 from src\PeriodicTasks.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:39: warning: "MAX_SOCK_NUM" redefined
+   39 | #define MAX_SOCK_NUM 8
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/ESP8266WiFi.h:28,
+                 from include/Global.h:29,
+                 from include/PeriodicTasks.h:2,
+                 from src\PeriodicTasks.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/wl_definitions.h:42: note: this is the location of the previous definition
+   42 | #define MAX_SOCK_NUM  4
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from include/PeriodicTasks.h:2,
+                 from src\PeriodicTasks.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:150: warning: "UDP_TX_PACKET_MAX_SIZE" redefined
+  150 | #define UDP_TX_PACKET_MAX_SIZE 24
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266httpUpdate\src/ESP8266httpUpdate.h:32,
+                 from include/Global.h:30,
+                 from include/PeriodicTasks.h:2,
+                 from src\PeriodicTasks.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/WiFiUdp.h:28: note: this is the location of the previous definition
+   28 | #define UDP_TX_PACKET_MAX_SIZE 8192
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from include/NTP.h:3,
+                 from src\NTP.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:39: warning: "MAX_SOCK_NUM" redefined
+   39 | #define MAX_SOCK_NUM 8
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/ESP8266WiFi.h:28,
+                 from include/Global.h:29,
+                 from include/NTP.h:3,
+                 from src\NTP.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/wl_definitions.h:42: note: this is the location of the previous definition
+   42 | #define MAX_SOCK_NUM  4
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from include/NTP.h:3,
+                 from src\NTP.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:150: warning: "UDP_TX_PACKET_MAX_SIZE" redefined
+  150 | #define UDP_TX_PACKET_MAX_SIZE 24
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266httpUpdate\src/ESP8266httpUpdate.h:32,
+                 from include/Global.h:30,
+                 from include/NTP.h:3,
+                 from src\NTP.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/WiFiUdp.h:28: note: this is the location of the previous definition
+   28 | #define UDP_TX_PACKET_MAX_SIZE 8192
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from include/StandWebServer.h:2,
+                 from src\StandWebServer.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:39: warning: "MAX_SOCK_NUM" redefined
+   39 | #define MAX_SOCK_NUM 8
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/ESP8266WiFi.h:28,
+                 from include/Global.h:29,
+                 from include/StandWebServer.h:2,
+                 from src\StandWebServer.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/wl_definitions.h:42: note: this is the location of the previous definition
+   42 | #define MAX_SOCK_NUM  4
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from include/StandWebServer.h:2,
+                 from src\StandWebServer.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:150: warning: "UDP_TX_PACKET_MAX_SIZE" redefined
+  150 | #define UDP_TX_PACKET_MAX_SIZE 24
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266httpUpdate\src/ESP8266httpUpdate.h:32,
+                 from include/Global.h:30,
+                 from include/StandWebServer.h:2,
+                 from src\StandWebServer.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/WiFiUdp.h:28: note: this is the location of the previous definition
+   28 | #define UDP_TX_PACKET_MAX_SIZE 8192
+      | 
+src\MqttClient.cpp: In function 'boolean mqttConnect()':
+src\MqttClient.cpp:72:14: warning: variable 'connected' set but not used [-Wunused-but-set-variable]
+   72 |         bool connected = false;
+      |              ^~~~~~~~~
+src\MqttClient.cpp: In function 'void publishWidgets()':
+src\MqttClient.cpp:333:12: warning: unused variable 'size' [-Wunused-variable]
+  333 |     size_t size = file.size();
+      |            ^~~~
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from include/UpgradeFirm.h:2,
+                 from src\UpgradeFirm.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:39: warning: "MAX_SOCK_NUM" redefined
+   39 | #define MAX_SOCK_NUM 8
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/ESP8266WiFi.h:28,
+                 from include/Global.h:29,
+                 from include/UpgradeFirm.h:2,
+                 from src\UpgradeFirm.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/wl_definitions.h:42: note: this is the location of the previous definition
+   42 | #define MAX_SOCK_NUM  4
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from include/UpgradeFirm.h:2,
+                 from src\UpgradeFirm.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:150: warning: "UDP_TX_PACKET_MAX_SIZE" redefined
+  150 | #define UDP_TX_PACKET_MAX_SIZE 24
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266httpUpdate\src/ESP8266httpUpdate.h:32,
+                 from include/Global.h:30,
+                 from include/UpgradeFirm.h:2,
+                 from src\UpgradeFirm.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/WiFiUdp.h:28: note: this is the location of the previous definition
+   28 | #define UDP_TX_PACKET_MAX_SIZE 8192
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from include/WsServer.h:2,
+                 from src\WsServer.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:39: warning: "MAX_SOCK_NUM" redefined
+   39 | #define MAX_SOCK_NUM 8
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/ESP8266WiFi.h:28,
+                 from include/Global.h:29,
+                 from include/WsServer.h:2,
+                 from src\WsServer.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/wl_definitions.h:42: note: this is the location of the previous definition
+   42 | #define MAX_SOCK_NUM  4
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from include/WsServer.h:2,
+                 from src\WsServer.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:150: warning: "UDP_TX_PACKET_MAX_SIZE" redefined
+  150 | #define UDP_TX_PACKET_MAX_SIZE 24
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266httpUpdate\src/ESP8266httpUpdate.h:32,
+                 from include/Global.h:30,
+                 from include/WsServer.h:2,
+                 from src\WsServer.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/WiFiUdp.h:28: note: this is the location of the previous definition
+   28 | #define UDP_TX_PACKET_MAX_SIZE 8192
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from src\classes\IoTBench.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:39: warning: "MAX_SOCK_NUM" redefined
+   39 | #define MAX_SOCK_NUM 8
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/ESP8266WiFi.h:28,
+                 from include/Global.h:29,
+                 from src\classes\IoTBench.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/wl_definitions.h:42: note: this is the location of the previous definition
+   42 | #define MAX_SOCK_NUM  4
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from src\classes\IoTBench.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:150: warning: "UDP_TX_PACKET_MAX_SIZE" redefined
+  150 | #define UDP_TX_PACKET_MAX_SIZE 24
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266httpUpdate\src/ESP8266httpUpdate.h:32,
+                 from include/Global.h:30,
+                 from src\classes\IoTBench.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/WiFiUdp.h:28: note: this is the location of the previous definition
+   28 | #define UDP_TX_PACKET_MAX_SIZE 8192
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from include/classes/IoTDB.h:2,
+                 from src\classes\IoTDB.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:39: warning: "MAX_SOCK_NUM" redefined
+   39 | #define MAX_SOCK_NUM 8
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/ESP8266WiFi.h:28,
+                 from include/Global.h:29,
+                 from include/classes/IoTDB.h:2,
+                 from src\classes\IoTDB.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/wl_definitions.h:42: note: this is the location of the previous definition
+   42 | #define MAX_SOCK_NUM  4
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from include/classes/IoTDB.h:2,
+                 from src\classes\IoTDB.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:150: warning: "UDP_TX_PACKET_MAX_SIZE" redefined
+  150 | #define UDP_TX_PACKET_MAX_SIZE 24
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266httpUpdate\src/ESP8266httpUpdate.h:32,
+                 from include/Global.h:30,
+                 from include/classes/IoTDB.h:2,
+                 from src\classes\IoTDB.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/WiFiUdp.h:28: note: this is the location of the previous definition
+   28 | #define UDP_TX_PACKET_MAX_SIZE 8192
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from src\classes\IoTDiscovery.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:39: warning: "MAX_SOCK_NUM" redefined
+   39 | #define MAX_SOCK_NUM 8
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/ESP8266WiFi.h:28,
+                 from include/Global.h:29,
+                 from src\classes\IoTDiscovery.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/wl_definitions.h:42: note: this is the location of the previous definition
+   42 | #define MAX_SOCK_NUM  4
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from src\classes\IoTDiscovery.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:150: warning: "UDP_TX_PACKET_MAX_SIZE" redefined
+  150 | #define UDP_TX_PACKET_MAX_SIZE 24
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266httpUpdate\src/ESP8266httpUpdate.h:32,
+                 from include/Global.h:30,
+                 from src\classes\IoTDiscovery.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/WiFiUdp.h:28: note: this is the location of the previous definition
+   28 | #define UDP_TX_PACKET_MAX_SIZE 8192
+      | 
+src\UpgradeFirm.cpp: In function 'bool upgradeBuild(String)':
+src\UpgradeFirm.cpp:307:25: warning: unused variable 'retBuild' [-Wunused-variable]
+  307 |     t_httpUpdate_return retBuild = ESPhttpUpdate.update(wifiClient, path + "/firmware.bin");
+      |                         ^~~~~~~~
+src\WsServer.cpp: In function 'void sendFileToWsByFrames(const String&, const String&, const String&, int, size_t)':
+src\WsServer.cpp:479:12: warning: unused variable 'totalSize' [-Wunused-variable]
+  479 |     size_t totalSize = file.size();
+      |            ^~~~~~~~~
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from include/utils/JsonUtils.h:3,
+                 from src\classes\IoTItem.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:39: warning: "MAX_SOCK_NUM" redefined
+   39 | #define MAX_SOCK_NUM 8
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/ESP8266WiFi.h:28,
+                 from include/Global.h:29,
+                 from include/utils/JsonUtils.h:3,
+                 from src\classes\IoTItem.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/wl_definitions.h:42: note: this is the location of the previous definition
+   42 | #define MAX_SOCK_NUM  4
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from include/utils/JsonUtils.h:3,
+                 from src\classes\IoTItem.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:150: warning: "UDP_TX_PACKET_MAX_SIZE" redefined
+  150 | #define UDP_TX_PACKET_MAX_SIZE 24
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266httpUpdate\src/ESP8266httpUpdate.h:32,
+                 from include/Global.h:30,
+                 from include/utils/JsonUtils.h:3,
+                 from src\classes\IoTItem.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/WiFiUdp.h:28: note: this is the location of the previous definition
+   28 | #define UDP_TX_PACKET_MAX_SIZE 8192
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from src\classes\IoTScenario.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:39: warning: "MAX_SOCK_NUM" redefined
+   39 | #define MAX_SOCK_NUM 8
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/ESP8266WiFi.h:28,
+                 from include/Global.h:29,
+                 from src\classes\IoTScenario.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/wl_definitions.h:42: note: this is the location of the previous definition
+   42 | #define MAX_SOCK_NUM  4
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from src\classes\IoTScenario.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:150: warning: "UDP_TX_PACKET_MAX_SIZE" redefined
+  150 | #define UDP_TX_PACKET_MAX_SIZE 24
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266httpUpdate\src/ESP8266httpUpdate.h:32,
+                 from include/Global.h:30,
+                 from src\classes\IoTScenario.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/WiFiUdp.h:28: note: this is the location of the previous definition
+   28 | #define UDP_TX_PACKET_MAX_SIZE 8192
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from src\classes\IoTUart.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:39: warning: "MAX_SOCK_NUM" redefined
+   39 | #define MAX_SOCK_NUM 8
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/ESP8266WiFi.h:28,
+                 from include/Global.h:29,
+                 from src\classes\IoTUart.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/wl_definitions.h:42: note: this is the location of the previous definition
+   42 | #define MAX_SOCK_NUM  4
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from src\classes\IoTUart.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:150: warning: "UDP_TX_PACKET_MAX_SIZE" redefined
+  150 | #define UDP_TX_PACKET_MAX_SIZE 24
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266httpUpdate\src/ESP8266httpUpdate.h:32,
+                 from include/Global.h:30,
+                 from src\classes\IoTUart.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/WiFiUdp.h:28: note: this is the location of the previous definition
+   28 | #define UDP_TX_PACKET_MAX_SIZE 8192
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from include/ESPConfiguration.h:2,
+                 from src\modules\API.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:39: warning: "MAX_SOCK_NUM" redefined
+   39 | #define MAX_SOCK_NUM 8
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/ESP8266WiFi.h:28,
+                 from include/Global.h:29,
+                 from include/ESPConfiguration.h:2,
+                 from src\modules\API.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/wl_definitions.h:42: note: this is the location of the previous definition
+   42 | #define MAX_SOCK_NUM  4
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from include/ESPConfiguration.h:2,
+                 from src\modules\API.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:150: warning: "UDP_TX_PACKET_MAX_SIZE" redefined
+  150 | #define UDP_TX_PACKET_MAX_SIZE 24
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266httpUpdate\src/ESP8266httpUpdate.h:32,
+                 from include/Global.h:30,
+                 from include/ESPConfiguration.h:2,
+                 from src\modules\API.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/WiFiUdp.h:28: note: this is the location of the previous definition
+   28 | #define UDP_TX_PACKET_MAX_SIZE 8192
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from src\modules\exec\ButtonIn\ButtonIn.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:39: warning: "MAX_SOCK_NUM" redefined
+   39 | #define MAX_SOCK_NUM 8
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/ESP8266WiFi.h:28,
+                 from include/Global.h:29,
+                 from src\modules\exec\ButtonIn\ButtonIn.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/wl_definitions.h:42: note: this is the location of the previous definition
+   42 | #define MAX_SOCK_NUM  4
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from src\modules\exec\ButtonIn\ButtonIn.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:150: warning: "UDP_TX_PACKET_MAX_SIZE" redefined
+  150 | #define UDP_TX_PACKET_MAX_SIZE 24
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266httpUpdate\src/ESP8266httpUpdate.h:32,
+                 from include/Global.h:30,
+                 from src\modules\exec\ButtonIn\ButtonIn.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/WiFiUdp.h:28: note: this is the location of the previous definition
+   28 | #define UDP_TX_PACKET_MAX_SIZE 8192
+      | 
+src\classes\IoTScenario.cpp: In member function 'bool BinaryExprAST::compStr(String, String)':
+src\classes\IoTScenario.cpp:251:27: warning: comparison of integer expressions of different signedness: 'int' and 'unsigned int' [-Wsign-compare]
+  251 |         for (int i = 0; i < str1.length(); i++) {
+      |                         ~~^~~~~~~~~~~~~~~
+src\classes\IoTScenario.cpp: In function 'IoTValue sysExecute(SysOp, std::vector<IoTValue>&)':
+src\classes\IoTScenario.cpp:372:16: warning: enumeration value 'sysop_notfound' not handled in switch [-Wswitch]
+  372 |         switch (command) {
+      |                ^
+src\classes\IoTScenario.cpp:372:16: warning: enumeration value 'sysop_reboot' not handled in switch [-Wswitch]
+src\classes\IoTScenario.cpp:372:16: warning: enumeration value 'sysop_digitalRead' not handled in switch [-Wswitch]
+src\classes\IoTScenario.cpp:372:16: warning: enumeration value 'sysop_analogRead' not handled in switch [-Wswitch]
+src\classes\IoTScenario.cpp:372:16: warning: enumeration value 'sysop_digitalWrite' not handled in switch [-Wswitch]
+src\classes\IoTScenario.cpp:372:16: warning: enumeration value 'sysop_digitalInvert' not handled in switch [-Wswitch]
+src\classes\IoTScenario.cpp:372:16: warning: enumeration value 'sysop_deepSleep' not handled in switch [-Wswitch]
+src\classes\IoTScenario.cpp:372:16: warning: enumeration value 'sysop_getRSSI' not handled in switch [-Wswitch]
+src\classes\IoTScenario.cpp:372:16: warning: enumeration value 'sysop_getIP' not handled in switch [-Wswitch]
+src\classes\IoTScenario.cpp:372:16: warning: enumeration value 'sysop_mqttPub' not handled in switch [-Wswitch]
+src\classes\IoTScenario.cpp:372:16: warning: enumeration value 'sysop_getUptime' not handled in switch [-Wswitch]
+src\classes\IoTScenario.cpp:372:16: warning: enumeration value 'sysop_mqttIsConnect' not handled in switch [-Wswitch]
+src\classes\IoTScenario.cpp:372:16: warning: enumeration value 'sysop_wifiIsConnect' not handled in switch [-Wswitch]
+src\classes\IoTScenario.cpp:372:16: warning: enumeration value 'sysop_setInterval' not handled in switch [-Wswitch]
+src\classes\IoTScenario.cpp:372:16: warning: enumeration value 'sysop_addPortMap' not handled in switch [-Wswitch]
+src\classes\IoTScenario.cpp:406:12: warning: enumeration value 'sysop_notfound' not handled in switch [-Wswitch]
+  406 |     switch (command) {
+      |            ^
+src\classes\IoTScenario.cpp:406:12: warning: enumeration value 'sysop_getHours' not handled in switch [-Wswitch]
+src\classes\IoTScenario.cpp:406:12: warning: enumeration value 'sysop_getMinutes' not handled in switch [-Wswitch]
+src\classes\IoTScenario.cpp:406:12: warning: enumeration value 'sysop_getSeconds' not handled in switch [-Wswitch]
+src\classes\IoTScenario.cpp:406:12: warning: enumeration value 'sysop_getMonth' not handled in switch [-Wswitch]
+src\classes\IoTScenario.cpp:406:12: warning: enumeration value 'sysop_getDay' not handled in switch [-Wswitch]
+src\classes\IoTScenario.cpp:406:12: warning: enumeration value 'sysop_gethhmm' not handled in switch [-Wswitch]
+src\classes\IoTScenario.cpp:406:12: warning: enumeration value 'sysop_gethhmmss' not handled in switch [-Wswitch]
+src\classes\IoTScenario.cpp:406:12: warning: enumeration value 'sysop_getTime' not handled in switch [-Wswitch]
+src\classes\IoTScenario.cpp: In member function 'virtual IoTValue* IfExprAST::exec()':
+src\classes\IoTScenario.cpp:610:33: warning: suggest parentheses around '&&' within '||' [-Wparentheses]
+  610 |         if (cond_ret->isDecimal && cond_ret->valD || !(cond_ret->isDecimal) && cond_ret->valS != "") {
+      |             ~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~
+src\classes\IoTScenario.cpp:599:19: warning: variable 'res_ret' set but not used [-Wunused-but-set-variable]
+  599 |         IoTValue *res_ret = nullptr;
+      |                   ^~~~~~~
+src\classes\IoTScenario.cpp: In member function 'int IoTScenario::getLastChar()':
+src\classes\IoTScenario.cpp:680:23: warning: comparison of integer expressions of different signedness: 'int' and 'unsigned int' [-Wsign-compare]
+  680 |         if (charCount < strFromFile.length()) {
+      |             ~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from src\modules\exec\ButtonOut\ButtonOut.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:39: warning: "MAX_SOCK_NUM" redefined
+   39 | #define MAX_SOCK_NUM 8
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/ESP8266WiFi.h:28,
+                 from include/Global.h:29,
+                 from src\modules\exec\ButtonOut\ButtonOut.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/wl_definitions.h:42: note: this is the location of the previous definition
+   42 | #define MAX_SOCK_NUM  4
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from src\modules\exec\ButtonOut\ButtonOut.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:150: warning: "UDP_TX_PACKET_MAX_SIZE" redefined
+  150 | #define UDP_TX_PACKET_MAX_SIZE 24
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266httpUpdate\src/ESP8266httpUpdate.h:32,
+                 from include/Global.h:30,
+                 from src\modules\exec\ButtonOut\ButtonOut.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/WiFiUdp.h:28: note: this is the location of the previous definition
+   28 | #define UDP_TX_PACKET_MAX_SIZE 8192
+      | 
+src\modules\exec\ButtonIn\ButtonIn.cpp: In member function 'virtual void ButtonIn::loop()':
+src\modules\exec\ButtonIn\ButtonIn.cpp:44:44: warning: comparison of integer expressions of different signedness: 'long unsigned int' and 'int' [-Wsign-compare]
+   44 |         if ((millis() - _lastDebounceTime) > _debounceDelay) {
+      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from src\modules\exec\HC59543\HC59543.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:39: warning: "MAX_SOCK_NUM" redefined
+   39 | #define MAX_SOCK_NUM 8
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/ESP8266WiFi.h:28,
+                 from include/Global.h:29,
+                 from src\modules\exec\HC59543\HC59543.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/wl_definitions.h:42: note: this is the location of the previous definition
+   42 | #define MAX_SOCK_NUM  4
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from src\modules\exec\HC59543\HC59543.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:150: warning: "UDP_TX_PACKET_MAX_SIZE" redefined
+  150 | #define UDP_TX_PACKET_MAX_SIZE 24
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266httpUpdate\src/ESP8266httpUpdate.h:32,
+                 from include/Global.h:30,
+                 from src\modules\exec\HC59543\HC59543.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/WiFiUdp.h:28: note: this is the location of the previous definition
+   28 | #define UDP_TX_PACKET_MAX_SIZE 8192
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from src\modules\exec\TelegramLT\TelegramLT.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:39: warning: "MAX_SOCK_NUM" redefined
+   39 | #define MAX_SOCK_NUM 8
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/ESP8266WiFi.h:28,
+                 from include/Global.h:29,
+                 from src\modules\exec\TelegramLT\TelegramLT.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/wl_definitions.h:42: note: this is the location of the previous definition
+   42 | #define MAX_SOCK_NUM  4
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from src\modules\exec\TelegramLT\TelegramLT.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:150: warning: "UDP_TX_PACKET_MAX_SIZE" redefined
+  150 | #define UDP_TX_PACKET_MAX_SIZE 24
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266httpUpdate\src/ESP8266httpUpdate.h:32,
+                 from include/Global.h:30,
+                 from src\modules\exec\TelegramLT\TelegramLT.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/WiFiUdp.h:28: note: this is the location of the previous definition
+   28 | #define UDP_TX_PACKET_MAX_SIZE 8192
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from src\modules\exec\Thermostat\Thermostat.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:39: warning: "MAX_SOCK_NUM" redefined
+   39 | #define MAX_SOCK_NUM 8
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/ESP8266WiFi.h:28,
+                 from include/Global.h:29,
+                 from src\modules\exec\Thermostat\Thermostat.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/wl_definitions.h:42: note: this is the location of the previous definition
+   42 | #define MAX_SOCK_NUM  4
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from src\modules\exec\Thermostat\Thermostat.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:150: warning: "UDP_TX_PACKET_MAX_SIZE" redefined
+  150 | #define UDP_TX_PACKET_MAX_SIZE 24
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266httpUpdate\src/ESP8266httpUpdate.h:32,
+                 from include/Global.h:30,
+                 from src\modules\exec\Thermostat\Thermostat.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/WiFiUdp.h:28: note: this is the location of the previous definition
+   28 | #define UDP_TX_PACKET_MAX_SIZE 8192
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from src\modules\sensors\AnalogAdc\AnalogAdc.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:39: warning: "MAX_SOCK_NUM" redefined
+   39 | #define MAX_SOCK_NUM 8
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/ESP8266WiFi.h:28,
+                 from include/Global.h:29,
+                 from src\modules\sensors\AnalogAdc\AnalogAdc.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/wl_definitions.h:42: note: this is the location of the previous definition
+   42 | #define MAX_SOCK_NUM  4
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from src\modules\sensors\AnalogAdc\AnalogAdc.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:150: warning: "UDP_TX_PACKET_MAX_SIZE" redefined
+  150 | #define UDP_TX_PACKET_MAX_SIZE 24
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266httpUpdate\src/ESP8266httpUpdate.h:32,
+                 from include/Global.h:30,
+                 from src\modules\sensors\AnalogAdc\AnalogAdc.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/WiFiUdp.h:28: note: this is the location of the previous definition
+   28 | #define UDP_TX_PACKET_MAX_SIZE 8192
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from src\modules\sensors\Ds18b20\Ds18b20.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:39: warning: "MAX_SOCK_NUM" redefined
+   39 | #define MAX_SOCK_NUM 8
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/ESP8266WiFi.h:28,
+                 from include/Global.h:29,
+                 from src\modules\sensors\Ds18b20\Ds18b20.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/wl_definitions.h:42: note: this is the location of the previous definition
+   42 | #define MAX_SOCK_NUM  4
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from src\modules\sensors\Ds18b20\Ds18b20.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:150: warning: "UDP_TX_PACKET_MAX_SIZE" redefined
+  150 | #define UDP_TX_PACKET_MAX_SIZE 24
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266httpUpdate\src/ESP8266httpUpdate.h:32,
+                 from include/Global.h:30,
+                 from src\modules\sensors\Ds18b20\Ds18b20.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/WiFiUdp.h:28: note: this is the location of the previous definition
+   28 | #define UDP_TX_PACKET_MAX_SIZE 8192
+      | 
+src\modules\exec\HC59543\HC59543.cpp: In destructor 'virtual HC59543::~HC59543()':
+src\modules\exec\HC59543\HC59543.cpp:180:9: warning: deleting object of polymorphic class type 'Hc59543Driver' which has non-virtual destructor might cause undefined behavior [-Wdelete-non-virtual-dtor]
+  180 |         delete _driver;
+      |         ^~~~~~~~~~~~~~
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from src\modules\sensors\ExternalMQTT\ExternalMQTT.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:39: warning: "MAX_SOCK_NUM" redefined
+   39 | #define MAX_SOCK_NUM 8
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/ESP8266WiFi.h:28,
+                 from include/Global.h:29,
+                 from src\modules\sensors\ExternalMQTT\ExternalMQTT.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/wl_definitions.h:42: note: this is the location of the previous definition
+   42 | #define MAX_SOCK_NUM  4
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from src\modules\sensors\ExternalMQTT\ExternalMQTT.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:150: warning: "UDP_TX_PACKET_MAX_SIZE" redefined
+  150 | #define UDP_TX_PACKET_MAX_SIZE 24
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266httpUpdate\src/ESP8266httpUpdate.h:32,
+                 from include/Global.h:30,
+                 from src\modules\sensors\ExternalMQTT\ExternalMQTT.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/WiFiUdp.h:28: note: this is the location of the previous definition
+   28 | #define UDP_TX_PACKET_MAX_SIZE 8192
+      | 
+src\modules\exec\TelegramLT\TelegramLT.cpp: In member function 'virtual void TelegramLT::sendTelegramMsg(bool, String)':
+src\modules\exec\TelegramLT\TelegramLT.cpp:16:51: warning: suggest parentheses around '&&' within '||' [-Wparentheses]
+   16 |         if (isNetworkActive() && (often || !often && _prevMsg != msg)) {
+      |                                            ~~~~~~~^~~~~~~~~~~~~~~~~~
+In file included from src\modules\exec\Thermostat\Thermostat.cpp:3:
+src\modules\exec\Thermostat\GyverPID.h: In member function 'datatype GyverPID::getResultTimer()':
+src\modules\exec\Thermostat\GyverPID.h:143:33: warning: comparison of integer expressions of different signedness: 'long unsigned int' and 'int16_t' {aka 'short int'} [-Wsign-compare]
+  143 |         if (millis() - pidTimer >= _dt)
+      |             ~~~~~~~~~~~~~~~~~~~~^~~~~~
+src\modules\exec\Thermostat\Thermostat.cpp: In member function 'virtual void ThermostatPID::loop()':
+src\modules\exec\Thermostat\Thermostat.cpp:316:28: warning: comparison of integer expressions of different signedness: 'long unsigned int' and 'int' [-Wsign-compare]
+  316 |             if (difference >= interval * 1000)
+      |                 ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from src\modules\sensors\SoftRTC\SoftRTC.cpp:4:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:39: warning: "MAX_SOCK_NUM" redefined
+   39 | #define MAX_SOCK_NUM 8
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/ESP8266WiFi.h:28,
+                 from include/Global.h:29,
+                 from src\modules\sensors\SoftRTC\SoftRTC.cpp:4:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/wl_definitions.h:42: note: this is the location of the previous definition
+   42 | #define MAX_SOCK_NUM  4
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from src\modules\sensors\SoftRTC\SoftRTC.cpp:4:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:150: warning: "UDP_TX_PACKET_MAX_SIZE" redefined
+  150 | #define UDP_TX_PACKET_MAX_SIZE 24
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266httpUpdate\src/ESP8266httpUpdate.h:32,
+                 from include/Global.h:30,
+                 from src\modules\sensors\SoftRTC\SoftRTC.cpp:4:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/WiFiUdp.h:28: note: this is the location of the previous definition
+   28 | #define UDP_TX_PACKET_MAX_SIZE 8192
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from include/NTP.h:3,
+                 from src\modules\virtual\Cron\Cron.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:39: warning: "MAX_SOCK_NUM" redefined
+   39 | #define MAX_SOCK_NUM 8
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/ESP8266WiFi.h:28,
+                 from include/Global.h:29,
+                 from include/NTP.h:3,
+                 from src\modules\virtual\Cron\Cron.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/wl_definitions.h:42: note: this is the location of the previous definition
+   42 | #define MAX_SOCK_NUM  4
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from include/NTP.h:3,
+                 from src\modules\virtual\Cron\Cron.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:150: warning: "UDP_TX_PACKET_MAX_SIZE" redefined
+  150 | #define UDP_TX_PACKET_MAX_SIZE 24
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266httpUpdate\src/ESP8266httpUpdate.h:32,
+                 from include/Global.h:30,
+                 from include/NTP.h:3,
+                 from src\modules\virtual\Cron\Cron.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/WiFiUdp.h:28: note: this is the location of the previous definition
+   28 | #define UDP_TX_PACKET_MAX_SIZE 8192
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from src\modules\virtual\DiscoveryHomeD\DiscoveryHomeD.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:39: warning: "MAX_SOCK_NUM" redefined
+   39 | #define MAX_SOCK_NUM 8
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/ESP8266WiFi.h:28,
+                 from include/Global.h:29,
+                 from src\modules\virtual\DiscoveryHomeD\DiscoveryHomeD.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/wl_definitions.h:42: note: this is the location of the previous definition
+   42 | #define MAX_SOCK_NUM  4
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from src\modules\virtual\DiscoveryHomeD\DiscoveryHomeD.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:150: warning: "UDP_TX_PACKET_MAX_SIZE" redefined
+  150 | #define UDP_TX_PACKET_MAX_SIZE 24
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266httpUpdate\src/ESP8266httpUpdate.h:32,
+                 from include/Global.h:30,
+                 from src\modules\virtual\DiscoveryHomeD\DiscoveryHomeD.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/WiFiUdp.h:28: note: this is the location of the previous definition
+   28 | #define UDP_TX_PACKET_MAX_SIZE 8192
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from src\modules\virtual\Loging\Loging.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:39: warning: "MAX_SOCK_NUM" redefined
+   39 | #define MAX_SOCK_NUM 8
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/ESP8266WiFi.h:28,
+                 from include/Global.h:29,
+                 from src\modules\virtual\Loging\Loging.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/wl_definitions.h:42: note: this is the location of the previous definition
+   42 | #define MAX_SOCK_NUM  4
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from src\modules\virtual\Loging\Loging.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:150: warning: "UDP_TX_PACKET_MAX_SIZE" redefined
+  150 | #define UDP_TX_PACKET_MAX_SIZE 24
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266httpUpdate\src/ESP8266httpUpdate.h:32,
+                 from include/Global.h:30,
+                 from src\modules\virtual\Loging\Loging.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/WiFiUdp.h:28: note: this is the location of the previous definition
+   28 | #define UDP_TX_PACKET_MAX_SIZE 8192
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from src\modules\virtual\Timer\Timer.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:39: warning: "MAX_SOCK_NUM" redefined
+   39 | #define MAX_SOCK_NUM 8
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/ESP8266WiFi.h:28,
+                 from include/Global.h:29,
+                 from src\modules\virtual\Timer\Timer.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/wl_definitions.h:42: note: this is the location of the previous definition
+   42 | #define MAX_SOCK_NUM  4
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from src\modules\virtual\Timer\Timer.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:150: warning: "UDP_TX_PACKET_MAX_SIZE" redefined
+  150 | #define UDP_TX_PACKET_MAX_SIZE 24
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266httpUpdate\src/ESP8266httpUpdate.h:32,
+                 from include/Global.h:30,
+                 from src\modules\virtual\Timer\Timer.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/WiFiUdp.h:28: note: this is the location of the previous definition
+   28 | #define UDP_TX_PACKET_MAX_SIZE 8192
+      | 
+src\modules\sensors\SoftRTC\SoftRTC.cpp: In member function 'virtual void SoftRTC::loop()':
+src\modules\sensors\SoftRTC\SoftRTC.cpp:290:21: warning: unused variable 'delta' [-Wunused-variable]
+  290 |                 int delta = abs(after - before - int((startMillis + 500) / 1000));
+      |                     ^~~~~
+src\modules\virtual\DiscoveryHomeD\DiscoveryHomeD.cpp: In member function 'virtual void DiscoveryHomeD::getlayoutHOMEd()':
+src\modules\virtual\DiscoveryHomeD\DiscoveryHomeD.cpp:70:20: warning: unused variable 'size' [-Wunused-variable]
+   70 |             size_t size = file.size();
+      |                    ^~~~
+src\modules\sensors\SoftRTC\SoftRTC.cpp: In member function 'virtual IoTValue SoftRTC::execute(String, std::vector<IoTValue>&)':
+src\modules\sensors\SoftRTC\SoftRTC.cpp:645:51: warning: '%d' directive output may be truncated writing between 1 and 11 bytes into a region of size between 0 and 6 [-Wformat-truncation=]
+  645 |             snprintf(buf, sizeof(buf), "%02d.%02d.%d", day, month, t->tm_year + 1900);
+      |                                                   ^~
+src\modules\sensors\SoftRTC\SoftRTC.cpp:645:40: note: directive argument in the range [-2147481748, 2147483647]
+  645 |             snprintf(buf, sizeof(buf), "%02d.%02d.%d", day, month, t->tm_year + 1900);
+      |                                        ^~~~~~~~~~~~~~
+src\modules\sensors\SoftRTC\SoftRTC.cpp:645:21: note: 'snprintf' output between 8 and 36 bytes into a destination of size 12
+  645 |             snprintf(buf, sizeof(buf), "%02d.%02d.%d", day, month, t->tm_year + 1900);
+      |             ~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from src\modules\virtual\VButton\VButton.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:39: warning: "MAX_SOCK_NUM" redefined
+   39 | #define MAX_SOCK_NUM 8
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/ESP8266WiFi.h:28,
+                 from include/Global.h:29,
+                 from src\modules\virtual\VButton\VButton.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/wl_definitions.h:42: note: this is the location of the previous definition
+   42 | #define MAX_SOCK_NUM  4
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from src\modules\virtual\VButton\VButton.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:150: warning: "UDP_TX_PACKET_MAX_SIZE" redefined
+  150 | #define UDP_TX_PACKET_MAX_SIZE 24
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266httpUpdate\src/ESP8266httpUpdate.h:32,
+                 from include/Global.h:30,
+                 from src\modules\virtual\VButton\VButton.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/WiFiUdp.h:28: note: this is the location of the previous definition
+   28 | #define UDP_TX_PACKET_MAX_SIZE 8192
+      | 
+src\modules\virtual\Loging\Loging.cpp: In member function 'void Loging::deleteOldFile()':
+src\modules\virtual\Loging\Loging.cpp:404:28: warning: comparison of integer expressions of different signedness: 'int' and 'long unsigned int' [-Wsign-compare]
+  404 |             if (pathTodel_ < unixTimeShort - days)
+      |                 ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+src\modules\virtual\Loging\Loging.cpp:409:28: warning: comparison of integer expressions of different signedness: 'int' and 'long unsigned int' [-Wsign-compare]
+  409 |             if (pathTodel_ < unixTimeShort - 5184000)
+      |                 ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from src\modules\virtual\VariableColor\VariableColor.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:39: warning: "MAX_SOCK_NUM" redefined
+   39 | #define MAX_SOCK_NUM 8
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/ESP8266WiFi.h:28,
+                 from include/Global.h:29,
+                 from src\modules\virtual\VariableColor\VariableColor.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/wl_definitions.h:42: note: this is the location of the previous definition
+   42 | #define MAX_SOCK_NUM  4
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from src\modules\virtual\VariableColor\VariableColor.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:150: warning: "UDP_TX_PACKET_MAX_SIZE" redefined
+  150 | #define UDP_TX_PACKET_MAX_SIZE 24
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266httpUpdate\src/ESP8266httpUpdate.h:32,
+                 from include/Global.h:30,
+                 from src\modules\virtual\VariableColor\VariableColor.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/WiFiUdp.h:28: note: this is the location of the previous definition
+   28 | #define UDP_TX_PACKET_MAX_SIZE 8192
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from src\modules\virtual\Variable\Variable.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:39: warning: "MAX_SOCK_NUM" redefined
+   39 | #define MAX_SOCK_NUM 8
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/ESP8266WiFi.h:28,
+                 from include/Global.h:29,
+                 from src\modules\virtual\Variable\Variable.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/wl_definitions.h:42: note: this is the location of the previous definition
+   42 | #define MAX_SOCK_NUM  4
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from src\modules\virtual\Variable\Variable.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:150: warning: "UDP_TX_PACKET_MAX_SIZE" redefined
+  150 | #define UDP_TX_PACKET_MAX_SIZE 24
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266httpUpdate\src/ESP8266httpUpdate.h:32,
+                 from include/Global.h:30,
+                 from src\modules\virtual\Variable\Variable.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/WiFiUdp.h:28: note: this is the location of the previous definition
+   28 | #define UDP_TX_PACKET_MAX_SIZE 8192
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from src\utils\EthernetUtils.cpp:2:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:39: warning: "MAX_SOCK_NUM" redefined
+   39 | #define MAX_SOCK_NUM 8
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/ESP8266WiFi.h:28,
+                 from include/Global.h:29,
+                 from include/utils/EthernetUtils.h:3,
+                 from src\utils\EthernetUtils.cpp:2:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/wl_definitions.h:42: note: this is the location of the previous definition
+   42 | #define MAX_SOCK_NUM  4
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from src\utils\EthernetUtils.cpp:2:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:150: warning: "UDP_TX_PACKET_MAX_SIZE" redefined
+  150 | #define UDP_TX_PACKET_MAX_SIZE 24
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266httpUpdate\src/ESP8266httpUpdate.h:32,
+                 from include/Global.h:30,
+                 from include/utils/EthernetUtils.h:3,
+                 from src\utils\EthernetUtils.cpp:2:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/WiFiUdp.h:28: note: this is the location of the previous definition
+   28 | #define UDP_TX_PACKET_MAX_SIZE 8192
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from include/utils/FileUtils.h:2,
+                 from src\utils\FileUtils.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:39: warning: "MAX_SOCK_NUM" redefined
+   39 | #define MAX_SOCK_NUM 8
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/ESP8266WiFi.h:28,
+                 from include/Global.h:29,
+                 from include/utils/FileUtils.h:2,
+                 from src\utils\FileUtils.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/wl_definitions.h:42: note: this is the location of the previous definition
+   42 | #define MAX_SOCK_NUM  4
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from include/utils/FileUtils.h:2,
+                 from src\utils\FileUtils.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:150: warning: "UDP_TX_PACKET_MAX_SIZE" redefined
+  150 | #define UDP_TX_PACKET_MAX_SIZE 24
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266httpUpdate\src/ESP8266httpUpdate.h:32,
+                 from include/Global.h:30,
+                 from include/utils/FileUtils.h:2,
+                 from src\utils\FileUtils.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/WiFiUdp.h:28: note: this is the location of the previous definition
+   28 | #define UDP_TX_PACKET_MAX_SIZE 8192
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from include/utils/SerialPrint.h:2,
+                 from src\utils\I2CUtils.cpp:3:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:39: warning: "MAX_SOCK_NUM" redefined
+   39 | #define MAX_SOCK_NUM 8
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/ESP8266WiFi.h:28,
+                 from include/Global.h:29,
+                 from include/utils/SerialPrint.h:2,
+                 from src\utils\I2CUtils.cpp:3:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/wl_definitions.h:42: note: this is the location of the previous definition
+   42 | #define MAX_SOCK_NUM  4
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from include/utils/SerialPrint.h:2,
+                 from src\utils\I2CUtils.cpp:3:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:150: warning: "UDP_TX_PACKET_MAX_SIZE" redefined
+  150 | #define UDP_TX_PACKET_MAX_SIZE 24
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266httpUpdate\src/ESP8266httpUpdate.h:32,
+                 from include/Global.h:30,
+                 from include/utils/SerialPrint.h:2,
+                 from src\utils\I2CUtils.cpp:3:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/WiFiUdp.h:28: note: this is the location of the previous definition
+   28 | #define UDP_TX_PACKET_MAX_SIZE 8192
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from include/utils/JsonUtils.h:3,
+                 from src\utils\JsonUtils.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:39: warning: "MAX_SOCK_NUM" redefined
+   39 | #define MAX_SOCK_NUM 8
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/ESP8266WiFi.h:28,
+                 from include/Global.h:29,
+                 from include/utils/JsonUtils.h:3,
+                 from src\utils\JsonUtils.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/wl_definitions.h:42: note: this is the location of the previous definition
+   42 | #define MAX_SOCK_NUM  4
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from include/utils/JsonUtils.h:3,
+                 from src\utils\JsonUtils.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:150: warning: "UDP_TX_PACKET_MAX_SIZE" redefined
+  150 | #define UDP_TX_PACKET_MAX_SIZE 24
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266httpUpdate\src/ESP8266httpUpdate.h:32,
+                 from include/Global.h:30,
+                 from include/utils/JsonUtils.h:3,
+                 from src\utils\JsonUtils.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/WiFiUdp.h:28: note: this is the location of the previous definition
+   28 | #define UDP_TX_PACKET_MAX_SIZE 8192
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from include/utils/SerialPrint.h:2,
+                 from src\utils\SerialPrint.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:39: warning: "MAX_SOCK_NUM" redefined
+   39 | #define MAX_SOCK_NUM 8
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/ESP8266WiFi.h:28,
+                 from include/Global.h:29,
+                 from include/utils/SerialPrint.h:2,
+                 from src\utils\SerialPrint.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/wl_definitions.h:42: note: this is the location of the previous definition
+   42 | #define MAX_SOCK_NUM  4
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from include/utils/SerialPrint.h:2,
+                 from src\utils\SerialPrint.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:150: warning: "UDP_TX_PACKET_MAX_SIZE" redefined
+  150 | #define UDP_TX_PACKET_MAX_SIZE 24
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266httpUpdate\src/ESP8266httpUpdate.h:32,
+                 from include/Global.h:30,
+                 from include/utils/SerialPrint.h:2,
+                 from src\utils\SerialPrint.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/WiFiUdp.h:28: note: this is the location of the previous definition
+   28 | #define UDP_TX_PACKET_MAX_SIZE 8192
+      | 
+src\utils\EthernetUtils.cpp:214:23: warning: 'ethStatus' defined but not used [-Wunused-variable]
+  214 | static EthernetStatus ethStatus = ETH_DISCONNECTED;
+      |                       ^~~~~~~~~
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from include/utils/Statistic.h:1,
+                 from src\utils\Statistic.cpp:3:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:39: warning: "MAX_SOCK_NUM" redefined
+   39 | #define MAX_SOCK_NUM 8
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/ESP8266WiFi.h:28,
+                 from include/Global.h:29,
+                 from include/utils/Statistic.h:1,
+                 from src\utils\Statistic.cpp:3:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/wl_definitions.h:42: note: this is the location of the previous definition
+   42 | #define MAX_SOCK_NUM  4
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from include/utils/Statistic.h:1,
+                 from src\utils\Statistic.cpp:3:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:150: warning: "UDP_TX_PACKET_MAX_SIZE" redefined
+  150 | #define UDP_TX_PACKET_MAX_SIZE 24
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266httpUpdate\src/ESP8266httpUpdate.h:32,
+                 from include/Global.h:30,
+                 from include/utils/Statistic.h:1,
+                 from src\utils\Statistic.cpp:3:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/WiFiUdp.h:28: note: this is the location of the previous definition
+   28 | #define UDP_TX_PACKET_MAX_SIZE 8192
+      | 
+src\utils\JsonUtils.cpp: In function 'bool jsonReadArray(const String&, String, std::vector<String>&, bool)':
+src\utils\JsonUtils.cpp:115:30: warning: comparison of integer expressions of different signedness: 'int8_t' {aka 'signed char'} and 'size_t' {aka 'unsigned int'} [-Wsign-compare]
+  115 |         for (int8_t i = 0; i < doc[key].size(); i++) jArray.push_back(doc[key][i].as<String>());
+      |                            ~~^~~~~~~~~~~~~~~~~
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from include/utils/StringUtils.h:3,
+                 from src\utils\StringUtils.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:39: warning: "MAX_SOCK_NUM" redefined
+   39 | #define MAX_SOCK_NUM 8
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/ESP8266WiFi.h:28,
+                 from include/Global.h:29,
+                 from include/utils/StringUtils.h:3,
+                 from src\utils\StringUtils.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/wl_definitions.h:42: note: this is the location of the previous definition
+   42 | #define MAX_SOCK_NUM  4
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from include/utils/StringUtils.h:3,
+                 from src\utils\StringUtils.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:150: warning: "UDP_TX_PACKET_MAX_SIZE" redefined
+  150 | #define UDP_TX_PACKET_MAX_SIZE 24
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266httpUpdate\src/ESP8266httpUpdate.h:32,
+                 from include/Global.h:30,
+                 from include/utils/StringUtils.h:3,
+                 from src\utils\StringUtils.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/WiFiUdp.h:28: note: this is the location of the previous definition
+   28 | #define UDP_TX_PACKET_MAX_SIZE 8192
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from src\utils\TimeUtils.cpp:2:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:39: warning: "MAX_SOCK_NUM" redefined
+   39 | #define MAX_SOCK_NUM 8
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/ESP8266WiFi.h:28,
+                 from include/Global.h:29,
+                 from src\utils\TimeUtils.cpp:2:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/wl_definitions.h:42: note: this is the location of the previous definition
+   42 | #define MAX_SOCK_NUM  4
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from src\utils\TimeUtils.cpp:2:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:150: warning: "UDP_TX_PACKET_MAX_SIZE" redefined
+  150 | #define UDP_TX_PACKET_MAX_SIZE 24
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266httpUpdate\src/ESP8266httpUpdate.h:32,
+                 from include/Global.h:30,
+                 from src\utils\TimeUtils.cpp:2:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/WiFiUdp.h:28: note: this is the location of the previous definition
+   28 | #define UDP_TX_PACKET_MAX_SIZE 8192
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from include/utils/WiFiUtils.h:3,
+                 from src\utils\WiFiUtils.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:39: warning: "MAX_SOCK_NUM" redefined
+   39 | #define MAX_SOCK_NUM 8
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/ESP8266WiFi.h:28,
+                 from include/Global.h:29,
+                 from include/utils/WiFiUtils.h:3,
+                 from src\utils\WiFiUtils.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/wl_definitions.h:42: note: this is the location of the previous definition
+   42 | #define MAX_SOCK_NUM  4
+      | 
+In file included from include/utils/EthernetUtils.h:34,
+                 from include/Global.h:34,
+                 from include/utils/WiFiUtils.h:3,
+                 from src\utils\WiFiUtils.cpp:1:
+.pio\libdeps\esp8266_4mb\Ethernet\src/Ethernet.h:150: warning: "UDP_TX_PACKET_MAX_SIZE" redefined
+  150 | #define UDP_TX_PACKET_MAX_SIZE 24
+      | 
+In file included from C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266httpUpdate\src/ESP8266httpUpdate.h:32,
+                 from include/Global.h:30,
+                 from include/utils/WiFiUtils.h:3,
+                 from src\utils\WiFiUtils.cpp:1:
+C:\Users\avaks\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/WiFiUdp.h:28: note: this is the location of the previous definition
+   28 | #define UDP_TX_PACKET_MAX_SIZE 8192
+      | 
+src\utils\WiFiUtils.cpp:7:10: fatal error: ESPmDNS.h: No such file or directory
+
+*****************************************************************
+* Looking for ESPmDNS.h dependency? Check our library registry!
+*
+* CLI  > platformio lib search "header:ESPmDNS.h"
+* Web  > https://registry.platformio.org/search?q=header:ESPmDNS.h
+*
+*****************************************************************
+
+    7 | #include <ESPmDNS.h>
+      |          ^~~~~~~~~~~
+compilation terminated.
+*** [.pio\build\esp8266_4mb\src\utils\WiFiUtils.cpp.o] Error 1
+src\utils\StringUtils.cpp: In function 'std::vector<String> splitStr(const String&, const String&)':
+src\utils\StringUtils.cpp:222:51: warning: comparison of integer expressions of different signedness: 'size_t' {aka 'unsigned int'} and 'int' [-Wsign-compare]
+  222 |     while ((newPos = str.indexOf(delimiter, pos)) != -1) {
+      |            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~
+src\utils\TimeUtils.cpp: In function 'const String prettyMinutsTimeout(long unsigned int)':
+src\utils\TimeUtils.cpp:55:26: warning: format '%d' expects argument of type 'int', but argument 3 has type 'long unsigned int' [-Wformat=]
+   55 |         sprintf_P(buf, "%d day %d hr %d min", days, hours, minutes, seconds);
+      |                         ~^                    ~~~~
+      |                          |                    |
+      |                          int                  long unsigned int
+      |                         %ld
+src\utils\TimeUtils.cpp:55:33: warning: format '%d' expects argument of type 'int', but argument 4 has type 'long unsigned int' [-Wformat=]
+   55 |         sprintf_P(buf, "%d day %d hr %d min", days, hours, minutes, seconds);
+      |                                ~^                   ~~~~~
+      |                                 |                   |
+      |                                 int                 long unsigned int
+      |                                %ld
+src\utils\TimeUtils.cpp:55:39: warning: format '%d' expects argument of type 'int', but argument 5 has type 'long unsigned int' [-Wformat=]
+   55 |         sprintf_P(buf, "%d day %d hr %d min", days, hours, minutes, seconds);
+      |                                      ~^                    ~~~~~~~
+      |                                       |                    |
+      |                                       int                  long unsigned int
+      |                                      %ld
+src\utils\TimeUtils.cpp:55:24: warning: too many arguments for format [-Wformat-extra-args]
+   55 |         sprintf_P(buf, "%d day %d hr %d min", days, hours, minutes, seconds);
+      |                        ^~~~~~~~~~~~~~~~~~~~~
+src\utils\TimeUtils.cpp:57:26: warning: format '%d' expects argument of type 'int', but argument 3 has type 'long unsigned int' [-Wformat=]
+   57 |         sprintf_P(buf, "%d hr %d min", hours, minutes);
+      |                         ~^             ~~~~~
+      |                          |             |
+      |                          int           long unsigned int
+      |                         %ld
+src\utils\TimeUtils.cpp:57:32: warning: format '%d' expects argument of type 'int', but argument 4 has type 'long unsigned int' [-Wformat=]
+   57 |         sprintf_P(buf, "%d hr %d min", hours, minutes);
+      |                               ~^              ~~~~~~~
+      |                                |              |
+      |                                int            long unsigned int
+      |                               %ld
+src\utils\TimeUtils.cpp:59:26: warning: format '%d' expects argument of type 'int', but argument 3 has type 'long unsigned int' [-Wformat=]
+   59 |         sprintf_P(buf, "%d min", minutes);
+      |                         ~^       ~~~~~~~
+      |                          |       |
+      |                          int     long unsigned int
+      |                         %ld
+========================= [FAILED] Took 17.55 seconds =========================
+Environment    Status    Duration
+-------------  --------  ------------
+esp8266_4mb    FAILED    00:00:17.546
+==================== 1 failed, 0 succeeded in 00:00:17.546 ====================

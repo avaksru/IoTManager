@@ -1,6 +1,6 @@
 {
-    "name": "ESP32C6_8MB",
-    "apssid": "IOTM-ESP32C6",
+    "name": "IOTM-ESP8266-4MB",
+    "apssid": "IOTM-ESP8266-4MB",
     "appass": "",
     "routerssid": "Mikro",
     "routerpass": "4455667788",

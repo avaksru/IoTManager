@@ -4,7 +4,11 @@
 #include <esp_task_wdt.h>
 #endif
 #include "DebugTrace.h"
+#if defined(ESP32)
 #include <ESPmDNS.h>
+#elif defined(ESP8266)
+#include <ESP8266mDNS.h>
+#endif
 #define TRIESONE 20 // количество секунд ожидания подключения к одной сети из несколких
 #define TRIES 30    // количество секунд ожидания подключения сети если она одна
 

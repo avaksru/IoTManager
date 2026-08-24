@@ -1,7 +1,7 @@
 #include "UpgradeFirm.h"
+#ifdef ESP32
 #include <freertos/FreeRTOS.h>
 #include <freertos/semphr.h>
-#ifdef ESP32
 #include <HTTPUpdate.h>
 #include <esp_task_wdt.h>
 #endif

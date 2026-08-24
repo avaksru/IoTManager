@@ -1,0 +1,181 @@
+Processing esp8266_4mb (framework: arduino; board: nodemcuv2; platform: espressif8266 @4.0.1)
+--------------------------------------------------------------------------------
+Verbose mode can be enabled via `-v, --verbose` option
+Current Build targets []
+Clear BUILD_TIME, delete main.o !
+Error: ./.pio/build/esp8266_4mb/src/Main.cpp.o - Системе не удается найти указанный путь.
+CONFIGURATION: https://docs.platformio.org/page/boards/espressif8266/nodemcuv2.html
+PLATFORM: Espressif 8266 (4.0.1) > NodeMCU 1.0 (ESP-12E Module)
+HARDWARE: ESP8266 80MHz, 80KB RAM, 4MB Flash
+PACKAGES: 
+ - framework-arduinoespressif8266 @ 3.30002.0 (3.0.2) 
+ - tool-esptool @ 1.413.0 (4.13) 
+ - tool-esptoolpy @ 1.30000.201119 (3.0.0) 
+ - toolchain-xtensa @ 2.100300.220621 (10.3.0)
+LDF: Library Dependency Finder -> https://bit.ly/configure-pio-ldf
+LDF Modes: Finder ~ chain, Compatibility ~ soft
+Found 50 compatible libraries
+Scanning dependencies...
+Dependency Graph
+|-- ArduinoJson @ 7.4.3
+|-- PubSubClient @ 2.8.0
+|-- Ethernet @ 2.0.2
+|-- DallasTemperature @ 4.0.6+sha.dadbbf7
+|-- ESPAsyncUDP @ 0.0.0-alpha+sha.697c75a025
+|-- SPI @ 1.0
+|-- Wire @ 1.0
+|-- OneWire @ 2.3.8
+|-- ESP8266mDNS @ 1.2
+|-- LittleFS @ 0.1.0
+|-- ESP8266httpUpdate @ 1.3
+|-- ESP8266HTTPUpdateServer @ 1.0
+|-- ESP8266WebServer @ 1.0
+|-- ESP8266WiFi @ 1.0
+|-- Hash @ 1.0
+|-- TickerScheduler
+|-- WebSockets @ 2.3.7
+|-- EspSoftwareSerial @ 8.1.0
+Building in release mode
+Compiling .pio\build\esp8266_4mb\src\AsyncWebServer.cpp.o
+Compiling .pio\build\esp8266_4mb\src\Buffers.cpp.o
+Compiling .pio\build\esp8266_4mb\src\DebugTrace.cpp.o
+Compiling .pio\build\esp8266_4mb\src\DeviceList.cpp.o
+Compiling .pio\build\esp8266_4mb\src\ESPConfiguration.cpp.o
+Compiling .pio\build\esp8266_4mb\src\EspFileSystem.cpp.o
+Compiling .pio\build\esp8266_4mb\src\EventsAndOrders.cpp.o
+Compiling .pio\build\esp8266_4mb\src\Global.cpp.o
+Compiling .pio\build\esp8266_4mb\src\Main.cpp.o
+Compiling .pio\build\esp8266_4mb\src\MqttClient.cpp.o
+Compiling .pio\build\esp8266_4mb\src\NTP.cpp.o
+Compiling .pio\build\esp8266_4mb\src\PeriodicTasks.cpp.o
+Compiling .pio\build\esp8266_4mb\src\StandWebServer.cpp.o
+Compiling .pio\build\esp8266_4mb\src\UpgradeFirm.cpp.o
+Compiling .pio\build\esp8266_4mb\src\WsServer.cpp.o
+Compiling .pio\build\esp8266_4mb\src\classes\IoTBench.cpp.o
+Compiling .pio\build\esp8266_4mb\src\classes\IoTDB.cpp.o
+Compiling .pio\build\esp8266_4mb\src\classes\IoTDiscovery.cpp.o
+Compiling .pio\build\esp8266_4mb\src\classes\IoTGpio.cpp.o
+Compiling .pio\build\esp8266_4mb\src\classes\IoTItem.cpp.o
+Compiling .pio\build\esp8266_4mb\src\classes\IoTScenario.cpp.o
+Compiling .pio\build\esp8266_4mb\src\classes\IoTUart.cpp.o
+Compiling .pio\build\esp8266_4mb\src\classes\NotAsync.cpp.o
+Compiling .pio\build\esp8266_4mb\src\modules\API.cpp.o
+Compiling .pio\build\esp8266_4mb\src\modules\exec\ButtonIn\ButtonIn.cpp.o
+Compiling .pio\build\esp8266_4mb\src\modules\exec\ButtonOut\ButtonOut.cpp.o
+Compiling .pio\build\esp8266_4mb\src\modules\exec\HC59543\HC59543.cpp.o
+Compiling .pio\build\esp8266_4mb\src\modules\exec\TelegramLT\TelegramLT.cpp.o
+Compiling .pio\build\esp8266_4mb\src\modules\exec\Thermostat\Thermostat.cpp.o
+Compiling .pio\build\esp8266_4mb\src\modules\sensors\AnalogAdc\AnalogAdc.cpp.o
+Compiling .pio\build\esp8266_4mb\src\modules\sensors\Ds18b20\Ds18b20.cpp.o
+Compiling .pio\build\esp8266_4mb\src\modules\sensors\ExternalMQTT\ExternalMQTT.cpp.o
+Compiling .pio\build\esp8266_4mb\src\modules\sensors\SoftRTC\SoftRTC.cpp.o
+Compiling .pio\build\esp8266_4mb\src\modules\virtual\Cron\Cron.cpp.o
+Compiling .pio\build\esp8266_4mb\src\modules\virtual\Cron\ccronexpr\ccronexpr.c.o
+Compiling .pio\build\esp8266_4mb\src\modules\virtual\DiscoveryHomeD\DiscoveryHomeD.cpp.o
+Compiling .pio\build\esp8266_4mb\src\modules\virtual\Loging\Loging.cpp.o
+Compiling .pio\build\esp8266_4mb\src\modules\virtual\Timer\Timer.cpp.o
+Compiling .pio\build\esp8266_4mb\src\modules\virtual\VButton\VButton.cpp.o
+Compiling .pio\build\esp8266_4mb\src\modules\virtual\VariableColor\VariableColor.cpp.o
+Compiling .pio\build\esp8266_4mb\src\modules\virtual\Variable\Variable.cpp.o
+Compiling .pio\build\esp8266_4mb\src\utils\EthernetUtils.cpp.o
+Compiling .pio\build\esp8266_4mb\src\utils\FileUtils.cpp.o
+Compiling .pio\build\esp8266_4mb\src\utils\I2CUtils.cpp.o
+Compiling .pio\build\esp8266_4mb\src\utils\JsonUtils.cpp.o
+Compiling .pio\build\esp8266_4mb\src\utils\SerialPrint.cpp.o
+Compiling .pio\build\esp8266_4mb\src\utils\Statistic.cpp.o
+Compiling .pio\build\esp8266_4mb\src\utils\StringUtils.cpp.o
+Compiling .pio\build\esp8266_4mb\src\utils\TimeUtils.cpp.o
+Compiling .pio\build\esp8266_4mb\src\utils\WiFiUtils.cpp.o
+Generating LD script .pio\build\esp8266_4mb\ld\local.eagle.app.v6.common.ld
+Compiling .pio\build\esp8266_4mb\libb3c\PubSubClient\PubSubClient.cpp.o
+Compiling .pio\build\esp8266_4mb\lib0af\SPI\SPI.cpp.o
+Compiling .pio\build\esp8266_4mb\libdcf\Ethernet\Dhcp.cpp.o
+Compiling .pio\build\esp8266_4mb\libdcf\Ethernet\Dns.cpp.o
+Archiving .pio\build\esp8266_4mb\libb3c\libPubSubClient.a
+Archiving .pio\build\esp8266_4mb\lib0af\libSPI.a
+Compiling .pio\build\esp8266_4mb\libdcf\Ethernet\Ethernet.cpp.o
+Compiling .pio\build\esp8266_4mb\libdcf\Ethernet\EthernetClient.cpp.o
+Compiling .pio\build\esp8266_4mb\libdcf\Ethernet\EthernetServer.cpp.o
+Compiling .pio\build\esp8266_4mb\libdcf\Ethernet\EthernetUdp.cpp.o
+Compiling .pio\build\esp8266_4mb\libdcf\Ethernet\socket.cpp.o
+Compiling .pio\build\esp8266_4mb\libdcf\Ethernet\utility\w5100.cpp.o
+Compiling .pio\build\esp8266_4mb\lib5aa\OneWire\OneWire.cpp.o
+Compiling .pio\build\esp8266_4mb\libb5a\DallasTemperature\DallasTemperature.cpp.o
+Compiling .pio\build\esp8266_4mb\libc69\ESPAsyncUDP\AsyncUDP.cpp.o
+Compiling .pio\build\esp8266_4mb\liba59\Wire\Wire.cpp.o
+Compiling .pio\build\esp8266_4mb\libf3b\ESP8266WiFi\BearSSLHelpers.cpp.o
+Archiving .pio\build\esp8266_4mb\libdcf\libEthernet.a
+Compiling .pio\build\esp8266_4mb\libf3b\ESP8266WiFi\CertStoreBearSSL.cpp.o
+Archiving .pio\build\esp8266_4mb\lib5aa\libOneWire.a
+Compiling .pio\build\esp8266_4mb\libf3b\ESP8266WiFi\ESP8266WiFi.cpp.o
+Archiving .pio\build\esp8266_4mb\liba59\libWire.a
+Compiling .pio\build\esp8266_4mb\libf3b\ESP8266WiFi\ESP8266WiFiAP.cpp.o
+Archiving .pio\build\esp8266_4mb\libb5a\libDallasTemperature.a
+Archiving .pio\build\esp8266_4mb\libc69\libESPAsyncUDP.a
+Compiling .pio\build\esp8266_4mb\libf3b\ESP8266WiFi\ESP8266WiFiGeneric.cpp.o
+Compiling .pio\build\esp8266_4mb\libf3b\ESP8266WiFi\ESP8266WiFiGratuitous.cpp.o
+Compiling .pio\build\esp8266_4mb\libf3b\ESP8266WiFi\ESP8266WiFiMulti.cpp.o
+Compiling .pio\build\esp8266_4mb\libf3b\ESP8266WiFi\ESP8266WiFiSTA-WPS.cpp.o
+Compiling .pio\build\esp8266_4mb\libf3b\ESP8266WiFi\ESP8266WiFiSTA.cpp.o
+Compiling .pio\build\esp8266_4mb\libf3b\ESP8266WiFi\ESP8266WiFiScan.cpp.o
+Compiling .pio\build\esp8266_4mb\libf3b\ESP8266WiFi\WiFiClient.cpp.o
+Compiling .pio\build\esp8266_4mb\libf3b\ESP8266WiFi\WiFiClientSecureBearSSL.cpp.o
+Compiling .pio\build\esp8266_4mb\libf3b\ESP8266WiFi\WiFiServer.cpp.o
+Compiling .pio\build\esp8266_4mb\libf3b\ESP8266WiFi\WiFiServerSecureBearSSL.cpp.o
+Compiling .pio\build\esp8266_4mb\libf3b\ESP8266WiFi\WiFiUdp.cpp.o
+Compiling .pio\build\esp8266_4mb\libf3b\ESP8266WiFi\enable_wifi_at_boot_time.cpp.o
+Compiling .pio\build\esp8266_4mb\lib4b9\ESP8266mDNS\ESP8266mDNS.cpp.o
+Compiling .pio\build\esp8266_4mb\lib4b9\ESP8266mDNS\LEAmDNS.cpp.o
+Compiling .pio\build\esp8266_4mb\lib4b9\ESP8266mDNS\LEAmDNS_Control.cpp.o
+Compiling .pio\build\esp8266_4mb\lib4b9\ESP8266mDNS\LEAmDNS_Helpers.cpp.o
+Compiling .pio\build\esp8266_4mb\lib4b9\ESP8266mDNS\LEAmDNS_Structs.cpp.o
+Archiving .pio\build\esp8266_4mb\libf3b\libESP8266WiFi.a
+Compiling .pio\build\esp8266_4mb\lib4b9\ESP8266mDNS\LEAmDNS_Transfer.cpp.o
+Compiling .pio\build\esp8266_4mb\libdfd\LittleFS\LittleFS.cpp.o
+Compiling .pio\build\esp8266_4mb\libdfd\LittleFS\lfs.c.o
+Compiling .pio\build\esp8266_4mb\libdfd\LittleFS\lfs_util.c.o
+Compiling .pio\build\esp8266_4mb\libadb\ESP8266HTTPClient\ESP8266HTTPClient.cpp.o
+Compiling .pio\build\esp8266_4mb\lib220\ESP8266httpUpdate\ESP8266httpUpdate.cpp.o
+Compiling .pio\build\esp8266_4mb\libec9\ESP8266WebServer\detail\mimetable.cpp.o
+Archiving .pio\build\esp8266_4mb\libec9\libESP8266WebServer.a
+Archiving .pio\build\esp8266_4mb\lib4b9\libESP8266mDNS.a
+Compiling .pio\build\esp8266_4mb\lib74c\Hash\Hash.cpp.o
+Compiling .pio\build\esp8266_4mb\lib80f\Ticker\Ticker.cpp.o
+Compiling .pio\build\esp8266_4mb\lib4b3\TickerScheduler\TickerScheduler.cpp.o
+Archiving .pio\build\esp8266_4mb\libdfd\libLittleFS.a
+Compiling .pio\build\esp8266_4mb\libf4d\WebSockets\SocketIOclient.cpp.o
+Archiving .pio\build\esp8266_4mb\lib80f\libTicker.a
+Archiving .pio\build\esp8266_4mb\libadb\libESP8266HTTPClient.a
+Archiving .pio\build\esp8266_4mb\lib220\libESP8266httpUpdate.a
+Archiving .pio\build\esp8266_4mb\lib74c\libHash.a
+Compiling .pio\build\esp8266_4mb\libf4d\WebSockets\WebSockets.cpp.o
+Compiling .pio\build\esp8266_4mb\libf4d\WebSockets\WebSocketsClient.cpp.o
+Compiling .pio\build\esp8266_4mb\libf4d\WebSockets\WebSocketsServer.cpp.o
+Compiling .pio\build\esp8266_4mb\libf4d\WebSockets\libb64\cdecode.c.o
+Archiving .pio\build\esp8266_4mb\lib4b3\libTickerScheduler.a
+Compiling .pio\build\esp8266_4mb\libf4d\WebSockets\libb64\cencode.c.o
+Compiling .pio\build\esp8266_4mb\libf4d\WebSockets\libsha1\libsha1.c.o
+Compiling .pio\build\esp8266_4mb\lib8a7\EspSoftwareSerial\SoftwareSerial.cpp.o
+Archiving .pio\build\esp8266_4mb\libFrameworkArduinoVariant.a
+Compiling .pio\build\esp8266_4mb\FrameworkArduino\Crypto.cpp.o
+Compiling .pio\build\esp8266_4mb\FrameworkArduino\Esp-frag.cpp.o
+Compiling .pio\build\esp8266_4mb\FrameworkArduino\Esp-version.cpp.o
+Compiling .pio\build\esp8266_4mb\FrameworkArduino\Esp.cpp.o
+Archiving .pio\build\esp8266_4mb\libf4d\libWebSockets.a
+Compiling .pio\build\esp8266_4mb\FrameworkArduino\FS.cpp.o
+Compiling .pio\build\esp8266_4mb\FrameworkArduino\FSnoop.cpp.o
+Compiling .pio\build\esp8266_4mb\FrameworkArduino\FunctionalInterrupt.cpp.o
+Archiving .pio\build\esp8266_4mb\lib8a7\libEspSoftwareSerial.a
+Compiling .pio\build\esp8266_4mb\FrameworkArduino\HardwareSerial.cpp.o
+Compiling .pio\build\esp8266_4mb\FrameworkArduino\IPAddress.cpp.o
+Compiling .pio\build\esp8266_4mb\FrameworkArduino\LwipDhcpServer-NonOS.cpp.o
+Compiling .pio\build\esp8266_4mb\FrameworkArduino\LwipDhcpServer.cpp.o
+Compiling .pio\build\esp8266_4mb\FrameworkArduino\LwipIntf.cpp.o
+Compiling .pio\build\esp8266_4mb\FrameworkArduino\LwipIntfCB.cpp.o
+Compiling .pio\build\esp8266_4mb\FrameworkArduino\MD5Builder.cpp.o
+Compiling .pio\build\esp8266_4mb\FrameworkArduino\Print.cpp.o
+Compiling .pio\build\esp8266_4mb\FrameworkArduino\Schedule.cpp.o
+Compiling .pio\build\esp8266_4mb\FrameworkArduino\StackThunk.cpp.o
+Compiling .pio\build\esp8266_4mb\FrameworkArduino\Stream.cpp.o
+Compiling .pio\build\esp8266_4mb\FrameworkArduino\StreamSend.cpp.o
+Compiling .pio\build\esp8266_4mb\FrameworkArduino\Tone.cpp.o

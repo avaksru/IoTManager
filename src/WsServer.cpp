@@ -1,6 +1,8 @@
 #include "WsServer.h"
 #include "classes/IoTScenario.h"
+#ifdef ESP32
 #include <esp_task_wdt.h>
+#endif
 extern IoTScenario iotScen;
 
 #ifdef STANDARD_WEB_SOCKETS

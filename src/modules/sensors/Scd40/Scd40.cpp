@@ -142,7 +142,7 @@ public:
         if (value.valD < 5000)
             regEvent(value.valD, "Scd40co2");
         else
-            SerialPrint("E", "Sensor Scd40co2", "Error", _id);
+            SerialPrint("E", "Sensor Scd40co2", "Error", String(_id.c_str()));
     }
 
     //Хук для обработки кнопки
@@ -301,7 +301,7 @@ public:
         if (value.valD < 124)
             regEvent(value.valD, "Scd40t");
         else
-            SerialPrint("E", "Sensor Scd40t", "Error", _id);
+            SerialPrint("E", "Sensor Scd40t", "Error", String(_id.c_str()));
     }
 
     void setTemperatureOffset()
@@ -397,7 +397,7 @@ public:
         if (value.valD < 100)
             regEvent(value.valD, "Scd40h");
         else
-            SerialPrint("E", "Sensor Scd40h", "Error", _id);
+            SerialPrint("E", "Sensor Scd40h", "Error", String(_id.c_str()));
     }
 
     ~Scd40h(){};

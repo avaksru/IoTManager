@@ -1,7 +1,7 @@
 {
     "projectProp": {
         "platformio": {
-            "default_envs": "esp32c6_8mb"
+            "default_envs": "esp8266_4mb"
         }
     },
     "modules": {
@@ -16,7 +16,7 @@
             },
             {
                 "path": "src/modules/virtual/DiscoveryHA",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/virtual/DiscoveryHomeD",
@@ -24,7 +24,7 @@
             },
             {
                 "path": "src/modules/virtual/DiscoverySprut",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/virtual/GoogleSheet",
@@ -44,11 +44,11 @@
             },
             {
                 "path": "src/modules/virtual/LogingDaily",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/virtual/LogingHourly",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/virtual/Math",
@@ -56,7 +56,7 @@
             },
             {
                 "path": "src/modules/virtual/owmWeather",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/virtual/Ping",
@@ -76,7 +76,7 @@
             },
             {
                 "path": "src/modules/virtual/UpdateServer",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/virtual/Variable",
@@ -92,7 +92,7 @@
             },
             {
                 "path": "src/modules/virtual/Weather",
-                "active": true
+                "active": false
             }
         ],
         "sensors": [
@@ -102,7 +102,7 @@
             },
             {
                 "path": "src/modules/exec/PressureRelay",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/sensors/A02Distance",
@@ -118,7 +118,7 @@
             },
             {
                 "path": "src/modules/sensors/AhtXX",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/sensors/AnalogAdc",
@@ -138,7 +138,7 @@
             },
             {
                 "path": "src/modules/sensors/Ble",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/sensors/Ble_part1",
@@ -150,15 +150,15 @@
             },
             {
                 "path": "src/modules/sensors/Bme280",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/sensors/Bmp280",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/sensors/Dht1122",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/sensors/Ds18b20",
@@ -198,7 +198,7 @@
             },
             {
                 "path": "src/modules/sensors/Hx710",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/sensors/Hx711",
@@ -206,7 +206,7 @@
             },
             {
                 "path": "src/modules/sensors/Impulse",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/sensors/Ina219",
@@ -222,11 +222,15 @@
             },
             {
                 "path": "src/modules/sensors/JHM1200",
-                "active": true
+                "active": false
+            },
+            {
+                "path": "src/modules/sensors/JHM1200v2",
+                "active": false
             },
             {
                 "path": "src/modules/sensors/ld2410",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/sensors/Max6675",
@@ -250,7 +254,7 @@
             },
             {
                 "path": "src/modules/sensors/MQgas",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/sensors/NoiseAdc",
@@ -258,7 +262,7 @@
             },
             {
                 "path": "src/modules/sensors/Ntc",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/sensors/Pcf8591",
@@ -278,11 +282,11 @@
             },
             {
                 "path": "src/modules/sensors/RCswitch",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/sensors/RTC",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/sensors/S8",
@@ -302,11 +306,11 @@
             },
             {
                 "path": "src/modules/sensors/Sht20",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/sensors/Sht30",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/sensors/SoftRTC",
@@ -318,13 +322,13 @@
             },
             {
                 "path": "src/modules/sensors/UART",
-                "active": true
+                "active": false
             }
         ],
         "executive_devices": [
             {
                 "path": "src/modules/exec/AnalogBtn",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/exec/BrokerMQTT",
@@ -344,7 +348,7 @@
             },
             {
                 "path": "src/modules/exec/EctoControlAdapter",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/exec/Enconder",
@@ -360,7 +364,7 @@
             },
             {
                 "path": "src/modules/exec/HttpGet",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/exec/IoTServo",
@@ -384,7 +388,7 @@
             },
             {
                 "path": "src/modules/exec/Multitouch",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/exec/MySensors",
@@ -392,15 +396,19 @@
             },
             {
                 "path": "src/modules/exec/OpenThermMonitor",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/exec/Pcf8574",
+                "active": false
+            },
+            {
+                "path": "src/modules/exec/HC59543",
                 "active": true
             },
             {
                 "path": "src/modules/exec/Pwm32",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/exec/Pwm8266",
@@ -424,7 +432,7 @@
             },
             {
                 "path": "src/modules/exec/sysReset",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/exec/Tca9555",
@@ -440,7 +448,7 @@
             },
             {
                 "path": "src/modules/exec/Telegram_v2",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/exec/Thermostat",
@@ -470,7 +478,7 @@
             },
             {
                 "path": "src/modules/display/LedFX",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/display/Nextion",
