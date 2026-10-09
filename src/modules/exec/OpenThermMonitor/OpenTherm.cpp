@@ -612,21 +612,46 @@ void OpenTherm::ImitationResponse(unsigned long request)
 	switch (id)
 	{
 	case OpenThermMessageID::Status:
+	{
+		// Имитация котла: статус-запрос мастера несет флаги режима в старшем байте
+		// (bit8 CH, bit9 DHW, bit10 Cooling, bit11 OTC, bit12 CH2). Запоминаем
+		// выставленный режим и отражаем его в ответе как реальный котел - иначе
+		// "отопление"/"ГВС" горят в статусе всегда, независимо от команд термостата
+		static bool imitCh = false, imitDhw = false, imitCooling = false, imitCh2 = false;
+		imitCh = data & 0x0100;
+		imitDhw = data & 0x0200;
+		imitCooling = data & 0x0400;
+		imitCh2 = data & 0x1000;
+
 		// Статус котла получен
 		msgType = OpenThermMessageType::READ_ACK;
 		static int8_t flame = 0;
-		flame_timer++;
-		if (flame_timer > 10)
-			flame = 1;
-		if (flame_timer > 20)
+		if (imitCh || imitDhw)
 		{
-			flame_timer = 0;
+			// пламя имитируется пилой (10 сек работает / 10 сек отдыхает),
+			// но только когда котел вообще должен гореть (режим Ч или ГВС активен)
+			flame_timer++;
+			if (flame_timer > 10)
+				flame = 1;
+			if (flame_timer > 20)
+			{
+				flame_timer = 0;
+				flame = 0;
+			}
+		}
+		else
+		{
 			flame = 0;
+			flame_timer = 0;
 		}
 		static int8_t fault = 0;
 		// fault = 1 - fault;
-		data = (bool)fault | (true << 1) | (true << 2) | ((bool)flame << 3) | (false << 4);
+		// Флаги ответа (их читает мониторинг из младших битов ответа):
+		// bit0 - ошибка, bit1 - режим Ч активен, bit2 - ГВС активен, bit3 - пламя,
+		// bit4 - Cooling активен, bit5 - Ч2 активен
+		data = (bool)fault | ((bool)imitCh << 1) | ((bool)imitDhw << 2) | ((bool)flame << 3) | ((bool)imitCooling << 4) | ((bool)imitCh2 << 5);
 		break;
+	}
 	case OpenThermMessageID::SConfigSMemberIDcode:
 		msgType = OpenThermMessageType::READ_ACK;
 		break;

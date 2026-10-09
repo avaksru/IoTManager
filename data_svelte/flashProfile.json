@@ -1,7 +1,7 @@
 {
     "projectProp": {
         "platformio": {
-            "default_envs": "esp8266_4mb"
+            "default_envs": "esp32c6_8mb"
         }
     },
     "modules": {
@@ -16,7 +16,7 @@
             },
             {
                 "path": "src/modules/virtual/DiscoveryHA",
-                "active": false
+                "active": true
             },
             {
                 "path": "src/modules/virtual/DiscoveryHomeD",
@@ -24,7 +24,7 @@
             },
             {
                 "path": "src/modules/virtual/DiscoverySprut",
-                "active": false
+                "active": true
             },
             {
                 "path": "src/modules/virtual/GoogleSheet",
@@ -44,23 +44,23 @@
             },
             {
                 "path": "src/modules/virtual/LogingDaily",
-                "active": false
+                "active": true
             },
             {
                 "path": "src/modules/virtual/LogingHourly",
-                "active": false
+                "active": true
             },
             {
                 "path": "src/modules/virtual/Math",
-                "active": false
+                "active": true
             },
             {
                 "path": "src/modules/virtual/owmWeather",
-                "active": false
+                "active": true
             },
             {
                 "path": "src/modules/virtual/Ping",
-                "active": false
+                "active": true
             },
             {
                 "path": "src/modules/virtual/SaveConfig",
@@ -76,7 +76,7 @@
             },
             {
                 "path": "src/modules/virtual/UpdateServer",
-                "active": false
+                "active": true
             },
             {
                 "path": "src/modules/virtual/Variable",
@@ -92,7 +92,7 @@
             },
             {
                 "path": "src/modules/virtual/Weather",
-                "active": false
+                "active": true
             }
         ],
         "sensors": [
@@ -102,7 +102,7 @@
             },
             {
                 "path": "src/modules/exec/PressureRelay",
-                "active": false
+                "active": true
             },
             {
                 "path": "src/modules/sensors/A02Distance",
@@ -118,7 +118,7 @@
             },
             {
                 "path": "src/modules/sensors/AhtXX",
-                "active": false
+                "active": true
             },
             {
                 "path": "src/modules/sensors/AnalogAdc",
@@ -138,7 +138,7 @@
             },
             {
                 "path": "src/modules/sensors/Ble",
-                "active": false
+                "active": true
             },
             {
                 "path": "src/modules/sensors/Ble_part1",
@@ -150,15 +150,15 @@
             },
             {
                 "path": "src/modules/sensors/Bme280",
-                "active": false
+                "active": true
             },
             {
                 "path": "src/modules/sensors/Bmp280",
-                "active": false
+                "active": true
             },
             {
                 "path": "src/modules/sensors/Dht1122",
-                "active": false
+                "active": true
             },
             {
                 "path": "src/modules/sensors/Ds18b20",
@@ -198,7 +198,7 @@
             },
             {
                 "path": "src/modules/sensors/Hx710",
-                "active": false
+                "active": true
             },
             {
                 "path": "src/modules/sensors/Hx711",
@@ -206,7 +206,7 @@
             },
             {
                 "path": "src/modules/sensors/Impulse",
-                "active": false
+                "active": true
             },
             {
                 "path": "src/modules/sensors/Ina219",
@@ -222,15 +222,11 @@
             },
             {
                 "path": "src/modules/sensors/JHM1200",
-                "active": false
-            },
-            {
-                "path": "src/modules/sensors/JHM1200v2",
-                "active": false
+                "active": true
             },
             {
                 "path": "src/modules/sensors/ld2410",
-                "active": false
+                "active": true
             },
             {
                 "path": "src/modules/sensors/Max6675",
@@ -254,7 +250,7 @@
             },
             {
                 "path": "src/modules/sensors/MQgas",
-                "active": false
+                "active": true
             },
             {
                 "path": "src/modules/sensors/NoiseAdc",
@@ -262,7 +258,7 @@
             },
             {
                 "path": "src/modules/sensors/Ntc",
-                "active": false
+                "active": true
             },
             {
                 "path": "src/modules/sensors/Pcf8591",
@@ -282,11 +278,11 @@
             },
             {
                 "path": "src/modules/sensors/RCswitch",
-                "active": false
+                "active": true
             },
             {
                 "path": "src/modules/sensors/RTC",
-                "active": false
+                "active": true
             },
             {
                 "path": "src/modules/sensors/S8",
@@ -306,11 +302,11 @@
             },
             {
                 "path": "src/modules/sensors/Sht20",
-                "active": false
+                "active": true
             },
             {
                 "path": "src/modules/sensors/Sht30",
-                "active": false
+                "active": true
             },
             {
                 "path": "src/modules/sensors/SoftRTC",
@@ -322,13 +318,13 @@
             },
             {
                 "path": "src/modules/sensors/UART",
-                "active": false
+                "active": true
             }
         ],
         "executive_devices": [
             {
                 "path": "src/modules/exec/AnalogBtn",
-                "active": false
+                "active": true
             },
             {
                 "path": "src/modules/exec/BrokerMQTT",
@@ -348,7 +344,7 @@
             },
             {
                 "path": "src/modules/exec/EctoControlAdapter",
-                "active": false
+                "active": true
             },
             {
                 "path": "src/modules/exec/Enconder",
@@ -364,7 +360,7 @@
             },
             {
                 "path": "src/modules/exec/HttpGet",
-                "active": false
+                "active": true
             },
             {
                 "path": "src/modules/exec/IoTServo",
@@ -388,7 +384,7 @@
             },
             {
                 "path": "src/modules/exec/Multitouch",
-                "active": false
+                "active": true
             },
             {
                 "path": "src/modules/exec/MySensors",
@@ -396,19 +392,15 @@
             },
             {
                 "path": "src/modules/exec/OpenThermMonitor",
-                "active": false
+                "active": true
             },
             {
                 "path": "src/modules/exec/Pcf8574",
-                "active": false
-            },
-            {
-                "path": "src/modules/exec/HC59543",
                 "active": true
             },
             {
                 "path": "src/modules/exec/Pwm32",
-                "active": false
+                "active": true
             },
             {
                 "path": "src/modules/exec/Pwm8266",
@@ -432,7 +424,7 @@
             },
             {
                 "path": "src/modules/exec/sysReset",
-                "active": false
+                "active": true
             },
             {
                 "path": "src/modules/exec/Tca9555",
@@ -448,7 +440,7 @@
             },
             {
                 "path": "src/modules/exec/Telegram_v2",
-                "active": false
+                "active": true
             },
             {
                 "path": "src/modules/exec/Thermostat",
@@ -478,7 +470,7 @@
             },
             {
                 "path": "src/modules/display/LedFX",
-                "active": false
+                "active": true
             },
             {
                 "path": "src/modules/display/Nextion",

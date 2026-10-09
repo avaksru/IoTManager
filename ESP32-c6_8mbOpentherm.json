@@ -203,7 +203,7 @@
             },
             {
                 "path": "src/modules/virtual/Math",
-                "active": false
+                "active": true
             },
             {
                 "path": "src/modules/virtual/owmWeather",
@@ -211,7 +211,7 @@
             },
             {
                 "path": "src/modules/virtual/Ping",
-                "active": false
+                "active": true
             },
             {
                 "path": "src/modules/virtual/SaveConfig",

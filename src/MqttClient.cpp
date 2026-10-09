@@ -3,6 +3,8 @@
 
 void mqttInit() {
     mqtt.setBufferSize(1024); // Увеличиваем буфер до 1024 байт
+    mqtt.setKeepAlive(60);    // вместо дефолтных 15 с
+    mqtt.setSocketTimeout(10);
     mqtt.setCallback(mqttCallback);
     ts.add(
         WIFI_MQTT_CONNECTION_CHECK, MQTT_RECONNECT_INTERVAL,
