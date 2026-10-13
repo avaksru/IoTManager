@@ -177,7 +177,10 @@ void mqttSubscribe() {
         {
             if ((*it)->iAmLocal)
             {
-                publishStatusMqtt(String((*it)->getID().c_str()), (*it)->getValue());
+                // публикуем статус только если элемент уже получил реальное значение,
+                // чтобы не отправлять в MQTT нули от ещё не опрошенных датчиков (например, Ds18b20)
+                if ((*it)->isValueSet())
+                    publishStatusMqtt(String((*it)->getID().c_str()), (*it)->getValue());
                 (*it)->onMqttWsAppConnectEvent();
             }
         }
@@ -220,7 +223,10 @@ void mqttCallback(char* topic, uint8_t* payload, size_t length) {
         // публикация всех статус сообщений при подключении приложения и генерация события подключения приложения в модулях
         for (std::list<IoTItem*>::iterator it = IoTItems.begin(); it != IoTItems.end(); ++it) {
             if ((*it)->iAmLocal) {
-                publishStatusMqtt(String((*it)->getID().c_str()), (*it)->getValue());
+                // публикуем статус только если элемент уже получил реальное значение,
+                // чтобы не отправлять в MQTT нули от ещё не опрошенных датчиков (например, Ds18b20)
+                if ((*it)->isValueSet())
+                    publishStatusMqtt(String((*it)->getID().c_str()), (*it)->getValue());
                 (*it)->onMqttWsAppConnectEvent();
             }
         }

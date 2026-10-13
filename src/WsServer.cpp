@@ -150,7 +150,10 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t* payload, size_t length)
                         {
                                 if ((*it)->iAmLocal)
                                 {
-                                    publishStatusMqtt(String((*it)->getID().c_str()), (*it)->getValue());
+                                    // публикуем статус только если элемент уже получил реальное значение,
+                                    // чтобы не отправлять нули от ещё не опрошенных датчиков (например, Ds18b20)
+                                    if ((*it)->isValueSet())
+                                        publishStatusMqtt(String((*it)->getID().c_str()), (*it)->getValue());
                                     (*it)->onMqttWsAppConnectEvent();
                                 }
                         }

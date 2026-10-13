@@ -107,6 +107,7 @@ void IoTItem::sendSubWidgetsValues(String& id, String& json) {
 
 // когда событие случилось
 void IoTItem::regEvent(const String& value, const String& consoleInfo, bool error, bool genEvent) {
+    _valueSet = true;  // фиксируем, что элемент получил реальное значение
         if (_needSave) {
         jsonWriteStr_(valuesFlashJson, _id.c_str(), value);
         needSaveValues = true;
@@ -151,6 +152,7 @@ String IoTItem::getRoundValue() {
 }
 
 void IoTItem::regEvent(float regvalue, const String& consoleInfo, bool error, bool genEvent) {
+    _valueSet = true;  // фиксируем, что элемент получил реальное значение
         value.valD = regvalue;
 
     if (_multiply) value.valD = value.valD * _multiply;

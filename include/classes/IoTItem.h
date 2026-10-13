@@ -35,7 +35,8 @@ class IoTItem {
     virtual String getValue();
     long getInterval();
     bool isGlobal();
-    
+    bool isValueSet() const { return _valueSet; }  // элемент уже получил хотя бы одно реальное значение
+
     void sendSubWidgetsValues(String& id, String& json);
 
     void setInterval(long interval);
@@ -103,6 +104,7 @@ class IoTItem {
 
    protected:
     bool _needSave = false;  // признак необходимости сохранять и загружать значение элемента на flash
+    bool _valueSet = false;  // признак того, что элемент получил первое реальное значение (устанавливается в regEvent/setValue)
     std::string _subtype = "";
     std::string _id = "errorId";  // если будет попытка создания Item без указания id, то элемент оставит это значение
     long _interval = 0;

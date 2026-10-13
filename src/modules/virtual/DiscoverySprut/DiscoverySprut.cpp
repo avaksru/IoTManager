@@ -278,7 +278,10 @@ public:
             {
                 if ((*it)->iAmLocal)
                 {
-                    publishStatusMqtt(String((*it)->getID().c_str()), (*it)->getValue());
+                    // публикуем статус только если элемент уже получил реальное значение,
+                    // чтобы не отправлять в MQTT нули от ещё не опрошенных датчиков (например, Ds18b20)
+                    if ((*it)->isValueSet())
+                        publishStatusMqtt(String((*it)->getID().c_str()), (*it)->getValue());
                     (*it)->onMqttWsAppConnectEvent();
                 }
             }
