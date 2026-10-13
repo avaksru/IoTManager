@@ -296,7 +296,8 @@ extern "C" void __wrap_esp_panic_handler(void *info)
 #include "esp_ota_ops.h"
 
 #include <esp_task_wdt.h>
-// 3 seconds WDT, reset in 1 seconds
+#include <esp_idf_version.h>
+// WDT для loopTask: 180 с без esp_task_wdt_reset() / проходов loop() — panic и перезапуск
 #define WDT_TIMEOUT 180
 
 static bool wdt_initialized = false;
@@ -310,8 +311,34 @@ void startWatchDog()
   wdt_initialized = true;
   
 #if defined(esp32c6_4mb) || defined(esp32c6_8mb) || defined(esp32s3_16mb)
-  // Для ESP32-C6 и ESP32-S3 watchdog отключен в setup() через esp_task_wdt_deinit()
-  // Serial.printf("[WDT] Task Watchdog disabled for ESP32-C6/S3\n");
+  // Раньше для ESP32-C6/S3 watchdog полностью отключали (esp_task_wdt_deinit() в setup()),
+  // и зависший loop() некому было перезапустить. Возвращаем наблюдение за loopTask
+  // с тем же окном (WDT_TIMEOUT), что и на классических ESP32; при срабатывании — panic (ребут).
+#if ESP_IDF_VERSION_MAJOR >= 5
+  {
+    esp_task_wdt_config_t config = {};
+    config.timeout_ms     = WDT_TIMEOUT * 1000UL;
+    config.idle_core_mask = 0;
+    config.trigger_panic  = true;
+    esp_err_t err = esp_task_wdt_reconfigure(&config);
+    if (err != ESP_OK) {
+      err = esp_task_wdt_init(&config);  // если TWDT ещё не был инициализирован
+    }
+    if (err != ESP_OK) {
+      Serial.printf("[WDT] reconfigure/init error: %d\n", err);
+    }
+  }
+#else
+  esp_err_t err = esp_task_wdt_init(WDT_TIMEOUT, true);
+  if (err != ESP_OK && err != ESP_ERR_INVALID_STATE) {
+    Serial.printf("[WDT] init error: %d\n", err);
+  }
+#endif
+  // Подписываем loopTask и включаем сброс WDT в цикле ядра (loopTaskWDTEnabled):
+  // enableLoopWDT() делает и то и другое. Голый esp_task_wdt_add(NULL) тут нельзя —
+  // ядро не стало бы сбрасывать WDT и через WDT_TIMEOUT случился бы вечный ребут.
+  enableLoopWDT();
+  Serial.println("[WDT] Task watchdog on loopTask, timeout " + String(WDT_TIMEOUT) + " s");
 #else
   // Для ESP32 (Xtensa классический) - инициализируем если ещё не инициализирован
   esp_err_t err = esp_task_wdt_init(WDT_TIMEOUT, true);

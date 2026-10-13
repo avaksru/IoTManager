@@ -28,6 +28,10 @@
 #include <core_esp8266_features.h>
 #endif
 
+#if(WEBSOCKETS_NETWORK_TYPE == NETWORK_ESP32)
+#include <sys/select.h>    // select(), fd_set — проверка "залипшего" сокета в WebSockets::write()
+#endif
+
 extern "C" {
 #ifdef CORE_HAS_LIBB64
 #include <libb64/cencode.h>
@@ -691,6 +695,33 @@ size_t WebSockets::write(WSclient_t * client, uint8_t * out, size_t n) {
             DEBUG_WEBSOCKETS("[write] write TIMEOUT! %lu\n", (millis() - t));
             break;
         }
+
+#if(WEBSOCKETS_NETWORK_TYPE == NETWORK_ESP32)
+        // NetworkClient::write() при клиенте, который перестал подтверждать данные, ждёт
+        // в select() до 10 x 1 с (WIFI_CLIENT_MAX_WRITE_RETRY x WIFI_CLIENT_SELECT_TIMEOUT_US).
+        // Проверяем готовность сокета без ожидания: если он не освобождается
+        // WEBSOCKETS_WRITE_STALL_MS, закрываем TCP (изнутри write() нельзя вызывать
+        // clientDisconnect() — потребовался бы close-кадр, рекурсия). Слот подчистит
+        // clientIsConnected() в handleClientData() на следующем проходе loop().
+        {
+            int fd = client->tcp->fd();
+            fd_set wset;
+            FD_ZERO(&wset);
+            if(fd >= 0) {
+                FD_SET(fd, &wset);
+            }
+            struct timeval tv = { 0, 0 };
+            if(fd < 0 || select(fd + 1, NULL, &wset, NULL, &tv) <= 0) {
+                if((millis() - t) > WEBSOCKETS_WRITE_STALL_MS) {
+                    DEBUG_WEBSOCKETS("[write] socket stalled %lu ms, dropping client\n", (millis() - t));
+                    client->tcp->stop();
+                    break;
+                }
+                WEBSOCKETS_YIELD_MORE();
+                continue;
+            }
+        }
+#endif
 
         len = client->tcp->write((const uint8_t *)out, n);
         if(len) {

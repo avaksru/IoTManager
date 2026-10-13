@@ -93,14 +93,12 @@ void stopErrorMarker(int id) {
 }
 
 void setup() {
-    // Подавляем логи task_wdt и отключаем Task Watchdog для ESP32-C6 и ESP32-S3
+    // task_wdt логи подавляем (шумные сообщения Watchdog). Сами Task Watchdog для
+    // ESP32-C6/S3 больше НЕ отключаем (раньше здесь был esp_task_wdt_deinit(), и зависший
+    // loop() некому было перезапустить): watchdog настраивает startWatchDog() ->
+    // esp_task_wdt_reconfigure(WDT_TIMEOUT) + enableLoopWDT(), см. src/DebugTrace.cpp.
     #if defined(ESP32)
-    esp_log_level_set("task_wdt", ESP_LOG_NONE);  // Отключаем логи watchdog
-    #endif
-    
-    #if defined(CONFIG_IDF_TARGET_ESP32C6) || defined(CONFIG_IDF_TARGET_ESP32S3)
-    esp_task_wdt_deinit();
-    Serial.println("[WDT] esp_task_wdt_deinit() called for ESP32-C6/S3");
+    esp_log_level_set("task_wdt", ESP_LOG_NONE);
     #endif
 
 #if defined(esp32s2_4mb) || defined(esp32s3_16mb)

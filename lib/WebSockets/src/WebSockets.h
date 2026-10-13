@@ -94,7 +94,18 @@
 #define WEBSOCKETS_YIELD_MORE()
 #endif
 
+// Общий таймаут чтения/записи WebSockets-библиотеки. Можно переопределить флагом сборки.
+#ifndef WEBSOCKETS_TCP_TIMEOUT
 #define WEBSOCKETS_TCP_TIMEOUT (5000)
+#endif
+
+// После этого времени в мс write() закрывает TCP-сокет, если тот не готов к записи
+// (клиент пропал без закрытия соединения: ACK не идут, send-буфер полон). Без этого
+// NetworkClient::write() на ESP32 может ждать select() до 10 x 1 с на один вызов,
+// и loop() стоит на одном сообщении десятки секунд.
+#ifndef WEBSOCKETS_WRITE_STALL_MS
+#define WEBSOCKETS_WRITE_STALL_MS (1500)
+#endif
 
 #define NETWORK_ESP8266_ASYNC (0)
 #define NETWORK_ESP8266 (1)

@@ -122,9 +122,9 @@ public:
                     HOMEdJSON = HOMEdJSON + "\"" + device + "\",";
                     bindings = bindings + "\"" + device + "\":{\"inTopic\": \"" + mqttRootDevice + "/" + device + "/status\", \"inPattern\": \"{{ json.status }}\", \"outTopic\": \"" + mqttRootDevice + "/" + device + "/control\"},";
                     // options = options + "\"" + device + "\":{\"title\": \"" + name + "\"},";
-                    options = options + "\"" + device + "\":{\"title\": \"" + name + "\",\"type\": \"number\", \"min\": -10000, \"max\": 100000, \"step\": 0.1, \"round\": " + value["round"].as<String>() + "},";
+                    options = options + "\"" + device + "\":{\"title\": \"" + name + "\",\"type\": \"number\",  \"unit\": \"°C\", \"min\": -10000, \"max\": 100000, \"step\": 0.1, \"round\": " + value["round"].as<String>() + "},";
                 }
-                else if (value["widget"].as<String>() == "anydataTmp")
+                else if (value["widget"].as<String>() == "anydataTmp") 
                 {
                     HOMEdJSON = HOMEdJSON + "\"" + device + "\",";
                     bindings = bindings + "\"" + device + "\":{\"inTopic\": \"" + mqttRootDevice + "/" + device + "/status\", \"inPattern\": \"{{ json.status }}\"},";

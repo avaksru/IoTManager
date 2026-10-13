@@ -9,6 +9,11 @@ extern IoTScenario iotScen;
 void standWebSocketsInit() {
     standWebSocket.begin();
     standWebSocket.onEvent(webSocketEvent);
+    // Отключать клиентов, пропавших без закрытия соединения (телефон сменил сеть, моргнул свет):
+    // ping раз в 10 с, отключение после 2 пропущенных pong. Настройки применяются и к уже
+    // подключеным клиентам, и к новым (WebSocketsServerCore::enableHeartbeat / newClient).
+    // Браузер отвечает на протокольный ping сам, прикладной ping "/pi|" не мешает.
+    standWebSocket.enableHeartbeat(10000, 3000, 2);
     SerialPrint("i", "WS", "WS server initialized");
     for (size_t i = 0; i < WEBSOCKETS_CLIENT_MAX; i++)
     {
@@ -569,20 +574,20 @@ void sendStringToWs(const String& header, String& payload, int client_id) {
 
     String msg = header + "|0012|" + payload;
     size_t totalSize = msg.length();
-   // SerialPrint("E", "sendStringToWs", msg);
-    char dataArray[totalSize];
-    msg.toCharArray(dataArray, totalSize + 1);
+    // SerialPrint("E", "sendStringToWs", msg);
+    // (было: char dataArray[totalSize]; msg.toCharArray(dataArray, totalSize + 1);
+    //  — VLA на стеке + запись totalSize + 1 байт в массив из totalSize)
 #ifdef ASYNC_WEB_SOCKETS
     if (client_id == -1) {
-        ws.binaryAll((uint8_t*)dataArray, totalSize);
+        ws.binaryAll((uint8_t*)msg.c_str(), totalSize);
     } else {
-        ws.binary(client_id, (uint8_t*)dataArray, totalSize);
+        ws.binary(client_id, (uint8_t*)msg.c_str(), totalSize);
     }
 #elif defined (STANDARD_WEB_SOCKETS)
     if (client_id == -1) {
-        standWebSocket.broadcastBIN((uint8_t*)dataArray, totalSize);
+        standWebSocket.broadcastBIN((const uint8_t*)msg.c_str(), totalSize);
     } else {
-        standWebSocket.sendBIN(client_id, (uint8_t*)dataArray, totalSize);
+        standWebSocket.sendBIN(client_id, (const uint8_t*)msg.c_str(), totalSize);
     }
 #endif
 }
