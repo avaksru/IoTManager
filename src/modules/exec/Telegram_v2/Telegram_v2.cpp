@@ -425,32 +425,60 @@ public:
             _myBot->deleteMessage(_myBot->lastBotMsg());
             if (msg.data.indexOf("Firmware") != -1)
             {
+                // приостанавливаем фоновые ts-задачи (TIMES пишет values.json и т.п.),
+                // чтобы во время перезаписи раздела никто не писал в ФС
+                ts.disableAll();
                 putUserDataToRam();
                 if (typeOTA == FB_SPIFFS)
                 {
-                    if (_updateFS((String *)&OTAfilepath) == 1)
+                    uint8_t otaRes = _updateFS((String *)&OTAfilepath);
+                    if (otaRes == HTTP_UPDATE_OK)
                     {
-                        saveUserDataToFlash();
-                        SerialPrint("!!!", F("Update"), "Start upgrade FS... ");
+                        // раздел ФС перезаписан - ПЕРЕМОНТИРОВАТЬ ФС, иначе восстановление
+                        // данных пойдёт через устаревшее монтирование и будет потеряно
+                        if (remountFS())
+                        {
+                            saveUserDataToFlash();
+                            SerialPrint("!!!", F("Update"), F("FS upgraded, user data restored"));
+                        }
+                        else
+                        {
+                            SerialPrint("E", F("Update"), F("User data restore skipped (FS remount failed)"));
+                        }
                     }
                     else
                     {
-                        SerialPrint("E", F("Update"), F("FS Path error"));
-                        _myBot->sendMessage("FS Path error!", _chatID);
+                        if (otaRes == HTTP_UPDATE_NO_UPDATES)
+                            SerialPrint("W", F("Update"), F("FS update: no updates"));
+                        else
+                            SerialPrint("E", F("Update"), F("FS update failed"));
+                        _myBot->sendMessage(otaRes == HTTP_UPDATE_NO_UPDATES ? "No updates!" : "FS update failed!", _chatID);
+                        ts.enableAll();
                     }
                 }
                 else if (typeOTA == FB_FIRMWARE)
                 {
-                    if (_update((String *)&OTAfilepath) == 1)
+                    uint8_t otaRes = _update((String *)&OTAfilepath);
+                    if (otaRes == HTTP_UPDATE_OK)
                     {
+                        // ФС не затронута; перезапись тем же содержимым безопасна
                         saveUserDataToFlash();
-                        SerialPrint("!!!", F("Update"), "Start upgrade BUILD... ");
+                        SerialPrint("!!!", F("Update"), F("Firmware upgraded"));
                     }
                     else
                     {
-                        SerialPrint("E", F("Update"), F("Build Path error"));
-                        _myBot->sendMessage("Build Path error!", _chatID);
+                        if (otaRes == HTTP_UPDATE_NO_UPDATES)
+                            SerialPrint("W", F("Update"), F("BUILD update: no updates"));
+                        else
+                            SerialPrint("E", F("Update"), F("Build update failed"));
+                        _myBot->sendMessage(otaRes == HTTP_UPDATE_NO_UPDATES ? "No updates!" : "Build update failed!", _chatID);
+                        ts.enableAll();
                     }
+                }
+                else
+                {
+                    // неизвестный тип файла - вернём фоновые задачи
+                    ts.enableAll();
                 }
             }
             OTAfilepath = "";
@@ -822,7 +850,9 @@ public:
     }
 
     // ===================== OTA =====================
-    // ОТА обновление, вызывать внутри обработчика сообщения по флагу OTA
+    // ОТА обновление, вызывать внутри обработчика сообщения по флагу OTA.
+    // Возвращает HTTPUpdateResult: 0=HTTP_UPDATE_FAILED, 1=HTTP_UPDATE_NO_UPDATES,
+    // 2=HTTP_UPDATE_OK (нумерация одинакова в ядрах ESP32/ESP8266), 8 - нет файла
     uint8_t static _update(String *_file_ptr, __attribute__((unused)) uint8_t type = FB_FIRMWARE)
     {
 #ifndef FB_NO_OTA
@@ -851,7 +881,10 @@ public:
             _OTAstate = httpUpdate.updateSpiffs(client, *_file_ptr);
 #endif
 #endif
-        return 1;
+        // Ранее здесь всегда возвращалась 1 - а 1 это HTTP_UPDATE_NO_UPDATES!
+        // Из-за этого восстановление пользовательских данных не выполнялось после
+        // успешной OTA. Возвращаем реальный результат (0=FAILED, 1=NO_UPDATES, 2=OK)
+        return (uint8_t)_OTAstate;
     }
 
     // ОТА обновление SPIFFS, вызывать внутри обработчика сообщения по флагу OTA

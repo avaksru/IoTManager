@@ -20,6 +20,13 @@ extern void getLastVersion();
 extern void upgrade_firmware(int type, String path);
 extern bool upgradeFS(String path);
 extern bool upgradeBuild(String path);
+
+// Перемонтировать LittleFS после перезаписи раздела ФС (updateSpiffs/updateFS/Update).
+// После записи раздела через esp_partition_write "старое" монтирование в RAM содержит
+// устаревшую таблицу размещения: записи/чтения через него теряются после перезагрузки
+// и могут повредить новую ФС. Возвращает true, если перемонтирование прошло успешно.
+extern bool remountFS();
+
 extern void restartEsp();
 
 extern const String getBinPath();

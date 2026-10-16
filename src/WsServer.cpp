@@ -13,7 +13,7 @@ void standWebSocketsInit() {
     // ping раз в 10 с, отключение после 2 пропущенных pong. Настройки применяются и к уже
     // подключеным клиентам, и к новым (WebSocketsServerCore::enableHeartbeat / newClient).
     // Браузер отвечает на протокольный ping сам, прикладной ping "/pi|" не мешает.
-    standWebSocket.enableHeartbeat(10000, 3000, 2);
+    wsResumeClientWatchdog();
     SerialPrint("i", "WS", "WS server initialized");
     for (size_t i = 0; i < WEBSOCKETS_CLIENT_MAX; i++)
     {
@@ -188,8 +188,12 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t* payload, size_t length)
                 // если не было создано приема данных по udp - то создадим его
                 addThisDeviceToList();
 #ifdef WIFI_ASYNC                
-settingsFlashJson = readFile(F("settings.json"), 4096 * 8);
-                settingsFlashJson.replace("\r\n", "");
+                // перечитываем только при успешном чтении - не затираем RAM-копию мусором
+                String readSettings = readFile(F("settings.json"), 4096 * 8);
+                if (readSettings != "failed" && readSettings != "large") {
+                    readSettings.replace("\r\n", "");
+                    settingsFlashJson = readSettings;
+                }
                 //Serial.println(settingsFlashJson);
                 //WiFiUtilsItit();
 #endif                
@@ -618,3 +622,39 @@ int getNumWSClients() { return ws.count(); }
 #elif defined (STANDARD_WEB_SOCKETS)
 int getNumWSClients() { return standWebSocket.connectedClients(false); }
 #endif
+
+//----------------------------------------------------------------------------
+// Серверный heartbeat (протокольные ping/pong): ping каждые
+// WS_HEARTBEAT_PING_INTERVAL, разрыв клиента после
+// WS_HEARTBEAT_PONG_TIMEOUT * WS_HEARTBEAT_TIMEOUT_COUNT пропущенных pong.
+//----------------------------------------------------------------------------
+#define WS_HEARTBEAT_PING_INTERVAL 10000
+#define WS_HEARTBEAT_PONG_TIMEOUT 3000
+#define WS_HEARTBEAT_TIMEOUT_COUNT 2
+
+// Радиомодуль на время WiFi-скана уходит с домашнего канала — pong-и клиентов
+// в это окно не доходят, и сервер кикает ЖИВЫЕ соединения (на клиенте это
+// "[WS] closed before open ... code 1006" и "связь разрывается" на странице
+// подключения). На время скана heartbeat отключаем; мёртвых клиентов всё
+// равно отлавливает прикладной механизм ack (/tst|, таймаут на фронте).
+#ifdef STANDARD_WEB_SOCKETS
+void wsSuspendClientWatchdog()
+{
+    standWebSocket.disableHeartbeat();
+    SerialPrint("i", "WS", "watchdog (ping/pong) paused during scan");
+}
+
+void wsResumeClientWatchdog()
+{
+    standWebSocket.enableHeartbeat(WS_HEARTBEAT_PING_INTERVAL, WS_HEARTBEAT_PONG_TIMEOUT, WS_HEARTBEAT_TIMEOUT_COUNT);
+    SerialPrint("i", "WS", "watchdog (ping/pong) resumed");
+}
+#else  // !STANDARD_WEB_SOCKETS
+void wsSuspendClientWatchdog()
+{
+}
+
+void wsResumeClientWatchdog()
+{
+}
+#endif  // STANDARD_WEB_SOCKETS

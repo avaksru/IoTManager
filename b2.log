@@ -1,0 +1,65 @@
+Processing esp32c6_8mb (framework: arduino; board: esp32-c6-devkitm-1; platform: espressif32 @7.0.1)
+--------------------------------------------------------------------------------
+Verbose mode can be enabled via `-v, --verbose` option
+PLATFORMIO_DIRC:\Users\avaks\.platformio
+Arduino already exists in C:\Users\avaks\.platformio\platforms\espressif32\boards\esp32-c6-devkitm-1.json
+Arduino already exists in C:\Users\avaks\.platformio\platforms\espressif32\boards\esp32-c6-devkitc-1.json
+CONFIGURATION: https://docs.platformio.org/page/boards/espressif32/esp32-c6-devkitm-1.html
+PLATFORM: Espressif 32 (7.0.1) > Espressif ESP32-C6-DevKitM-1
+HARDWARE: ESP32C6 160MHz, 320KB RAM, 4MB Flash
+DEBUG: Current (esp-prog) External (cmsis-dap, esp-bridge, esp-builtin, esp-prog, iot-bus-jtag, jlink, minimodule, olimex-arm-usb-ocd, olimex-arm-usb-ocd-h, olimex-arm-usb-tiny-h, olimex-jtag-tiny, tumpa)
+PACKAGES: 
+ - framework-arduinoespressif32 @ 3.0.1+sha.cc50d90 
+ - framework-arduinoespressif32-libs @ 5.1.0+sha.442a798083 
+ - tool-esptoolpy @ 2.41100.0 (4.11.0) 
+ - toolchain-riscv32-esp @ 12.2.0+20230208
+LDF: Library Dependency Finder -> https://bit.ly/configure-pio-ldf
+LDF Modes: Finder ~ chain, Compatibility ~ soft
+Found 69 compatible libraries
+Scanning dependencies...
+Dependency Graph
+|-- ArduinoJson @ 7.4.3
+|-- PubSubClient @ 2.8.0
+|-- Ethernet @ 2.0.2
+|-- AHTxx @ 1.2.0+sha.701814c
+|-- NimBLE-Arduino @ 2.0.0+sha.20c1e85
+|-- Adafruit BME280 Library @ 2.3.0
+|-- Adafruit BMP280 Library @ 3.0.0
+|-- DHT sensor library for ESPx @ 1.19.0
+|-- DallasTemperature @ 4.0.4+sha.d2d70ab
+|-- HX710B-based Pressure Sensor @ 1.0.0+sha.ef8baf3
+|-- ld2410 @ 0.1.4
+|-- rc-switch @ 2.6.4
+|-- SHT2x @ 0.1.4
+|-- WEMOS SHT3x @ 1.0.0
+|-- EspSoftwareSerial @ 8.1.0
+|-- Adafruit BusIO @ 1.17.4
+|-- FastBot @ 2.27.3
+|-- Adafruit NeoPixel @ 1.15.5
+|-- WS2812FX @ 1.4.6
+|-- SPI @ 2.0.0
+|-- Wire @ 2.0.0
+|-- HTTPUpdate @ 2.0.0
+|-- decoder
+|-- OneWireNg @ 0.14.1
+|-- iarduino RTC (часы реального времени) @ 2.0.0
+|-- ESPmDNS @ 2.0.0
+|-- ESP32 Async UDP @ 2.0.0
+|-- LittleFS @ 2.0.0
+|-- FS @ 2.0.0
+|-- SPIFFS @ 2.0.0
+|-- WiFi @ 2.0.0
+|-- HTTPClient @ 2.0.0
+|-- TickerScheduler
+|-- Update @ 2.0.0
+|-- WebServer @ 2.0.0
+|-- WebSockets @ 2.3.7
+|-- Ethernet @ 2.0.0
+Building in release mode
+Compiling .pio\build\esp32c6_8mb\src\modules\exec\Thermostat\Thermostat.cpp.o
+========================= [SUCCESS] Took 17.33 seconds =========================
+
+Environment    Status    Duration
+-------------  --------  ------------
+esp32c6_8mb    SUCCESS   00:00:17.333
+========================= 1 succeeded in 00:00:17.333 =========================

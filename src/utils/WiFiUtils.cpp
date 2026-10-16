@@ -1,9 +1,10 @@
 #include "utils/WiFiUtils.h"
+#include "WsServer.h"
 #include <vector>
-#if defined(ESP32)
-#include <esp_task_wdt.h>
-#endif
 #include "DebugTrace.h"
+#if defined(ESP32)
+#include <esp_wifi.h> // esp_wifi_set_country_code / esp_wifi_set_protocol (страна и fallback протокола)
+#endif
 #if defined(ESP32)
 #include <ESPmDNS.h>
 #elif defined(ESP8266)
@@ -11,6 +12,60 @@
 #endif
 #define TRIESONE 20 // количество секунд ожидания подключения к одной сети из несколких
 #define TRIES 30    // количество секунд ожидания подключения сети если она одна
+
+// Расшифровка причин разрыва WiFi (коды из esp_wifi_types.h / esp_wifi_types_nan.h).
+// Нужно, чтобы в логе сразу было видно: проблема с паролем/авторизацией (15, 202),
+// нет такой сети (201) или это "обычный" разрыв (1, 2, 8)
+static String wifiDisconnectReasonText(uint8_t reason)
+{
+  switch (reason)
+  {
+  case 1: return "UNSPECIFIED";
+  case 2: return "AUTH_EXPIRE";
+  case 3: return "AUTH_LEAVE";
+  case 4: return "ASSOC_EXPIRE";
+  case 5: return "ASSOC_TOOMANY";
+  case 6: return "NOT_AUTHED";
+  case 7: return "NOT_ASSOCED";
+  case 8: return "ASSOC_LEAVE";
+  case 10: return "DEAUTH_LEAVING";
+  case 15: return "4WAY_HANDSHAKE_TIMEOUT (wrong password?)";
+  case 16: return "GROUP_KEY_UPDATE_TIMEOUT";
+  case 18: return "ASSOC_NOT_AUTHED";
+  case 20: return "IEEE8021X_AUTH_FAIL";
+  case 201: return "NO_AP_FOUND";
+  case 202: return "AUTH_FAIL (wrong password?)";
+  case 203: return "ASSOC_FAIL";
+  case 204: return "HANDSHAKE_TIMEOUT";
+  case 39: return "TIMEOUT (assoc exchange failed)";
+  case 200: return "BEACON_TIMEOUT";
+  case 205: return "CONNECTION_FAIL";
+  case 206: return "AP_TSF_RESET";
+  case 207: return "ROAMING";
+  case 209: return "SA_QUERY_TIMEOUT (PMF?)";
+  default: return "unknown (see esp_wifi_types.h)";
+  }
+}
+
+// Расшифровка режимов аутентификации точки (esp_wifi_types.h, полезно видеть
+// в логе, чем защищена сеть - WPA2 / WPA3 / переходный режим)
+static String wifiAuthModeText(uint8_t authmode)
+{
+  switch (authmode)
+  {
+  case 0: return "OPEN";
+  case 1: return "WEP";
+  case 2: return "WPA_PSK";
+  case 3: return "WPA2_PSK";
+  case 4: return "WPA_WPA2_PSK";
+  case 5: return "WPA2_ENTERPRISE";
+  case 6: return "WPA3_PSK";
+  case 7: return "WPA2_WPA3_PSK";
+  case 8: return "WAPI_PSK";
+  case 9: return "OWE";
+  default: return "unknown (" + String(authmode) + ")";
+  }
+}
 
 #if defined(esp32_wifirep)
 #include "lwip/lwip_napt.h"
@@ -52,6 +107,14 @@ std::vector<String> _passwordList;
 uint8_t currentNetwork = 0;
 bool wifiConnecting = false;
 uint8_t connectionAttempts = 0;
+// диагностика проблем ассоциации: счётчик подряд идущих "подозрительных" разрывов
+// (reason 39/201/203) и флаг принудительного ограничения протокола (обход 11ax)
+uint8_t wifiConnFailStreak = 0;
+// канал/BSSID последней известной точки из скана
+uint8_t knownChannel = 0;
+uint8_t knownBssid[6] = {0, 0, 0, 0, 0, 0};
+bool knownBssidValid = false;
+bool wifiProtocolPinned = false;
 //------------------------------------------
 // Обработчики событий Wi-Fi
 //------------------------------------------
@@ -64,8 +127,13 @@ void WiFiEvent(arduino_event_t *event)
 #else
   case SYSTEM_EVENT_STA_CONNECTED:
 #endif
-    // Подключились к STA
+    // Подключились к STA. Канал и режим аутентификации точки сразу видны в логе:
+    // канал 12/13 => проблема страны, WPA3 => PMF/SAE нюансы
+#if defined(ESP32)
+    SerialPrint("i", "WIFI", "Connected to AP: " + WiFi.SSID() + " (channel " + String(event->event_info.wifi_sta_connected.channel) + ", authmode " + wifiAuthModeText(event->event_info.wifi_sta_connected.authmode) + ")");
+#else
     SerialPrint("i", "WIFI", "Connected to AP: " + WiFi.SSID());
+#endif
     // TODO если подключились, но не получили IP что будет?
     break;
 #if defined(LIBRETINY) || defined(esp32c6_4mb) || defined(esp32c6_8mb)
@@ -74,6 +142,7 @@ void WiFiEvent(arduino_event_t *event)
   case SYSTEM_EVENT_STA_GOT_IP:
 #endif
     // Получили IP от роутера
+    wifiConnFailStreak = 0; // соединение состоялось - сбрасываем счётчик провалов
     // wifiReconnectTicker.detach();
     ts.remove(WIFI_SCAN);
     ts.remove(WIFI_CONN);
@@ -101,8 +170,38 @@ void WiFiEvent(arduino_event_t *event)
 #else
   case SYSTEM_EVENT_STA_DISCONNECTED:
 #endif
-    // Отключились от STA
+    // Отключились от STA. Логируем причину и уровень сигнала: неверный пароль (15/202),
+    // нет сети (201), таймаут обмена (39 - типичен для ESP32-C6 и WiFi6 (11ax) точек,
+    // а также для каналов 12/13 без настроек страны)
+#if defined(ESP32)
+    {
+      uint8_t wlReason = event->event_info.wifi_sta_disconnected.reason;
+      char bssidStr[18];
+      snprintf(bssidStr, sizeof(bssidStr), "%02X:%02X:%02X:%02X:%02X:%02X",
+               event->event_info.wifi_sta_disconnected.bssid[0], event->event_info.wifi_sta_disconnected.bssid[1],
+               event->event_info.wifi_sta_disconnected.bssid[2], event->event_info.wifi_sta_disconnected.bssid[3],
+               event->event_info.wifi_sta_disconnected.bssid[4], event->event_info.wifi_sta_disconnected.bssid[5]);
+      SerialPrint("i", "WIFI", "Disconnected from STA (reason " + String(wlReason) + " - " + wifiDisconnectReasonText(wlReason) + ", rssi " + String(event->event_info.wifi_sta_disconnected.rssi) + ", bssid " + String(bssidStr) + ")");
+      // считаем подряд идущие проблемные разрывы - по ним включаем fallback
+      if ((wlReason == 39 || wlReason == 201 || wlReason == 203) && !isNetworkActive())
+      {
+        if (wifiConnFailStreak < 250) wifiConnFailStreak++;
+        if (wifiConnFailStreak >= 3 && !wifiProtocolPinned)
+        {
+          // известный нюанс ESP32-C6 (IDF 5.1.x) с WiFi-6 (802.11ax) точками доступа:
+          // ограничиваем протокол станции до 11B/11G/11N и продолжаем попытки
+          if (esp_wifi_set_protocol(WIFI_IF_STA, WIFI_PROTOCOL_11B | WIFI_PROTOCOL_11G | WIFI_PROTOCOL_11N) == ESP_OK)
+          {
+            wifiProtocolPinned = true;
+            SerialPrint("i", "WIFI", "Protocol pinned to 11B/11G/11N (11ax off) after repeated failures");
+            WiFi.setSleep(false); // приглушаем модем-сон - иногда мешает HE/TWT-режимам
+          }
+        }
+      }
+    }
+#else
     SerialPrint("i", "WIFI", "Disconnected from STA");
+#endif
     // Завершаем задачу проверки сети
     ts.remove(WIFI_CONN);
     if (wifiConnecting)
@@ -142,6 +241,8 @@ void WiFiEvent(arduino_event_t *event)
 //------------------------------------------
 void handleScanResults()
 {
+  // скан завершен — возвращаем серверный heartbeat (см. ScanAsync / wsSuspendClientWatchdog)
+  wsResumeClientWatchdog();
   ssidListHeapJson = "{}";
   _ssidList.clear();
   _passwordList.clear();
@@ -165,7 +266,14 @@ void handleScanResults()
     {
       if (ssid == _ssidList[i])
       {
-        Serial.printf("Found known network: %s\n", _ssidList[i]);
+        Serial.printf("Found known network: %s (channel %d, RSSI %d dBm)\n", _ssidList[i].c_str(), (int)WiFi.channel(n), (int)WiFi.RSSI(n));
+        knownChannel = (uint8_t)WiFi.channel(n);
+        const uint8_t *kbss = WiFi.BSSID(n);
+        if (kbss)
+        {
+          memcpy(knownBssid, kbss, 6);
+          knownBssidValid = true;
+        }
         if (connectNumNet < 0)
           connectNumNet = i;
       }
@@ -197,6 +305,22 @@ void WiFiUtilsItit()
 #endif
   WiFi.disconnect(true);  // Очистить сохранённые WiFi параметры
   WiFi.mode(WIFI_STA);
+  // Страна/каналы: по умолчанию RU (каналы 1-13). Без явной страны точка на канале
+  // 12/13 видна в скане, но ассоциация с ней не проходит (в логе это reason 39/203).
+  // Переопределяется ключом "wificountry" в settings.json
+  String wifiCountry = jsonReadStr(settingsFlashJson, "wificountry");
+  wifiCountry.trim();
+  if (wifiCountry == "")
+    wifiCountry = "RU";
+#if defined(ESP32)
+  if (wifiCountry.length() == 2)
+  {
+    if (esp_wifi_set_country_code(wifiCountry.c_str(), false) == ESP_OK)
+      SerialPrint("i", "WIFI", "Country set to " + wifiCountry);
+    else
+      SerialPrint("E", "WIFI", "Country set ERROR: " + wifiCountry);
+  }
+#endif
   //WiFi.config(INADDR_NONE, INADDR_NONE, INADDR_NONE, INADDR_NONE);  // сброс DHCP-имени
   String deviceName = jsonReadStr(settingsFlashJson, "name");  // Получаем имя в String
   Serial.print("[WiFi] Setting hostname: ");
@@ -237,9 +361,13 @@ void connectToNextNetwork()
   // connectionAttempts++;
 
   const char *ssid = _ssidList[currentNetwork].c_str();
-  const char *pass = _passwordList[currentNetwork].c_str();
+  // защищаемся от рассинхрона массивов routerssid/routerpass (разные количества элементов)
+  String passStr = (currentNetwork < _passwordList.size()) ? _passwordList[currentNetwork] : String("");
+  const char *pass = passStr.c_str();
   // Пробуем подключиться к сети
   SerialPrint("i", "WIFI", "Connecting to: " + String(ssid));
+  // КАКОЙ пароль реально идёт в эфир - видно сразу, так ловится рассинхрон массивов
+  SerialPrint("i", "WIFI", "Using pass[" + String(currentNetwork) + ", pass count " + String(_passwordList.size()) + "]: \"" + passStr + "\" (" + String(passStr.length()) + " chars)");
   String deviceName = jsonReadStr(settingsFlashJson, "name");  // Получаем имя в String
   Serial.print("[WiFi] Setting hostname: ");
   Serial.println(deviceName);
@@ -248,25 +376,25 @@ void connectToNextNetwork()
   Serial.print("[WiFi] Actual hostname: ");
   Serial.println(WiFi.getHostname());
   
-  // Сбрасываем WDT перед длительной операцией
-  #if defined(ESP32)
-  esp_task_wdt_reset();
-  #endif
-  
-  WiFi.begin(ssid, pass);
-  
-  // Сбрасываем WDT после WiFi.begin
-  #if defined(ESP32)
-  esp_task_wdt_reset();
-  #endif
-
+  // Устанавливаем мощность передатчика ДО WiFi.begin (после начала подключения
+  // смена мощности отрабатывается ненадёжно, esp_task_wdt_reset() из контекста
+  // wifi-событий шумел "task not found" и убран - WDT следит за loopTask)
 #if defined(ESP32)
   WiFi.setTxPower(WIFI_POWER_19_5dBm);
 #elif defined(ESP8266)
   WiFi.setOutputPower(20.5);
 #endif
-  // проверяем статус подключения и перебираем сети если таймаут не вышел
-  checkConnection();
+
+#if defined(ESP32)
+  if (knownBssidValid)
+  {
+    WiFi.begin(ssid, pass, (int32_t)knownChannel, knownBssid);
+  }
+  else
+#endif
+  {
+  WiFi.begin(ssid, pass);
+  }
 
 if (!MDNS.begin(deviceName.c_str())) {
         Serial.println("Error starting mDNS!");
@@ -282,11 +410,8 @@ void checkConnection()
       WIFI_CONN, 1000,
       [&](void *)
       {
-        // Сбрасываем WDT при каждой проверке соединения
-        #if defined(ESP32)
-        esp_task_wdt_reset();
-        #endif
-        
+        // esp_task_wdt_reset() убран: WDT следит за loopTask, который живёт независимо
+
         connectionAttempts++;
         if (WiFi.status() == WL_CONNECTED)
         {
@@ -313,6 +438,7 @@ void checkConnection()
           {
             SerialPrint("E", "WIFI", "Connection failed, wrong password?");
             jsonWriteInt(errorsHeapJson, "passer", 1);
+            wifiConnecting = false;
             currentNetwork++;
             connectionAttempts = 0;
           }
@@ -340,13 +466,12 @@ void connectToSTA(const char *ssid, const char *pass)
   String deviceName = jsonReadStr(settingsFlashJson, "name");  // Получаем имя в String
   deviceName.trim();
   WiFi.setHostname(deviceName.c_str());
-  WiFi.begin(ssid, pass);
 #if defined(ESP32)
   WiFi.setTxPower(WIFI_POWER_19_5dBm);
 #elif defined(ESP8266)
   WiFi.setOutputPower(20.5);
 #endif
-        
+  WiFi.begin(ssid, pass); 
 
 if (!MDNS.begin(deviceName.c_str())) {
         Serial.println("Error starting mDNS!");
@@ -367,6 +492,10 @@ void ScanAsync()
   }
   else
   {
+    // радиомодуль уходит с домашнего канала, pong-и клиентов не доходят -
+    // серверный heartbeat на время скана приостанавливаем (иначе он режет
+    // живые соединения), вернём в handleScanResults
+    wsSuspendClientWatchdog();
     SerialPrint("i", "WIFI", "start scanning");
     WiFi.scanNetworks(true, false);
   }
@@ -508,10 +637,6 @@ void routerConnect()
         jsonWriteInt(errorsHeapJson, "passer", 1);
         break;
       }
-#if defined(ESP32)
-      //SerialPrint("i", "Task", "Resetting WDT...");
-      esp_task_wdt_reset();
-#endif
       Serial.print(".");
       delay(1000);
     }
@@ -619,40 +744,41 @@ boolean RouterFind(std::vector<String> jArray)
   int n = WiFi.scanComplete();
   SerialPrint("i", "WIFI", "scan result: " + String(n, DEC));
 
-  if (n == -2)
-  { // Сканирование не было запущено, запускаем
+  if (n == -1)
+  { // Сканирование все еще выполняется. Безусловный scanDelete() в конце
+    // функции стирал результаты только что пришедшего скана, поэтому список
+    // сетей никогда не отдавался и скан приходилось запускать заново.
+    SerialPrint("i", "WIFI", "scanning in progress");
+    return res;
+  }
+
+  if (n == -2 || n == 0)
+  { // Сканирование не было запущено (или найдено 0 сетей), запускаем
+    // Скан уводит радиомодуль с домашнего канала, pong-и клиентов не доходят -
+    // серверный heartbeat на время скана приостанавливаем (иначе сервер рвёт
+    // живые соединения), вернём его когда соберем результаты ниже
+    wsSuspendClientWatchdog();
     SerialPrint("i", "WIFI", "start scanning");
     WiFi.scanNetworks(true, false); // async, show_hidden
+    return res;
   }
 
-  else if (n == -1)
-  { // Сканирование все еще выполняется
-    SerialPrint("i", "WIFI", "scanning in progress");
-  }
-
-  else if (n == 0)
-  { // ни одна сеть не найдена
-    SerialPrint("i", "WIFI", "no networks found");
-    WiFi.scanNetworks(true, false);
-  }
-  else if (n > 0)
+  // Сканирование завершено, есть результаты - собираем их и возвращаем heartbeat
+  for (int8_t i = 0; i < n; i++)
   {
-    for (int8_t i = 0; i < n; i++)
+    for (size_t k = 0; k < jArray.size(); k++)
     {
-      for (int8_t k = 0; k < jArray.size(); k++)
+      if (WiFi.SSID(i) == jArray[k])
       {
-        if (WiFi.SSID(i) == jArray[k])
-        {
-          res = true;
-        }
+        res = true;
       }
-      // SerialPrint("i", "WIFI", (res ? "*" : "") + String(i, DEC) + ") " + WiFi.SSID(i));
-      jsonWriteStr_(ssidListHeapJson, String(i), WiFi.SSID(i));
-
-      // String(WiFi.RSSI(i)
     }
+    jsonWriteStr_(ssidListHeapJson, String(i), WiFi.SSID(i));
+
+    // String(WiFi.RSSI(i)
   }
   SerialPrint("i", "WIFI", ssidListHeapJson);
+  wsResumeClientWatchdog();
   WiFi.scanDelete();
   return res;
 }

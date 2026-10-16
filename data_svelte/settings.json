@@ -4,6 +4,7 @@
     "appass": "",
     "routerssid": "Mikro",
     "routerpass": "4455667788",
+    "wificountry": "RU",
     "timezone": 3,
     "ntp": "pool.ntp.org",
     "weblogin": "admin",

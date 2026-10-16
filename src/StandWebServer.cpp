@@ -1,6 +1,8 @@
 #include "StandWebServer.h"
 #ifdef STANDARD_WEB_SERVER
 
+#include "UpgradeFirm.h" // putUserDataToRam/saveUserDataToFlash/remountFS - сохранение данных при OTA ФС
+
 File uploadFile;
 String unsupportedFiles = String();
 
@@ -216,6 +218,13 @@ void handleCors() {
         HTTP.send(500, "text/plain", "Ошибка: Недостаточно памяти");
         return;
       }
+      // При обновлении ФС весь раздел будет перезаписан заводским образом -
+      // снимаем снапшот пользовательских данных в RAM и останавливаем фоновые
+      // ts-задачи, чтобы никто не писал в ФС во время перезаписи раздела
+      if (typeOTAfile == FILESYSTEM) {
+        ts.disableAll();
+        putUserDataToRam();
+      }
     }
     else if (upload.status == UPLOAD_FILE_WRITE) {
       if (Update.write(upload.buf, upload.currentSize) != upload.currentSize) {
@@ -229,12 +238,29 @@ void handleCors() {
       if (Update.end(true)) { // true - перезагрузка после обновления
         SerialPrint("i", F("OTA"), "Обновление завершено");
         HTTP.send(200, "text/plain", "Обновление успешно");
+        // Раздел ФС перезаписан заводским образом (littlefs.bin) - без перемонтирования
+        // и восстановления пользовательских данных settings.json и конфигурация
+        // будут потеряны (см. remountFS в UpgradeFirm.cpp)
+        if (typeOTAfile == FILESYSTEM) {
+          if (remountFS()) {
+            saveUserDataToFlash();
+          } else {
+            SerialPrint("E", F("OTA"), F("User data restore skipped (FS remount failed)"));
+          }
+        }
         ESP.restart();
       } else {
         Update.end();
+        if (typeOTAfile == FILESYSTEM) ts.enableAll();
         SerialPrint("E", F("OTA"), "Ошибка завершения обновления");
         HTTP.send(500, "text/plain", "Ошибка завершения обновления");
       }
+    }
+    else if (upload.status == UPLOAD_FILE_ABORTED) {
+      // загрузка оборвана - отменяем обновление и возвращаем фоновые задачи
+      Update.end();
+      if (typeOTAfile == FILESYSTEM) ts.enableAll();
+      SerialPrint("E", F("OTA"), "Обновление прервано");
     }
   }
 void handleLocalOTA_Handler() {

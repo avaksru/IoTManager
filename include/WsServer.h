@@ -22,3 +22,7 @@ void sendStringToWs(const String& header, String& payload, int client_id);
 void disconnectWSClient(uint8_t client_id);
 void sendDeviceList(uint8_t num);
 int getNumWSClients();
+
+// пауза/возврат серверного heartbeat (ping/pong) на время WiFi-сканирования
+void wsSuspendClientWatchdog();
+void wsResumeClientWatchdog();
