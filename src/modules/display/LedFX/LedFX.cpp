@@ -168,7 +168,7 @@ public:
             {
                 _BrightnessFadeOutMin = param[0].valD;
                 _BrightnessFadeOutStep = param[1].valD;
-                SerialPrint("E", "Strip LedFX", "BrightnessFadeOut");
+                SerialPrint("i", "Strip LedFX", "BrightnessFadeOut");
             }
         }
         else if (command == "fadeIn")
@@ -177,7 +177,7 @@ public:
             {
                 _BrightnessFadeInMax = param[0].valD;
                 _BrightnessFadeInStep = param[1].valD;
-                SerialPrint("E", "Strip LedFX", "BrightnessFadeIn");
+                SerialPrint("i", "Strip LedFX", "BrightnessFadeIn");
             }
         }
         else if (command == "setColor")
@@ -187,7 +187,7 @@ public:
                     _color = hexStringToUint32(String(param[0].valS.c_str()));
                     _strip->setColor(_color);
                     _strip->show();
-                    SerialPrint("E", "Strip LedFX", "setColor:" + String(param[0].valS.c_str()));
+                    SerialPrint("i", "Strip LedFX", "setColor:" + String(param[0].valS.c_str()));
                 }
             else if (param.size() == 3)
             {
@@ -210,7 +210,7 @@ public:
                     _strip->setMode(_effectsMode);
                     _strip->show();
                     _strip->start();
-                    SerialPrint("E", "Strip LedFX", "setEffect:" + String(param[0].valD));
+                    SerialPrint("i", "Strip LedFX", "setEffect:" + String(param[0].valD));
                 }
         }
         else if (command == "setSpeed")
@@ -220,7 +220,7 @@ public:
                 _speed = param[0].valD;
                 _strip->setSpeed(_speed);
                 _strip->show();
-                SerialPrint("E", "Strip LedFX", "setSpeed:" + String(param[0].valD));
+                SerialPrint("i", "Strip LedFX", "setSpeed:" + String(param[0].valD));
             }
         }
         else if (command == "setBrightness")
@@ -230,28 +230,28 @@ public:
                 _brightness = param[0].valD;
                 _strip->setBrightness(_brightness);
                 _strip->show();
-                SerialPrint("E", "Strip LedFX", "setBrightness:" + String(param[0].valD));
+                SerialPrint("i", "Strip LedFX", "setBrightness:" + String(param[0].valD));
             }
         }
         else if (command == "stop")
         {
             _strip->stop();
-            SerialPrint("E", "Strip LedFX", "stop");
+            SerialPrint("i", "Strip LedFX", "stop");
         }
         else if (command == "start")
         {
             _strip->start();
-            SerialPrint("E", "Strip LedFX", "start");
+            SerialPrint("i", "Strip LedFX", "start");
         }
         else if (command == "pause")
         {
             _strip->pause();
-            SerialPrint("E", "Strip LedFX", "pause");
+            SerialPrint("i", "Strip LedFX", "pause");
         }
         else if (command == "resume")
         {
             _strip->resume();
-            SerialPrint("E", "Strip LedFX", "resume");
+            SerialPrint("i", "Strip LedFX", "resume");
         }
         else if (command == "setSegment")
         {
@@ -260,7 +260,7 @@ public:
                     _strip->setSegment(param[0].valD, param[1].valD, param[2].valD, param[3].valD, hexStringToUint32(String(param[4].valS.c_str())), param[5].valD);
                     _strip->show();
                     _strip->start();
-                    SerialPrint("E", "Strip LedFX", "setSegment:" + String(param[0].valS.c_str()) + " start:" + String(param[1].valS.c_str()) + " stop:" + String(param[2].valS.c_str()) + " mode:" + String(param[3].valS.c_str()), " color:" + String(param[4].valS.c_str()) + " speed:" + String(param[5].valS.c_str()));
+                    SerialPrint("i", "Strip LedFX", "setSegment:" + String(param[0].valS.c_str()) + " start:" + String(param[1].valS.c_str()) + " stop:" + String(param[2].valS.c_str()) + " mode:" + String(param[3].valS.c_str()), " color:" + String(param[4].valS.c_str()) + " speed:" + String(param[5].valS.c_str()));
                 }
         }
         else if (command == "noShowOne")
@@ -269,7 +269,7 @@ public:
             {
                 _strip->setPixelColor(param[0].valD, _strip->Color(0, 0, 0));
                 _strip->show();
-                SerialPrint("E", "Strip LedFX", "noShowOne");
+                SerialPrint("i", "Strip LedFX", "noShowOne");
             }
         }
         else if (command == "showLed")
@@ -280,7 +280,7 @@ public:
                     _strip->setPixelColor(param[0].valD, color);
                     _strip->show();
                     _strip->start();
-                    SerialPrint("E", "Strip LedFX", "showLed:" + String(param[0].valS.c_str()) + " color:" + String(param[1].valS.c_str()));
+                    SerialPrint("i", "Strip LedFX", "showLed:" + String(param[0].valS.c_str()) + " color:" + String(param[1].valS.c_str()));
                 }
         }
         else if (command == "vuMeter")
@@ -323,11 +323,11 @@ public:
                         {
                             // Добавляем указатель на поле value найденного элемента в vuMeterBands
                             vuMeterBands.push_back(&(item->value));
-                            SerialPrint("E", "LedFX", "Добавлен элемент в vuMeterBands: " + id);
+                            SerialPrint("i", "LedFX", "Добавлен элемент в vuMeterBands: " + id);
                         }
                         else
                         {
-                            SerialPrint("E", "LedFX", "Элемент не найден: " + id);
+                            SerialPrint("i", "LedFX", "Элемент не найден: " + id);
                         }
 
                         int8_t oldSize = idsStr.length();
@@ -343,7 +343,7 @@ public:
                 _strip->setCustomMode(vuMeter2);
                 _strip->setMode(FX_MODE_CUSTOM);
                 _strip->start();
-                SerialPrint("E", "Strip LedFX", "vuMeter bands:" + String(param[0].valS.c_str()) + " IDs to show:" + String(param[1].valS.c_str()));
+                SerialPrint("i", "Strip LedFX", "vuMeter bands:" + String(param[0].valS.c_str()) + " IDs to show:" + String(param[1].valS.c_str()));
             }
         }
 
