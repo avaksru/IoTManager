@@ -777,6 +777,7 @@ private:
     String _pcStartKind = "unknown"; // как стартовал цикл: predict/hysteresis/freeze
     String _pcStoppedBy = "unknown"; // чем завершен: planned/budget/overheat/pred_overheat/max_heat/manual
     unsigned long _cyclesLearned = 0; // циклы, вошедшие в самообучение
+    String _lastState = "";       // последнее изданное состояние (для дедупликации setState)
 public:
     ThermostatPRED(String parameters) : IoTItem(parameters)
     {
@@ -824,7 +825,7 @@ public:
         if (_overMax < 0.3f) _overMax = 0.3f;
         resetModel();
         loadLearn();
-        setValue(_heating ? "прогрев (восстановлен)" : "пауза");
+        setState(_heating ? "прогрев (восстановлен)" : "пауза");
     }
 
 private:
@@ -836,6 +837,19 @@ private:
     String f0(float v) { return String(v, 0); }
     String f1(float v) { return String(v, 1); }
     String f2(float v) { return String(v, 2); }
+
+    // setState() - издание состояния с дедупликацией. IoTItem::setValue() шлёт
+    // рассылку в MQTT и на все WS-клиенты (regEvent) на вызов БЕЗ проверки на
+    // изменение, а doByInterval() вызывается на каждом такте (60 с) с той же
+    // строкой ("пауза" и т.п.) - лишний трафик и нагрузка в MQTT/WS, когда
+    // канал и так нагружен. Идентичный текст пропускаем: первый вызов
+    // (пустая _lastState) и реальные смены состояния публикуются как раньше.
+    void setState(const String &s)
+    {
+        if (s == _lastState) return;
+        _lastState = s;
+        setValue(s);
+    }
 
     // чтение числового значения элемента по ID
     bool readNum(const String &id, float &out)
@@ -1425,7 +1439,7 @@ private:
         unsigned long now = millis();
         if (!setRele(true))
         {
-            setValue("ошибка управления реле");
+            setState("ошибка управления реле");
             return false;
         }
         _heating = true;
@@ -1470,7 +1484,7 @@ private:
             if (_burnBudget < 60.0f) _burnBudget = 60.0f;
             if (_burnBudget > 2.0f * _burnPerCycle) _burnBudget = 2.0f * _burnPerCycle;
         }
-        setValue(kind == "заморозка" ? "защита от замерзания" : "прогрев");
+        setState(kind == "заморозка" ? "защита от замерзания" : "прогрев");
         saveLearn(true); // старт цикла сразу фиксируем на flash: перезагрузка в любой момент восстановит его
         return true;
     }
@@ -1479,7 +1493,7 @@ private:
         unsigned long now = millis();
         if (!setRele(false))
         {
-            setValue("ошибка управления реле");
+            setState("ошибка управления реле");
             publishState(true); // внеплановый пульс: состояние реле/ошибка - сразу в MQTT, мимо троттлинга
             return false;
         }
@@ -1511,7 +1525,7 @@ private:
         _pcStoppedBy = code;
         _pcOk = true;
         if (burnLearned) _cyclesLearned++;
-        setValue(planned ? "пауза (по расчету)" : "пауза (защита)");
+        setState(planned ? "пауза (по расчету)" : "пауза (защита)");
         saveLearn(true); // итог цикла фиксируем сразу, без троттлинга - иначе перезагрузка может потерять последний цикл
         publishState(true); // внеплановый пульс сразу после изменения состояния реле (мимо троттлинга)
         return true;
@@ -1556,14 +1570,14 @@ private:
         if (!spOk || _rele == "")
         {
             _pvPrevOk = false;
-            setValue("ошибка настройки термостата");
+            setState("ошибка настройки термостата");
             publishState();
             return;
         }
         if (!pvOk)
         {
             _pvPrevOk = false; // реле не трогаем (как в гистерезисе)
-            if (enable) setValue(_term_rezerv_id != "" ? "ошибка резервного датчика" : "ошибка датчика температуры");
+            if (enable) setState(_term_rezerv_id != "" ? "ошибка резервного датчика" : "ошибка датчика температуры");
             publishState();
             return;
         }
@@ -1583,7 +1597,7 @@ private:
             // загрузки нам неизвестно, а _heating восстановлен из чекпоинта); заодно снова работают все защиты
             if (!_releOn && !setRele(true))
             {
-                setValue("ошибка управления реле");
+                setState("ошибка управления реле");
                 publishState();
                 return;
             }
@@ -1655,7 +1669,7 @@ private:
                 return;
             }
             saveLearn(); // периодический чекпоинт накоплений цикла (перезагрузка продолжит с ними)
-            setValue(resUsed ? "резервный датчик" : String("прогрев ( ") + f0(_burnSec / 60.0f) + " м )");
+            setState(resUsed ? "резервный датчик" : String("прогрев ( ") + f0(_burnSec / 60.0f) + " м )");
             publishState();
             return;
         }
@@ -1718,7 +1732,7 @@ private:
         }
         if (!enable)
         {
-            setValue("выключен");
+            setState("выключен");
             publishState();
             return;
         }
@@ -1745,9 +1759,9 @@ private:
         }
         else
         {
-            if (resUsed) setValue("резервный датчик");
-            else if (_extHeat) setValue("пауза (солнечный нагрев)");
-            else setValue("пауза");
+            if (resUsed) setState("резервный датчик");
+            else if (_extHeat) setState("пауза (солнечный нагрев)");
+            else setState("пауза");
         }
         saveLearn(); // периодический чекпоинт состояния паузы: минимум/пик/рост восстановятся после перезагрузки
         publishState();
@@ -1775,7 +1789,7 @@ private:
                 _pcStoppedBy = "manual";
                 _pcOk = true;
             }
-            setValue(enable ? "пауза" : "выключен");
+            setState(enable ? "пауза" : "выключен");
         }
         else if (command == "debug" && param.size() >= 1)
         {

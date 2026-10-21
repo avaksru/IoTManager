@@ -36,10 +36,15 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t* payload, size_t length)
             // IPAddress ip = standWebSocket.remoteIP(num);
             SerialPrint("i", "WS " + String(num), "WS client connected");
             if (num >= 3) {
-                SerialPrint("E", "WS", "Too many clients, connection closed!!!");
+                // Было: standWebSocket.close() + standWebSocketsInit() - серверное закрытие
+                // рвало ВСЕ соединения и на ESP32 останавливало listen-сокет
+                // (_server->end() внутри WebSocketsServer::close()); после этого все
+                // клиенты разом реконнектились, заново занимали слоты - и цикл повторялся
+                // (внешне: "проблемы при открытии web интерфейса"). Теперь отключаем только
+                // нового клиента: слот подчистится, остальные соединения продолжают жить.
+                SerialPrint("E", "WS", "Too many clients, connection rejected");
                 jsonWriteInt(errorsHeapJson, "wse1", 1);
-                standWebSocket.close();
-                standWebSocketsInit();
+                standWebSocket.disconnect(num);
             }
             // Serial.printf("[%u] Connected from %d.%d.%d.%d url: %s\n", num, ip[0],
             // ip[1], ip[2], ip[3], payload); standWebSocket.sendTXT(num,
