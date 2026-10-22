@@ -777,6 +777,11 @@ private:
     float _pcMaxC = 0;            // достигнутый пик после выключения, °C
     float _pcDipC = 0;            // просадка минимума ниже заданной, °C (0..)
     float _pcOverC = 0;           // перегрев пика над заданной, °C (0..)
+    float _pcDipSec = 0;          // длительность падения температуры в прогреве прошлого цикла (включение->минимум), сек
+    float _pcGrowSec = 0;         // длительность инерционного роста в остывании прошлого цикла (выключение->пик), сек
+    float _pcFallSec = 0;         // длительность падения в остывании прошлого цикла (пик->включение), сек
+    float _coolPrevSec = 0;       // длительность остывания прошлого цикла (выключение->включение) - эталон окна внешнего нагрева
+    unsigned long _tMax = 0;      // момент пика текущего остывания (для длительностей роста/падения)
     bool _pcOk = false;           // есть завершенный цикл
     bool _pcMaxDone = false;      // пик зафиксирован (в паузе)
     bool _pcLearned = false;      // цикл вошел в самообучение (не бюджет, не короче 180 сек)
@@ -997,6 +1002,11 @@ private:
             jbAddNum(buf, cap, pos, ",\"delta_c\":", _pcMaxC - _pcMinC, _pcMaxDone); // качели мин/макс
             jbAdd(buf, cap, pos, ",\"dip_below_c\":%.2f", (double)_pcDipC);          // просадка ниже заданной
             jbAddNum(buf, cap, pos, ",\"over_c\":", _pcOverC, _pcMaxDone);           // перегрев пика над заданной
+            jbAddNum(buf, cap, pos, ",\"burn_sec\":", _pcBurnSec, _pcOk);            // работа горелки за завершенный прогрев, сек
+            jbAddNum(buf, cap, pos, ",\"dip_sec\":", _pcDipSec, _pcOk);              // длительность падения температуры после включения (лаг), сек
+            jbAddNum(buf, cap, pos, ",\"grow_sec\":", _pcGrowSec, _pcMaxDone);       // длительность инерционного роста после выключения, сек
+            jbAddNum(buf, cap, pos, ",\"fall_sec\":", _pcFallSec, _pcMaxDone);       // длительность падения от пика до включения, сек
+            jbAddNum(buf, cap, pos, ",\"cool_sec\":", _coolPrevSec, _pcOk);          // длительность полного остывания, сек
             jbAdd(buf, cap, pos, "}");
         }
         else jbAdd(buf, cap, pos, "null");
@@ -1232,6 +1242,11 @@ private:
         j += ",\"pcmx\":" + f2(_pcMaxC);
         j += ",\"pcdp\":" + f2(_pcDipC);
         j += ",\"pcov\":" + f2(_pcOverC);
+        j += ",\"pcds\":" + f0(_pcDipSec);           // длительность падения после включения (прошлый прогрев), сек
+        j += ",\"pcg\":" + f0(_pcGrowSec);           // длительность инерционного роста прошлого остывания, сек
+        j += ",\"pcf\":" + f0(_pcFallSec);           // длительность падения прошлого остывания, сек
+        j += ",\"cpl\":" + f0(_coolPrevSec);         // длительность полного остывания прошлого цикла, сек
+        j += ",\"tmx\":" + agoS(_tMax);              // сколько секунд назад был пик текущего остывания
         j += ",\"pcsk\":\"" + _pcStartKind + "\"";
         j += ",\"pcsp\":\"" + _pcStoppedBy + "\"";
         j += "}";
@@ -1306,6 +1321,14 @@ private:
         _pcDipC = f;
         jsonRead(j, "pcov", f, false);
         _pcOverC = f;
+        jsonRead(j, "pcds", f, false);
+        _pcDipSec = f;
+        jsonRead(j, "pcg", f, false);
+        _pcGrowSec = f;
+        jsonRead(j, "pcf", f, false);
+        _pcFallSec = f;
+        jsonRead(j, "cpl", f, false);
+        _coolPrevSec = f;
         flag = 0;
         jsonRead(j, "pcok", flag, false);
         _pcOk = (flag != 0);
@@ -1324,6 +1347,7 @@ private:
         agoSet(_tOff, j, "toff");
         agoSet(_tStartPrev, j, "tsp");
         agoSet(_riseSince, j, "rs");
+        agoSet(_tMax, j, "tmx");
         int en = 1;
         jsonRead(j, "en", en, false);
         enable = en ? 1 : 0;
@@ -1361,6 +1385,9 @@ private:
         _minPvPause = 0;
         _minPvPauseOk = false;
         _prevHeatSec = 0;
+        _coolPrevSec = 0;
+        _pcDipSec = _pcGrowSec = _pcFallSec = 0;
+        _tMax = 0;
     }
 
     String modelInfo()
@@ -1492,6 +1519,29 @@ private:
                 _cyclePeriodSec = (_cyclePeriodSec > 0) ? ema(_cyclePeriodSec, period, 0.3f) : period;
         }
         _tStartPrev = now;
+        // === НАЧАЛО ЦИКЛА (этап прогрев): финализируем завершившееся остывание ===
+        // Переносим в статистику предыдущего цикла запомненные за "этап остывание" значения -
+        // максимальную температуру (пик) и длительности роста/падения - только если они были
+        // измерены. Заодно фиксируем полную длительность остывания (выключение->включение):
+        // она станет эталоном "предыдущего остывания" для окна внешнего нагрева (2x) в новой паузе.
+        if (_tOff > 0)
+        {
+            float coolNow = (now - _tOff) / 1000.0f;
+            if (coolNow < 0) coolNow = 0;
+            _coolPrevSec = coolNow;
+            if (_maxDone && _tMax >= _tOff) // пик был измерен и зафиксирован в этой паузе
+            {
+                float over = _maxPv - sp;
+                _pcMaxC = _maxPv;                       // перенос запомненного максимума в prev
+                _pcOverC = (over > 0) ? over : 0;
+                _pcMaxDone = true;
+                _pcGrowSec = (_tMax - _tOff) / 1000.0f; // длительность роста (инерционный подъем)
+                _pcFallSec = (now - _tMax) / 1000.0f;   // длительность падения (от пика до включения)
+            }
+        }
+        // порог выключения predict_off_c далее рассчитывается автоматически (stopThreshold()):
+        // он учитывает свежий перегрев прошлого цикла (_overPrev зафиксирован в паузе), смещая
+        // порог на долю off_k; EMA сглаживает незначительные перегревы в незначительные правки
         _tOn = now;
         _pvAtOn = pv;
         _minPv = pv;
@@ -1536,6 +1586,7 @@ private:
         _tOff = now;
         _pvAtOff = pv;
         _maxPv = pv;
+        _tMax = now;          // пик нового остывания отслеживаем от момента выключения
         _maxDone = false;
         _upTrend = true;      // после выключения ожидаем инерционный подъем
         _riseSince = now;
@@ -1550,6 +1601,11 @@ private:
             burnLearned = true;
         }
         _cutByBudget = false;
+        // === СЕРЕДИНА ЦИКЛА (прогрев завершен, начинается остывание): переносим в статистику
+        // предыдущего цикла запомненные за прогрев значения: работу горелки и длительность
+        // падения температуры после включения (лаг; валидна только при зафиксированном развороте)
+        _pcBurnSec = _burnSec;
+        _pcDipSec = (_minDone && _tMin >= _tOn) ? (_tMin - _tOn) / 1000.0f : 0;
         // снимок завершенного цикла для метрик prev_cycle (пик добавится позже, в паузе)
         _pcMinC = _minPv;
         _pcDipC = (sp - _minPv > 0) ? sp - _minPv : 0;
@@ -1717,19 +1773,24 @@ private:
         // пауза: котел выключен
         // трек минимума температуры в паузе: просадка ниже заданной за цикл (для советов)
         if (_minPvPauseOk && pv < _minPvPause) _minPvPause = pv;
-        // трек непрерывного роста без отопления: дольше окна допустимого роста (окно инерции
-        // или удвоенный последний прогрев) - внешний нагрев (солнце)
+        // трек роста без отопления: внешним нагревом (солнцем) фиксируем ТОЛЬКО если текущее
+        // остывание (от выключения котла до текущего момента) в два раза превысило длительность
+        // предыдущего остывания И в два раза превысило lag_min - более короткий рост еще
+        // объясним инерцией котла
         if (_rate > 0.00005f)
         {
-            unsigned long riseWin = riseWindowSec();
             if (!_upTrend)
             {
                 _upTrend = true;
                 _riseSince = now;
             }
-            if (!_extHeat && _tOff > 0 && now - _riseSince > riseWin * 1000UL)
+            if (!_extHeat && _tOff > 0)
             {
-                _extHeat = true; // рост дольше окна допустимого - внешний нагрев (солнце), обучение отключено
+                float coolNow = (now - _tOff) / 1000.0f; // длительность текущего остывания, сек
+                float winPrev = 2.0f * _coolPrevSec;     // вдвое дольше предыдущего остывания
+                float winLag = 2.0f * _lagInitMin * 60.0f; // вдвое дольше lag_min
+                float win = (winPrev > winLag) ? winPrev : winLag;
+                if (coolNow > win) _extHeat = true; // внешний нагрев (солнце); обучение на росте отключается
             }
         }
         else if (_rate < -0.00002f)
@@ -1740,7 +1801,11 @@ private:
         // фиксация пика после выключения (инерционный подъем / солнце)
         if (!_maxDone && _tOff > 0)
         {
-            if (pv > _maxPv) _maxPv = pv;
+            if (pv > _maxPv)
+            {
+                _maxPv = pv;
+                _tMax = now; // момент пика - по нему остывание делится на рост и падение
+            }
             bool turnedDown = (_rate < -0.00002f && now - _tOff > 120000UL);
             bool windowOut = (now - _tOff > riseWindowSec() * 1000UL);
             if (turnedDown || windowOut)
@@ -1819,10 +1884,13 @@ private:
                 _prevHeatSec = _heatSec; // окно допустимого роста в предстоящей паузе станет 2x этого прогрева
                 _tOff = millis();
                 _maxPv = pv;
+                _tMax = _tOff; // пик нового остывания отслеживаем от момента выключения
                 _maxDone = false;
                 _upTrend = true;
                 _riseSince = millis();
                 // снимок прерванного вручную цикла для метрик prev_cycle (пик не доучен)
+                _pcBurnSec = _burnSec;
+                _pcDipSec = (_minDone && _tMin >= _tOn) ? (_tMin - _tOn) / 1000.0f : 0;
                 _pcMinC = _minPv;
                 _pcDipC = (sp - _minPv > 0) ? sp - _minPv : 0;
                 _pcMaxDone = false;
