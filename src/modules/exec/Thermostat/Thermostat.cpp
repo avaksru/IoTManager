@@ -773,6 +773,7 @@ private:
     bool _resUsed = false;        // на последнем такте работает по резервному термометру
     // снимок завершенного цикла прогрева для метрик (ключ prev_cycle в пульсе)
     float _pcBurnSec = 0;         // работа горелки за завершенный цикл, сек
+    float _pcBudget = -1;         // бюджет горелки завершенного цикла, сек (-1 - не задавался)
     float _pcMinC = 0;            // минимум температуры за завершенный цикл, °C
     float _pcMaxC = 0;            // достигнутый пик после выключения, °C
     float _pcDipC = 0;            // просадка минимума ниже заданной, °C (0..)
@@ -964,7 +965,7 @@ private:
     // полный снимок состояния для тактового пульса метрик (топик <id>/debug): дописывается
     // в заранее выделенный буфер через jbAdd - без временных String (иначе каждое поле через
     // String на ESP - новая мелкая аллокация, десятки на каждый пульс);
-    // единицы: температуры - °C, скорости - °C/ч, *_seconds - сек, burner_per_cycle, predict_burn_c - сек,
+    // единицы: температуры - °C, скорости - °C/ч, *_seconds - сек, burner_per_cycle, predict_burn_c, budget_sec - сек,
     // null - нет данных.
     void stateJson(char *buf, int cap, int &pos, const char *recText = nullptr)
     {
@@ -976,6 +977,9 @@ private:
         jbAdd(buf, cap, pos, ",\"rate_per_hour\":%.2f", (double)(rateWinAvg() * 3600.0f)); // средняя скорость за последние 5 тиков doByInterval, °C/ч
         jbAdd(buf, cap, pos, ",\"predict_on_c\":%.2f", (double)startThreshold());   // порог упреждающего включения
         jbAdd(buf, cap, pos, ",\"predict_off_c\":%.2f", (double)stopThreshold());   // порог планового выключения
+        // бюджет горелки на цикл: настройки адаптации (burn_adj - вкл/выкл, burn_k - чувствительность к перегреву, %)
+        jbAdd(buf, cap, pos, ",\"burn_adj\":%d", (int)(_burnAdj ? 1 : 0)); // адаптивный бюджет включен (predict_burn_c null при выключенном)
+        jbAdd(buf, cap, pos, ",\"burn_k\":%.0f", (double)_burnK);          // чувствительность бюджета к перегреву, % (текущая настройка)
         // бюджет горелки на цикл, сек (рассчитывается в heatStart; null - не рассчитан)
         if (_burnBudget >= 0.0f) jbAdd(buf, cap, pos, ",\"predict_burn_c\":%d", (int)(_burnBudget + 0.5f));
         else jbAdd(buf, cap, pos, ",\"predict_burn_c\":null");
@@ -1003,6 +1007,8 @@ private:
             jbAdd(buf, cap, pos, ",\"dip_below_c\":%.2f", (double)_pcDipC);          // просадка ниже заданной
             jbAddNum(buf, cap, pos, ",\"over_c\":", _pcOverC, _pcMaxDone);           // перегрев пика над заданной
             jbAddNum(buf, cap, pos, ",\"burn_sec\":", _pcBurnSec, _pcOk);            // работа горелки за завершенный прогрев, сек
+            jbAddNum(buf, cap, pos, ",\"budget_sec\":", _pcBudget, _pcBudget >= 0.0f); // бюджет горелки завершенного цикла, сек (null - не задавался)
+            jbAdd(buf, cap, pos, ",\"stopped_by\":\"%s\"", _pcStoppedBy.c_str());   // чем завершен цикл: planned/budget/overheat/pred_overheat/max_heat/manual
             jbAddNum(buf, cap, pos, ",\"dip_sec\":", _pcDipSec, _pcOk);              // длительность падения температуры после включения (лаг), сек
             jbAddNum(buf, cap, pos, ",\"grow_sec\":", _pcGrowSec, _pcMaxDone);       // длительность инерционного роста после выключения, сек
             jbAddNum(buf, cap, pos, ",\"fall_sec\":", _pcFallSec, _pcMaxDone);       // длительность падения от пика до включения, сек
@@ -1238,6 +1244,7 @@ private:
         j += ",\"pcmd\":" + String(_pcMaxDone ? 1 : 0);
         j += ",\"pcln\":" + String(_pcLearned ? 1 : 0);
         j += ",\"pcbs\":" + f0(_pcBurnSec);
+        j += ",\"pcbb\":" + f0(_pcBudget < 0 ? -1 : _pcBudget); // бюджет горелки завершенного цикла, сек
         j += ",\"pcmn\":" + f2(_pcMinC);
         j += ",\"pcmx\":" + f2(_pcMaxC);
         j += ",\"pcdp\":" + f2(_pcDipC);
@@ -1313,6 +1320,9 @@ private:
         f = 0;
         jsonRead(j, "pcbs", f, false);
         _pcBurnSec = f;
+        f = -1;
+        jsonRead(j, "pcbb", f, false);
+        _pcBudget = f;
         jsonRead(j, "pcmn", f, false);
         _pcMinC = f;
         jsonRead(j, "pcmx", f, false);
@@ -1571,6 +1581,18 @@ private:
         saveLearn(true); // старт цикла сразу фиксируем на flash: перезагрузка в любой момент восстановит его
         return true;
     }
+    // расшифровка машинного токена причины остановки прогрева (код heatStop) в
+    // человекочитаемый текст состояния вместо общего "пауза (защита)"; сам токен
+    // при этом сохраняется в метриках prev_cycle (ключ stopped_by)
+    String pauseReasonText(const String &code)
+    {
+        if (code == "budget") return "пауза (бюджет горелки)";               // цикл прерван адаптивным бюджетом горелки
+        if (code == "overheat") return "пауза (защита от перегрева)";        // жесткая защита: температура достигла over_max
+        if (code == "pred_overheat") return "пауза (упреждение перегрева)";  // упреждающая защита: перегрев ожидается по инерции
+        if (code == "max_heat") return "пауза (лимит прогрева)";             // лимит длительности прогрева max_heat_min
+        return "пауза (защита)"; // неизвестная причина - общий текст
+    }
+
     bool heatStop(bool planned, const String &code)
     {
         unsigned long now = millis();
@@ -1605,6 +1627,7 @@ private:
         // предыдущего цикла запомненные за прогрев значения: работу горелки и длительность
         // падения температуры после включения (лаг; валидна только при зафиксированном развороте)
         _pcBurnSec = _burnSec;
+        _pcBudget = _burnBudget; // бюджет, под которым работал завершенный цикл (метрики prev_cycle)
         _pcDipSec = (_minDone && _tMin >= _tOn) ? (_tMin - _tOn) / 1000.0f : 0;
         // снимок завершенного цикла для метрик prev_cycle (пик добавится позже, в паузе)
         _pcMinC = _minPv;
@@ -1614,7 +1637,7 @@ private:
         _pcStoppedBy = code;
         _pcOk = true;
         if (burnLearned) _cyclesLearned++;
-        setState(planned ? "пауза (по расчету)" : "пауза (защита)");
+        setState(planned ? "прогрев завершен" : pauseReasonText(code));
         saveLearn(true); // итог цикла фиксируем сразу, без троттлинга - иначе перезагрузка может потерять последний цикл
         publishState(true); // внеплановый пульс сразу после изменения состояния реле (мимо троттлинга)
         return true;
@@ -1890,6 +1913,7 @@ private:
                 _riseSince = millis();
                 // снимок прерванного вручную цикла для метрик prev_cycle (пик не доучен)
                 _pcBurnSec = _burnSec;
+                _pcBudget = _burnBudget; // бюджет прерванного вручную цикла (метрики prev_cycle)
                 _pcDipSec = (_minDone && _tMin >= _tOn) ? (_tMin - _tOn) / 1000.0f : 0;
                 _pcMinC = _minPv;
                 _pcDipC = (sp - _minPv > 0) ? sp - _minPv : 0;
