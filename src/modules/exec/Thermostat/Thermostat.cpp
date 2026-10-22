@@ -613,7 +613,7 @@ protected:
 // троттлятся (PULSE_PERIOD_MS); внеплановые пульсы (смена состояния реле, включение debug)
 // уходят сразу. Буфер общий для всех экземпляров ThermostatPRED: их такты и публикации
 // выполняются в основном цикле (IoTItem::loop -> doByInterval), однопоточно, без пересечений.
-static const int PULSE_BUF_CAP = 1000; // размер буфера пульса (реальная длина ~650 байт, с запасом)
+static const int PULSE_BUF_CAP = 4000; // размер буфера пульса (реальная длина ~800-3700 байт, с запасом - умещается и длинный текст совета)
 static const unsigned long PULSE_PERIOD_MS = 30000UL; // минимальный интервал тактового пульса
 static char pulseMsgBuf[PULSE_BUF_CAP];
 
@@ -715,6 +715,12 @@ private:
     float _pvPrev = 0;
     bool _pvPrevOk = false;
     float _rate = 0;            // сглаженная скорость изменения температуры, °C/сек
+    // кольцевое окно последних 5 мгновенных скоростей (°C/сек) - источник метрики rate_per_hour;
+    // заполняется в doByInterval() теми же отсечёнными от выбросов измерениями, что и EMA _rate,
+    // усредняется в rateWinAvg(). После перезагрузки окно пусто: метрика = 0 до первых тиков.
+    float _rateWin[5] = {0};
+    uint8_t _rateWinCnt = 0;    // сколько валидных измерений накоплено (0..5)
+    uint8_t _rateWinIdx = 0;    // следующая позиция записи в окно
 
     // состояние цикла прогрева
     bool _heating = false;      // идет прогрев
@@ -834,6 +840,16 @@ private:
         return oldV + k * (newV - oldV);
     }
 
+    // средняя мгновенная скорость за последние 5 тиков doByInterval (°C/сек);
+    // при накоплении меньше 5 измерений усредняются те, что уже есть, 0 - нет данных
+    float rateWinAvg()
+    {
+        if (_rateWinCnt == 0) return 0;
+        float sum = 0;
+        for (uint8_t i = 0; i < _rateWinCnt; i++) sum += _rateWin[i];
+        return sum / _rateWinCnt;
+    }
+
     String f0(float v) { return String(v, 0); }
     String f1(float v) { return String(v, 1); }
     String f2(float v) { return String(v, 2); }
@@ -943,20 +959,21 @@ private:
     // полный снимок состояния для тактового пульса метрик (топик <id>/debug): дописывается
     // в заранее выделенный буфер через jbAdd - без временных String (иначе каждое поле через
     // String на ESP - новая мелкая аллокация, десятки на каждый пульс);
-    // единицы: температуры - °C, скорости - °C/ч, *_seconds - сек, burner_per_cycle - сек,
+    // единицы: температуры - °C, скорости - °C/ч, *_seconds - сек, burner_per_cycle, predict_burn_c - сек,
     // null - нет данных.
-    void stateJson(char *buf, int cap, int &pos)
+    void stateJson(char *buf, int cap, int &pos, const char *recText = nullptr)
     {
         int onSug, offSug, burnSug;
         suggestK(onSug, offSug, burnSug);
         bool sugOk = (_cycles >= 2);                       // рекомендации советника появляются после 2 циклов
-        jbAdd(buf, cap, pos, "{\"state_code\":%d", statusCode());          // фаза управления (0..7, см. statusCode)
-        jbAdd(buf, cap, pos, ",\"hysteresis\":%.2f", (double)_gist);       // гистерезис
+        jbAdd(buf, cap, pos, "{\"hysteresis\":%.2f", (double)_gist);       // гистерезис
         jbAdd(buf, cap, pos, ",\"current_temperature\":%.2f", (double)pv); // текущая температура
-        jbAdd(buf, cap, pos, ",\"setpoint\":%.2f", (double)sp);            // заданная температура
-        jbAdd(buf, cap, pos, ",\"rate_per_hour\":%.2f", (double)(_rate * 3600.0f)); // скорость изменения температуры
+        jbAdd(buf, cap, pos, ",\"rate_per_hour\":%.2f", (double)(rateWinAvg() * 3600.0f)); // средняя скорость за последние 5 тиков doByInterval, °C/ч
         jbAdd(buf, cap, pos, ",\"predict_on_c\":%.2f", (double)startThreshold());   // порог упреждающего включения
         jbAdd(buf, cap, pos, ",\"predict_off_c\":%.2f", (double)stopThreshold());   // порог планового выключения
+        // бюджет горелки на цикл, сек (рассчитывается в heatStart; null - не рассчитан)
+        if (_burnBudget >= 0.0f) jbAdd(buf, cap, pos, ",\"predict_burn_c\":%d", (int)(_burnBudget + 0.5f));
+        else jbAdd(buf, cap, pos, ",\"predict_burn_c\":null");
         // рекомендации советника (null до 2 циклов)
         jbAdd(buf, cap, pos, ",\"recommended_on_k\":");
         if (sugOk) jbAdd(buf, cap, pos, "%d", onSug); else jbAdd(buf, cap, pos, "null");
@@ -964,6 +981,9 @@ private:
         if (sugOk) jbAdd(buf, cap, pos, "%d", offSug); else jbAdd(buf, cap, pos, "null");
         jbAdd(buf, cap, pos, ",\"recommended_burn_k\":");
         if (sugOk) jbAdd(buf, cap, pos, "%d", burnSug); else jbAdd(buf, cap, pos, "null");
+        // ключ recommended: полный текст совета (advisor()) - только во внеплановом пульсе команды advice;
+        // тексты советов не содержат кавычек и переносов строк - вставляются в JSON напрямую
+        if (recText && recText[0]) jbAdd(buf, cap, pos, ",\"recommended\":\"%s\"", recText);
         // накопления текущего цикла
         jbAdd(buf, cap, pos, ",\"heat_seconds\":%.0f", (double)_heatSec);       // длительность текущего прогрева, сек
         jbAdd(buf, cap, pos, ",\"burner_seconds\":%.0f", (double)_burnSec);     // работа горелки в текущем цикле, сек
@@ -977,6 +997,19 @@ private:
             jbAddNum(buf, cap, pos, ",\"delta_c\":", _pcMaxC - _pcMinC, _pcMaxDone); // качели мин/макс
             jbAdd(buf, cap, pos, ",\"dip_below_c\":%.2f", (double)_pcDipC);          // просадка ниже заданной
             jbAddNum(buf, cap, pos, ",\"over_c\":", _pcOverC, _pcMaxDone);           // перегрев пика над заданной
+            jbAdd(buf, cap, pos, "}");
+        }
+        else jbAdd(buf, cap, pos, "null");
+        // текущий цикл: минимум/пик в реальном времени (пик null до фиксации разворота)
+        jbAdd(buf, cap, pos, ",\"curent_cycle\":");
+        if (_starts > 0)
+        {
+            float overC = (_maxPv > sp) ? _maxPv - sp : 0;                           // перегрев пика над заданной
+            jbAdd(buf, cap, pos, "{\"min_c\":%.2f", (double)_minPv);                 // минимум цикла
+            jbAddNum(buf, cap, pos, ",\"max_c\":", _maxPv, _maxDone);                // достигнутый пик
+            jbAddNum(buf, cap, pos, ",\"delta_c\":", _maxPv - _minPv, _maxDone);     // качели мин/макс
+            jbAdd(buf, cap, pos, ",\"dip_below_c\":%.2f", (double)((sp - _minPv > 0) ? sp - _minPv : 0)); // просадка ниже заданной
+            jbAddNum(buf, cap, pos, ",\"over_c\":", overC, _maxDone);                // перегрев пика над заданной
             jbAdd(buf, cap, pos, "}");
         }
         else jbAdd(buf, cap, pos, "null");
@@ -994,7 +1027,7 @@ private:
     // 1) пульс собирается в заранее выделенный буфер pulseMsgBuf (без аллокаций);
     // 2) тактовые пульсы ограничены частотой PULSE_PERIOD_MS (не чаще раза в 30 сек);
     //    внеплановые (force=true) уходят сразу: смена состояния реле (heatStop), включение debug
-    void publishState(bool force = false)
+    void publishState(bool force = false, const char *recText = nullptr) // recText - текст совета для внепланового пульса команды advice
     {
         if (!_debug || !mqttIsConnect()) return;
         unsigned long now = millis();
@@ -1008,7 +1041,7 @@ private:
         if (ts > 0) jbAdd(pulseMsgBuf, PULSE_BUF_CAP, pos, ",\"ts\":%lu", (unsigned long)ts);
         jbAdd(pulseMsgBuf, PULSE_BUF_CAP, pos, ",\"interval_sec\":%d", (int)(getInterval() / 1000));
         jbAdd(pulseMsgBuf, PULSE_BUF_CAP, pos, ",\"state\":");
-        stateJson(pulseMsgBuf, PULSE_BUF_CAP, pos);
+        stateJson(pulseMsgBuf, PULSE_BUF_CAP, pos, recText);
         jbAdd(pulseMsgBuf, PULSE_BUF_CAP, pos, "}");
         publishData(String(_id.c_str()) + "/debug", String(pulseMsgBuf));
     }
@@ -1582,11 +1615,19 @@ private:
             return;
         }
 
-        // сглаженная скорость изменения температуры (EMA производной, выбросы отсечены)
+        // сглаженная скорость изменения температуры (EMA производной, выбросы отсечены);
+        // то же мгновенное значение накапливается в окне 5 тиков для метрики rate_per_hour
         if (dtOk && _pvPrevOk)
         {
             float inst = (pv - _pvPrev) / dt; // °C/сек
-            if (inst > -0.02f && inst < 0.02f) _rate = ema(_rate, inst, 0.3f);
+            if (inst > -0.02f && inst < 0.02f)
+            {
+                _rate = ema(_rate, inst, 0.3f);
+                // то же отсечённое от выбросов измерение попадает в окно последних 5 тиков
+                _rateWin[_rateWinIdx] = inst;
+                _rateWinIdx = (uint8_t)((_rateWinIdx + 1) % 5);
+                if (_rateWinCnt < 5) _rateWinCnt++;
+            }
         }
         _pvPrev = pv;
         _pvPrevOk = true;
@@ -1840,6 +1881,7 @@ private:
             String advice;
             advisor(advice);
             say(advice);
+            publishState(true, advice.c_str()); // внеплановый пульс метрик в <id>/debug с ключом recommended (текст совета)
         }
         return {};
     }
