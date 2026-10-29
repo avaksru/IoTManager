@@ -11,6 +11,13 @@ struct IoTValue {
     std::string valS = "";
 
     bool isDecimal = true;
+
+    //  очистка БЕЗ удаления буфера строки из памяти (сохраняет capacity, heap не фрагментируется)
+    void clear() {
+        valD = 0.0f;
+        isDecimal = true;
+        valS.clear();
+    }
 };
 
 class IoTItem {
@@ -30,6 +37,8 @@ class IoTItem {
     const std::string& getSubtype();
 
     const std::string& getID();
+    uint32_t getIdHash() { return _idHash; }  // хэш FNV-1a имени, вычисляется один раз в конструкторе
+    uint32_t getSubHash();                    // хэш subtype (лениво; модули задают _subtype в конструкторах до любых вызовов)
     bool isStrInID(const std::string& str);
     int getIntFromNet();
     virtual String getValue();
@@ -79,6 +88,7 @@ class IoTItem {
 
     virtual void setValue(const IoTValue& Value, bool genEvent = true);
     virtual void setValue(const String& valStr, bool genEvent = true);
+    virtual void setValue(double val, bool genEvent = true);  // числовая перегрузка - без строковых аллокаций
         String getRoundValue();
     void getNetEvent(String& event);
     virtual String getMqttExterSub();
@@ -107,6 +117,8 @@ class IoTItem {
     bool _valueSet = false;  // признак того, что элемент получил первое реальное значение (устанавливается в regEvent/setValue)
     std::string _subtype = "";
     std::string _id = "errorId";  // если будет попытка создания Item без указания id, то элемент оставит это значение
+    uint32_t _idHash = 0;  // кэш хэша FNV-1a от _id (заполняется в конструкторах), для поиска по id и очереди событий
+    uint32_t _subHash = 0;  // кэш хэша subtype (ленивая инициализация в getSubHash)
     long _interval = 0;
     int _intFromNet = -2;  // количество секунд доверия, пришедших из сети вместе с данными для текущего ИД
                            // -2 - данные не приходили, скорее всего, элемент локальный, доверие есть, в случае прихода сетевого значения с int=0, будет выключен механизм проверки доверия
@@ -127,6 +139,7 @@ class IoTItem {
 };
 
 IoTItem* findIoTItem(const String& name);                     // поиск экземпляра элемента модуля по имени
+IoTItem* findIoTItem(uint32_t hash);                          // поиск элемента по кэшированному хэшу имени (очередь событий)
 IoTItem* findIoTItemByPartOfName(const String& partName);      // поиск элемента модуля в существующей конфигурации по части имени
 String getItemValue(const String& name);                      // поиск плюс получение значения
 bool isItemExist(const String& name);                         // существует ли айтем

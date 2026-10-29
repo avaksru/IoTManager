@@ -14,6 +14,12 @@ uint16_t hexStringToUint16(const String& hex);
 
 uint32_t hexStringToUint32(const String& hex);
 
+uint32_t hashFNV1a(const char* str);                 // хэш FNV-1a (32 бита) строки до терминального нуля
+uint32_t hashFNV1a(const char* str, size_t length);  // хэш первых length символов, без выделения памяти
+// Перегрузка для Arduino String (inline; сама функция - в StringUtils.cpp)
+inline uint32_t hashFNV1a(const String& str) { return hashFNV1a(str.c_str(), str.length()); }
+
+
 String selectToMarkerLast(String str, const String& found);
 
 String selectToMarker(String str, const String& found);

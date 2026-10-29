@@ -115,8 +115,6 @@ extern String errorsHeapJson;
 extern bool needSaveValues;
 
 // buf
-extern String orderBuf;
-extern String eventBuf;
 extern String mysensorBuf;
 
 // wifi

@@ -8,6 +8,7 @@
 
 IoTItem::IoTItem() {
     _id = "defaultId";
+    _idHash = hashFNV1a(_id.c_str());
 }
 
 IoTItem::IoTItem(const String& parameters) {
@@ -34,9 +35,13 @@ IoTItem::IoTItem(const String& parameters) {
     } else
         _map1 = _map2 = _map3 = _map4 = 0;
 
-    String valAsStr = "";
-    if (jsonRead(parameters, F("val"), valAsStr, false))  // значение переменной или датчика при инициализации если есть в конфигурации
+    String valAsStr;                                      // значение переменной или датчика при инициализации если есть в конфигурации
+    double tmpValD = 0.0;  // "умная" инициализация val: сначала пробуем прочитать число без строковых аллокаций;
+    if (jsonRead(parameters, F("val"), tmpValD, false)) {   // jsonRead(double) не конвертирует строки - текстовые значения корректно падают в строковую ветку
+        setValue(tmpValD, false);
+    } else if (jsonRead(parameters, F("val"), valAsStr, false)) {
         setValue(valAsStr, false);
+    }
 
     jsonRead(parameters, F("needSave"), _needSave, false);
     if (_needSave && jsonRead(valuesFlashJson, _id.c_str(), valAsStr, false))  // пробуем достать из сохранения значение элемента, если указано, что нужно сохранять
@@ -48,6 +53,8 @@ IoTItem::IoTItem(const String& parameters) {
     if (jsonRead(parameters, F("trackingID"), trackingID, false) && (item = findIoTItem(trackingID)) != nullptr) {
         _trackingValue = &(item->value);
     }
+
+    _idHash = hashFNV1a(_id.c_str());  // кэш хэша имени для быстрого поиска по id (очередь событий)
 }
 
 void IoTItem::suspendNextDoByInt(unsigned long _delay) { // 0 - force
@@ -85,6 +92,15 @@ void IoTItem::setValue(const String& valStr, bool genEvent) {
     } else {
                 value.valS = valStr.c_str();
     }
+    setValue(value, genEvent);
+}
+
+// числовая перегрузка - чистая математика, строковый буфер не меняется (сохраняет capacity)
+void IoTItem::setValue(double val, bool genEvent) {
+    value.valD = (float)val;
+    value.isDecimal = true;
+    value.valS.clear();
+    getRoundValue();
     setValue(value, genEvent);
 }
 
@@ -168,6 +184,14 @@ IoTValue IoTItem::execute(String command, std::vector<IoTValue>& param) { return
 
 const std::string& IoTItem::getSubtype() {
     return _subtype;
+}
+
+// хэш subtype (ленивая инициализация: модули задают _subtype в своём конструкторе,
+// до любого вызова getSubHash(); пустой subtype дает хэш пустой строки)
+uint32_t IoTItem::getSubHash() {
+    if (_subHash == 0)
+        _subHash = hashFNV1a(_subtype.c_str(), _subtype.length());
+    return _subHash;
 }
 
 int IoTItem::getIntFromNet() {
@@ -316,6 +340,15 @@ IoTItem* findIoTItem(const String& name) {
     if (name == "") return nullptr;
     for (std::list<IoTItem*>::iterator it = IoTItems.begin(); it != IoTItems.end(); ++it) {
         if ((*it)->getID() == name.c_str()) return *it;
+    }
+
+    return nullptr;
+}
+
+// поиск элемента по кэшированному хэшу имени - используется очередью событий (EventsAndOrders)
+IoTItem* findIoTItem(uint32_t hash) {
+    for (std::list<IoTItem*>::iterator it = IoTItems.begin(); it != IoTItems.end(); ++it) {
+        if ((*it)->getIdHash() == hash) return *it;
     }
 
     return nullptr;

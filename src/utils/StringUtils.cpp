@@ -259,3 +259,19 @@ String getUtf8CharByIndex(const String& utf8str, int index) {
     }
     return "";
 }
+
+// хэш FNV-1a (32 бита): offset basis 2166136261, prime 16777619.
+// hashFNV1a("") == 2166136261U - это же значение используются как признак пустого события в EventsAndOrders
+uint32_t hashFNV1a(const char* str, size_t length) {
+    uint32_t hash = 2166136261U;
+    for (size_t i = 0; i < length; ++i) {
+        hash ^= (uint8_t)str[i];
+        hash *= 16777619U;
+    }
+    return hash;
+}
+
+uint32_t hashFNV1a(const char* str) {
+    if (str == nullptr) return 2166136261U;
+    return hashFNV1a(str, strlen(str));
+}

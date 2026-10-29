@@ -39,7 +39,6 @@ void elementsLoop() {
         }
     }
 
-    handleOrder();
     handleEvent();
 }
 

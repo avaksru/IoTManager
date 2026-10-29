@@ -233,7 +233,7 @@ void mqttCallback(char* topic, uint8_t* payload, size_t length) {
 
         // отправка данных графиков - данный код будет оптимизирован после завершения написания приложения с новыми графиками
         for (std::list<IoTItem*>::iterator it = IoTItems.begin(); it != IoTItems.end(); ++it) {
-            if ((*it)->getSubtype() == "Loging" || "LogingDaily") {
+            if ((*it)->getSubtype() == "Loging" || (*it)->getSubtype() == "LogingDaily") {
                 (*it)->setPublishDestination(TO_MQTT);
                 (*it)->publishValue();
             }

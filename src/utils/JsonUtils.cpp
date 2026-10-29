@@ -47,6 +47,33 @@ bool jsonRead(const String &json, String key, float &value, bool e) {
     return true;
 }
 
+// двойная точность - используется для "умной инициализации" val в IoTItem:
+// строковые значения (например, "11:30") НЕ конвертируются в 0, а возвращают false,
+// чтобы вызывающий корректно выполнил строковую перегрузку
+bool jsonRead(const String &json, String key, double &value, bool e) {
+    JsonDocument doc;
+    DeserializationError error = deserializeJson(doc, json);
+    if (error) {
+        if (e) {
+            SerialPrint("E", F("jsonRead"), error.f_str());
+            jsonErrorDetected();
+        }
+        return false;
+    } else if (doc[key].isNull()) {
+        if (e) {
+            SerialPrint("E", F("jsonRead"), key + " missing in " + json);
+            jsonErrorDetected();
+        }
+        return false;
+    }
+    if (!doc[key].is<double>()) {
+        if (e) SerialPrint("E", F("jsonRead"), key + " is not a number in " + json);
+        return false;
+    }
+    value = doc[key].as<double>();
+    return true;
+}
+
 bool jsonRead(const String &json, String key, String &value, bool e) {
     JsonDocument doc;
     DeserializationError error = deserializeJson(doc, json);

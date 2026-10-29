@@ -49,8 +49,6 @@ String errorsHeapJson = "{}";     // переменная в которой хр
 bool needSaveValues = false;      // признак необходимости сбросить значения элементов на flash
 
 // buf
-String orderBuf = "";
-String eventBuf = "";
 String mysensorBuf = "";
 
 // wifi

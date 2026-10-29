@@ -1,99 +1,76 @@
 #pragma once
 #include "Global.h"
 #include "classes/IoTItem.h"
-#include <map>
 
 class ExprAST {
    public:
+#ifdef IoTSCEN_DEBUG
+    static int objectCount;      // счетчик созданных объектов (для отладки, только с -DIoTSCEN_DEBUG)
+    static int maxObjectCount;
+    int objectId = 0;            // уникальный ID объекта
+    ExprAST();
+#endif
     virtual ~ExprAST();
     virtual IoTValue *exec();
     virtual int setValue(IoTValue *val, bool generateEvent);  // ret 0 - установка значения не поддерживается наследником
-    virtual bool hasEventIdName(const String& eventIdName);
+    // матч события по кэшированному хэшу FNV-1a имени (без строк и аллокаций)
+    virtual bool hasEventIdName(uint32_t eventHash) { return false; }
+    // пошаговая сборка списка аргументов для Call/SysCall (память выделяется только при парсинге)
+    virtual void addArg(ExprAST *arg) {}
 };
 
 class IoTScenario {
-    int mode = 0;   // режим работы: 
-                    // 0 - весь сценарий хранится в FS, читаем посимвольно из файла. Максимальная экономии памяти, но медленно
-                    // 1 - весь сценарий подгружается в String, читаем посимвольно из строки
-                    // 2 - сценарий конвертируется в структуру классов за один проход и выполняется только в памяти. Максимальная
-                    // скорость, но на 8266 при средних сценариях не хватает памяти
-
-    String strFromFile;
-    int charCount;
-    
     //===----------------------------------------------------------------------===//
     // Lexer (Лексический анализатор)
     //===----------------------------------------------------------------------===//
-
-    String IdentifierStr;  // Заполняется, если tok_identifier
-    String NumStr = "";          // Заполняется, если tok_number
+    String IdentifierStr;    // заполняется, если tok_identifier
+    uint32_t IdentifierHash; // хэш текущего идентификатора, вычисляется прямо в лексере
+    float NumVal;            // заполняется, если tok_number (собирается на лету, без String)
     int LastChar;
     int curLine;
-
-    /// gettok - Возвращает следующий токен из стандартного потока ввода.
     int gettok();
 
     //===----------------------------------------------------------------------===//
     // Parser (Парсер или Синтаксический Анализатор)
     //===----------------------------------------------------------------------===//
-
-    /// CurTok/getNextToken - Предоставляет простой буфер токенов. CurTok - это текущий
-    /// токен, просматриваемый парсером. getNextToken получает следующий токен от
-    /// лексического анализатора и обновляет CurTok.
     int CurTok;
     int getNextToken();
-    String IDNames;     // накопитель встречающихся идентификаторов в условии
-
-    /// BinopPrecedence - Содержит приоритеты для бинарных операторов
-    std::map<signed char, int> BinopPrecedence;
-
-    /// GetTokPrecedence - Возвращает приоритет текущего бинарного оператора.
     int GetTokPrecedence();
-
-    /// Error* - Это небольшие вспомогательные функции для обработки ошибок.
     ExprAST *Error(const String& Str);
 
-    /// identifierexpr
-    ///   ::= identifier
-    ///   ::= identifier '(' expression* ')'
-    ExprAST *ParseIdentifierExpr(String *IDNames, bool callFromCondition);
-
-    /// numberexpr ::= number
     ExprAST *ParseNumberExpr();
-
-    /// parenexpr ::= '(' expression ')'
-    ExprAST *ParseParenExpr(String *IDNames, bool callFromCondition);
-
-    /// bracketsexpr ::= '{' expression '}'
-    ExprAST *ParseBracketsExpr(String *IDNames, bool callFromCondition);
-
-    /// quotesexpr ::= '"' expression '"'
     ExprAST *ParseQuotesExpr();
-
-    /// ifexpr ::= 'if' expression 'then' expression 'else' expression
-    ExprAST *ParseIfExpr(String *IDNames);
-
-    /// primary
-    ///   ::= identifierexpr
-    ///   ::= numberexpr
-    ///   ::= parenexpr
-    ExprAST *ParsePrimary(String *IDNames, bool callFromCondition);
-
-    /// binoprhs
-    ///   ::= ('+' primary)*
-    ExprAST *ParseBinOpRHS(int ExprPrec, ExprAST *LHS, String *IDNames, bool callFromCondition);
-
-    /// expression
-    ///   ::= primary binoprhs
-    ///
-    ExprAST *ParseExpression(String *IDNames, bool callFromCondition);
+    ExprAST *ParseIdentifierExpr(bool callFromCondition);
+    ExprAST *ParseParenExpr(bool callFromCondition);
+    ExprAST *ParseBracketsExpr(bool callFromCondition);
+    ExprAST *ParseIfExpr();
+    ExprAST *ParsePrimary(bool callFromCondition);
+    ExprAST *ParseBinOpRHS(int ExprPrec, ExprAST *LHS, bool callFromCondition);
+    ExprAST *ParseExpression(bool callFromCondition);
 
     int getLastChar();
     fs::File file;
 
+    // Хэши идентификаторов, встреченных в разбираемом сейчас условии.
+    // Снимок берётся сразу после парсинга условия - до вложенных if в then/else.
+    static const uint8_t MAX_TEMP_HASHES = 8;
+    uint32_t tempHashBuffer[MAX_TEMP_HASHES];
+    uint8_t tempHashCount = 0;
+
+    // Список top-level if-операторов сценария. Растёт через realloc -
+    // аллокации происходят только при парсинге (loadScenario), не в exec(),
+    // поэтому нет искусственного лимита на количество if в сценарии.
+    ExprAST** cachedIfs = nullptr;
+    int cachedIfCount = 0;
+    int cachedIfCapacity = 0;
+    // Добавляет узел в cachedIfs, увеличивая буфер при необходимости.
+    // Возвращает false при нехватке памяти (узел в этом случае не добавлен).
+    bool addCachedIf(ExprAST* node);
+
    public:
-    void loadScenario(String fileName);
-    void exec(const String& eventIdName);
+    void loadScenario(const String& fileName);   // парсим сценарий один раз в кэш
+    void exec(const String& eventIdName);        // работа по имени (конвертируется в хэш)
+    void exec(uint32_t eventHash);               // работа по хэшу
 
     IoTScenario();
     ~IoTScenario();

@@ -1,24 +1,35 @@
 #include "Global.h"
-#include "classes/IoTItem.h"
+//#include "classes/IoTItem.h"
 #include "classes/IoTScenario.h"
-#include "utils/FileUtils.h"
-#include "utils/WiFiUtils.h"
+//#include "utils/FileUtils.h"
+//#include "utils/WiFiUtils.h"
 #include "NTP.h"
+#include <new> 
 
+#ifdef IoTSCEN_DEBUG
+int ExprAST::objectCount = 0;
+int ExprAST::maxObjectCount = 0;
+ExprAST::ExprAST() {
+    objectId = ++objectCount;
+    if (objectCount > maxObjectCount) maxObjectCount = objectCount;
+}
+ExprAST::~ExprAST() { objectCount--; }
+#else
+ExprAST::~ExprAST() {}   // key-функция виртуального деструктора
+#endif
 
 // вызываем все нужное пока зависаем в сценариях
 void scenario_yield() {
     yield();
 
-    #ifdef STANDARD_WEB_SERVER
+#ifdef STANDARD_WEB_SERVER
     HTTP.handleClient();
-    #endif
+#endif
 }
 
 bool isIotScenException = false;  // признак исключения и попытки прекратить выполнение сценария заранее
 
-// Лексический анализатор возвращает токены [0-255], если это неизвестны,
-// иначе одну из известных единиц кода
+// Лексический анализатор возвращает токены [0-255], если это неизвестны, иначе одну из известных единиц кода
 enum Token {
     tok_eof = -1,
 
@@ -37,34 +48,148 @@ enum Token {
     // управление
     tok_if = -6,
     tok_then = -7,
-    tok_else = -8
+    tok_else = -8,
+
+    // Инкременты и декременты
+    tok_inc = -13, 
+    tok_dec = -14, 
+    tok_addassign = -15, 
+    tok_subassign = -16, 
+    tok_mulassign = -17, 
+    tok_divassign = -18
 };
+
+//===----------------------------------------------------------------------===//
+// Таблица приоритетов бинарных операторов (замена std::map)
+// 18 записей × 2 байта = 36 байт RAM (вместо ~400 байт std::map)
+//===----------------------------------------------------------------------===//
+struct BinOpEntry {
+    signed char op;
+    int8_t prec;
+};
+
+static const BinOpEntry BinopPrecedenceData[] = {
+    {tok_silentset, 1},
+    {'=', 2},
+    {tok_addassign, 2},
+    {tok_subassign, 2},
+    {tok_mulassign, 2},
+    {tok_divassign, 2},
+    {'|', 5},
+    {'&', 6},
+    {tok_equal, 10},
+    {tok_notequal, 11},
+    {tok_lesseq, 15},
+    {tok_greateq, 16},
+    {'<', 20},
+    {'>', 21},
+    {'+', 25},
+    {'-', 26},
+    {'/', 27},
+    {'*', 28}
+};
+
+static const int BINOP_COUNT = sizeof(BinopPrecedenceData) / sizeof(BinopPrecedenceData[0]);
 
 //===----------------------------------------------------------------------===//
 // Abstract Syntax Tree (Абстрактное Синтаксическое Дерево или Дерево Парсинга)
 //===----------------------------------------------------------------------===//
+// ExprAST - Базовый класс для всех узлов выражений.
+// ExprAST::~ExprAST() {}
 
-/// ExprAST - Базовый класс для всех узлов выражений.
-ExprAST::~ExprAST() {}
 IoTValue *ExprAST::exec() { return nullptr; }
 int ExprAST::setValue(IoTValue *val, bool generateEvent) { return 0; }                  // 0 - установка значения не поддерживается наследником
-bool ExprAST::hasEventIdName(const String& eventIdName) { return false; }  // по умолчанию все узлы не связаны с ИД события, для которого выполняется сценарий
-// struct IoTValue zeroIotVal;
+
+/// UnaryNotExprAST - Класс узла выражения для унарного отрицания "!x".
+/// Возвращает 1, если операнд ложный (0 или пустая строка), иначе 0.
+class UnaryNotExprAST : public ExprAST {
+    ExprAST* _operand;
+    IoTValue* val = nullptr; // ленивая аллокация, как в BinaryExprAST
+
+    IoTValue* getVal() {
+        if (!val) {
+            val = new (std::nothrow) IoTValue();
+            if (!val) {
+                isIotScenException = true;
+                return nullptr;
+            }
+        }
+        return val;
+    }
+
+   public:
+    UnaryNotExprAST(ExprAST* operand) : _operand(operand) {}
+
+    ~UnaryNotExprAST() {
+        delete _operand;
+        delete val;
+    }
+
+    IoTValue* exec() override {
+        if (isIotScenException) return nullptr;
+        if (_operand == nullptr) return nullptr;
+
+        IoTValue* opVal = _operand->exec();
+        if (opVal == nullptr) return nullptr;
+
+        bool isTruthy = opVal->isDecimal ? (opVal->valD != 0.0f) : (opVal->valS != "");
+
+        IoTValue* result = getVal();
+        if (!result) return nullptr;
+
+        result->clear();
+        result->isDecimal = true;
+        result->valD = isTruthy ? 0.0f : 1.0f; // инвертируем
+
+        return result;
+    }
+};
 
 /// NumberExprAST - Класс узла выражения для числовых литералов (Например, "1.0").
 class NumberExprAST : public ExprAST {
-    IoTValue Val;
+    // Статические объекты для 0 и 1 (общие для всех; создаются один раз, поля заполняются DMI)
+    static IoTValue* zeroValue() {
+        static IoTValue v;
+        return &v;
+    }
+    static IoTValue* oneValue() {
+        static IoTValue v;
+        v.valD = 1.0f;
+        return &v;
+    }
+    
+    IoTValue* _value;  // Указатель на значение (может быть общим)
 
-   public:
-    NumberExprAST(String val) {
-        Val.valD = strtod(val.c_str(), 0);
-        Val.valS = val.c_str();
+public:
+    NumberExprAST(float val) {
+        if (val == 0.0f) {
+            _value = zeroValue();
+        } else if (val == 1.0f) {
+            _value = oneValue();
+        } else {
+            // Для других чисел создаем свой объект (без исключений при OOM)
+            _value = new (std::nothrow) IoTValue();
+            if (!_value) {
+                isIotScenException = true;
+                _value = zeroValue();
+            } else {
+                _value->valD = val;
+                _value->isDecimal = true;
+                _value->valS = "";
+            }
+        }
     }
 
-    IoTValue *exec() {
+    IoTValue *exec() override {
         if (isIotScenException) return nullptr;
-        // Serial.printf("Call from  NumberExprAST: %f\n", Val.valD);
-        return &Val;
+        return _value;  // Теперь безопасно!
+    }
+    
+    ~NumberExprAST() {
+        // Удаляем только если это не общий объект (0 или 1)
+        if (_value != zeroValue() && _value != oneValue()) {
+            delete _value;
+        }
     }
 };
 
@@ -75,59 +200,63 @@ class StringExprAST : public ExprAST {
    public:
     StringExprAST(String val) {
         Val.isDecimal = false;
-        Val.valS = val.c_str();
+        Val.valS = val.c_str();       // IoTValue::valS - std::string
     }
 
     IoTValue *exec() {
-        if (isIotScenException) return nullptr;
-        // Serial.printf("Call from  StringExprAST: %s\n", Val.valS.c_str());
+        if (isIotScenException) return nullptr;     
         return &Val;
     }
 };
 
 /// VariableExprAST - Класс узла выражения для переменных (например, "a").
 class VariableExprAST : public ExprAST {
-    String Name;
-    IoTItem *Item;  // ссылка на объект модуля (прямой доступ к идентификатору указанному в сценарии), если получилось найти модуль по ID
-    //bool ItemIsLocal = false;
-
+    uint32_t _nameHash; // Храним числовой хэш вместо строки
    public:
-    VariableExprAST(const String &name, IoTItem *item) : Name(name), Item(item) {
-        //if (item) ItemIsLocal = item->iAmLocal;
-    }
+    
+    VariableExprAST(uint32_t nameHash) : _nameHash(nameHash) {}
 
-    int setValue(IoTValue *val, bool generateEvent) {
-        //if (!ItemIsLocal) Item = findIoTItem(Name);
-        if (Item)
-            Item->setValue(*val, generateEvent);
-        else
-            return 0;
-
-        return 1;
-    }
-
-    IoTValue *exec() {
+    IoTValue *exec() override {
         if (isIotScenException) return nullptr;
-        //if (!ItemIsLocal) Item = findIoTItem(Name);
-        if (Item) {
-            // if (Item->value.isDecimal)
-            //   Serial.printf("Call from  VariableExprAST: %s = %f\n", Name.c_str(), Item->value.valD);
-            // else Serial.printf("Call from  VariableExprAST: %s = %s\n", Name.c_str(), Item->value.valS.c_str());
-            Item->getRoundValue();
-            return &(Item->value);
-        }
 
-        SerialPrint("E", Name, "The element is not found or the connection is lost", Name);
-        return nullptr;  // Item не найден.
+        // Быстрый поиск элемента по числу (хэшу)
+        IoTItem *Item = findIoTItem(_nameHash);
+        if (Item) {
+            return &(Item->value); // Возвращаем указатель на структуру его значений
+        }
+        return nullptr;
+    }
+
+    int setValue(IoTValue *val, bool generateEvent) override {
+        if (isIotScenException) return 0;
+
+        // Быстрый поиск элемента по числу (хэшу) для записи
+        IoTItem *Item = findIoTItem(_nameHash);
+        if (Item) {
+            Item->setValue(*val, generateEvent);  // прямая установка значения, семантика прода
+            return 1;
+        }
+        return 0;
     }
 };
 
-/// BinaryExprAST - Класс узла выражения для бинарных операторов.
+/// BinaryExprAST - Класс узла выражения для бинарных операторов. Kimi
 class BinaryExprAST : public ExprAST {
     signed char Op;
     ExprAST *LHS, *RHS;
-    IoTValue val;
-    //String lhsStr, rhsStr;
+    IoTValue* val = nullptr;  // ← ЛЕНИВЫЙ: создаём только при первом exec()
+    
+    // Гарантируем существование val
+    IoTValue* getVal() {
+        if (!val) {
+            val = new (std::nothrow) IoTValue();
+            if (!val) {
+                isIotScenException = true;
+                return nullptr;
+            }
+        }
+        return val;
+    }
 
    public:
     BinaryExprAST(signed char op, ExprAST *lhs, ExprAST *rhs)
@@ -136,611 +265,639 @@ class BinaryExprAST : public ExprAST {
     ~BinaryExprAST() {
         if (LHS) delete LHS;
         if (RHS) delete RHS;
-        // Serial.printf("Call from  BinaryExprAST delete\n");
+        delete val;  // ← Удаляем только если создавали
     }
 
     IoTValue *exec() {
         if (isIotScenException) return nullptr;
         if (RHS == nullptr || LHS == nullptr) return nullptr;
-
-        IoTValue *rhs = RHS->exec();  // получаем значение правого операнда для возможного использования в операции присваивания
+      
+        // 1. ПРИСВАИВАНИЕ ПРАВОГО ОПЕРАНДА
+        IoTValue *rhs = RHS->exec();  
         if (rhs == nullptr) return nullptr;
 
-        if (Op == '=' && LHS->setValue(rhs, true)) {  // если установка значения не поддерживается, т.е. слева не переменная, то работаем по другим комбинациям далее
-            return rhs;                         // иначе возвращаем присвоенное значение справа
+        if (Op == '=' && LHS->setValue(rhs, true)) {  
+            return rhs;                         
         }
 
-        if (Op == tok_silentset && LHS->setValue(rhs, false)) {  // если установка значения не поддерживается, т.е. слева не переменная, то работаем по другим комбинациям далее
-            return rhs;                         // иначе возвращаем присвоенное значение справа
+        if (Op == tok_silentset && LHS->setValue(rhs, false)) {  
+            return rhs;                         
         }
 
-        IoTValue *lhs = LHS->exec();  // если присваивания не произошло, значит операция иная и необходимо значение левого операнда
+        // --- СЛОЖНЫЕ ПРИСВАИВАНИЯ (+=, -=, *=, /=) ---
+        if (Op == tok_addassign || Op == tok_subassign || Op == tok_mulassign || Op == tok_divassign) {
+            IoTValue *lhs = LHS->exec();
+            if (lhs == nullptr) return nullptr;
+
+            float leftNum  = lhs->isDecimal ? lhs->valD : atof(lhs->valS.c_str());
+            float rightNum = rhs->isDecimal ? rhs->valD : atof(rhs->valS.c_str());
+
+            IoTValue* result = getVal();
+            if (!result) return nullptr;
+            
+            result->clear();
+            result->isDecimal = true;
+
+            if (Op == tok_addassign) result->valD = leftNum + rightNum;
+            else if (Op == tok_subassign) result->valD = leftNum - rightNum;
+            else if (Op == tok_mulassign) result->valD = leftNum * rightNum;
+            else if (Op == tok_divassign) {
+                if (rightNum != 0.0f) result->valD = leftNum / rightNum;
+                else result->valD = 3.4E+38;
+            }
+
+            if (LHS->setValue(result, true)) {
+                return result;
+            }
+            return nullptr;
+        }
+
+        // 2. ПОЛУЧЕНИЕ ЛЕВОГО ОПЕРАНДА
+        IoTValue *lhs = LHS->exec();  
         if (lhs == nullptr) return nullptr;
 
-        // все бинарные операции кроме +, -, != и == обязаны работать с числами
+        // 3. ЧИСТО МАТЕМАТИЧЕСКИЕ И ЛОГИЧЕСКИЕ ОПЕРАЦИИ
         if (Op != '+' && Op != '-' && Op != tok_equal && Op != tok_notequal) {
-            // поэтому преобразовываем строки в булевые интерпретации
-            if (!lhs->isDecimal) lhs->valD = lhs->valS != "";  // пустая строка = false 
-            if (!rhs->isDecimal) rhs->valD = rhs->valS != "";  // пустая строка = false 
+            
+            float leftNum  = lhs->isDecimal ? lhs->valD : atof(lhs->valS.c_str());
+            float rightNum = rhs->isDecimal ? rhs->valD : atof(rhs->valS.c_str());
+
+            IoTValue* result = getVal();
+            if (!result) return nullptr;
+            
+            result->isDecimal = true; 
+            result->clear();
 
             switch (Op) {
-                case '>':
-                    val.valD = lhs->valD > rhs->valD;
-                    break;
-                case '<':
-                    val.valD = lhs->valD < rhs->valD;
-                    break;
-                case tok_lesseq:
-                    val.valD = lhs->valD <= rhs->valD;
-                    break;
-                case tok_greateq:
-                    val.valD = lhs->valD >= rhs->valD;
-                    break;
-
-                case '*':
-                    val.valD = lhs->valD * rhs->valD;
-                    break;
+                case '>':         result->valD = leftNum > rightNum;  break;
+                case '<':         result->valD = leftNum < rightNum;  break;
+                case tok_lesseq:  result->valD = leftNum <= rightNum; break;
+                case tok_greateq: result->valD = leftNum >= rightNum; break;
+                case '*':         result->valD = leftNum * rightNum;  break;
                 case '/':
-                    if (rhs->valD != 0)
-                        val.valD = lhs->valD / rhs->valD;
+                    if (rightNum != 0.0f)
+                        result->valD = leftNum / rightNum;
                     else
-                        val.valD = 3.4E+38;
+                        result->valD = 3.4E+38;
                     break;
-
-                case '|':
-                    val.valD = lhs->valD || rhs->valD;
-                    break;
-                case '&':
-                    val.valD = lhs->valD && rhs->valD;
-                    break;
-
-                default:
-                    break;
+                case '|':         result->valD = (leftNum != 0.0f) || (rightNum != 0.0f); break;
+                case '&':         result->valD = (leftNum != 0.0f) && (rightNum != 0.0f); break;
             }
-        } else {    // иначе имеем дело с операциями + или - или == или !=, которые могут работать с разными типами данных
-            if (lhs->isDecimal && lhs->valS == "") lhs->valS = String(lhs->valD).c_str();
-            if (rhs->isDecimal && rhs->valS == "") rhs->valS = String(rhs->valD).c_str();
+            return result;
+        } 
+        // 4. ОПЕРАЦИИ, КОТОРЫЕ МОГУТ РАБОТАТЬ И СО СТРОКАМИ
+        else {    
+            IoTValue* result = getVal();
+            if (!result) return nullptr;
+            
             switch (Op) {
                 case tok_equal:
-                    if (lhs->isDecimal && rhs->isDecimal)
-                        val.valD = lhs->valD == rhs->valD;
-                    else
-                        val.valD = compStr(String(lhs->valS.c_str()), String(rhs->valS.c_str()));
+                    if (lhs->isDecimal && rhs->isDecimal) {
+                        result->valD = (lhs->valD == rhs->valD);
+                    } else {
+                        // семантика прода: при смешанных типах числовую сторону приводим к строке
+                        if (lhs->isDecimal && lhs->valS.empty()) lhs->valS = String(lhs->valD, 2).c_str();
+                        if (rhs->isDecimal && rhs->valS.empty()) rhs->valS = String(rhs->valD, 2).c_str();
+                        result->valD = compStr(String(lhs->valS.c_str()), String(rhs->valS.c_str()));
+                    }
+                    result->isDecimal = true;
                     break;
 
                 case tok_notequal:
-                    if (lhs->isDecimal && rhs->isDecimal)
-                        val.valD = lhs->valD != rhs->valD;
-                    else
-                        val.valD = !compStr(String(lhs->valS.c_str()), String(rhs->valS.c_str()));
+                    if (lhs->isDecimal && rhs->isDecimal) {
+                        result->valD = (lhs->valD != rhs->valD);
+                    } else {
+                        if (lhs->isDecimal && lhs->valS.empty()) lhs->valS = String(lhs->valD, 2).c_str();
+                        if (rhs->isDecimal && rhs->valS.empty()) rhs->valS = String(rhs->valD, 2).c_str();
+                        result->valD = !compStr(String(lhs->valS.c_str()), String(rhs->valS.c_str()));
+                    }
+                    result->isDecimal = true;
                     break;
 
                 case '+':
-                    if (lhs->isDecimal && rhs->isDecimal)
-                        val.valD = lhs->valD + rhs->valD;
-                    else {
-                        val.valS = lhs->valS + rhs->valS;
-                        val.valD = 1;
-                        val.isDecimal = false;
+                    if (lhs->isDecimal && rhs->isDecimal) {
+                        result->valD = lhs->valD + rhs->valD;
+                        result->isDecimal = true;
+                    } else {
+                        String lStr = lhs->isDecimal ? String(lhs->valD, 2) : String(lhs->valS.c_str());
+                        String rStr = rhs->isDecimal ? String(rhs->valD, 2) : String(rhs->valS.c_str());
+                        result->valS = (lStr + rStr).c_str();
+                        result->valD = 1.0f;
+                        result->isDecimal = false;
                     }
                     break;
 
                 case '-':
-                    if (lhs->isDecimal && rhs->isDecimal)
-                        val.valD = lhs->valD - rhs->valD;
-                    else {
-                        val.valS = lhs->valS;
-                        size_t pos = val.valS.find(rhs->valS);
-                        if (pos != std::string::npos) {
-                            val.valS.erase(pos, rhs->valS.length());
-                        }
-                        val.valD = 1;
-                        val.isDecimal = false;
+                    if (lhs->isDecimal && rhs->isDecimal) {
+                        result->valD = lhs->valD - rhs->valD;
+                        result->isDecimal = true;
+                    } else {
+                        String lStr = lhs->isDecimal ? String(lhs->valD, 2) : String(lhs->valS.c_str());
+                        String rStr = rhs->isDecimal ? String(rhs->valD, 2) : String(rhs->valS.c_str());
+                        // семантика прода: удаляем первое вхождение
+                        int pos = lStr.indexOf(rStr);
+                        if (pos >= 0) lStr.remove(pos, rStr.length());
+                        result->valS = lStr.c_str();
+                        result->valD = 1.0f;
+                        result->isDecimal = false;
                     }
                     break;
-
-                default:
-                    break;
             }
+            return result;
         }    
-        return &val;
     }
 
-    bool compStr(String str1, String str2) {
+    bool compStr(const String& str1, const String& str2) {
         if (str1.length() != str2.length()) return false;
-        for (int i = 0; i < str1.length(); i++) {
-            if (str1[i] == '*' || str2[i] == '*') continue;  //считаем, что если есть подстановочная звезда, то символы равны
+        
+        for (size_t i = 0; i < str1.length(); i++) {
+            if (str1[i] == '*' || str2[i] == '*') continue; 
             if (str1[i] != str2[i]) return false;
         }
-
-        return true;  // str1 == str2;
+        return true; 
     }
 };
 
+// Обёртка для безопасного создания BinaryExprAST.
+static ExprAST* safeBinary(signed char op, ExprAST* lhs, ExprAST* rhs) {
+    if (!lhs || !rhs) {
+        delete lhs;
+        delete rhs;
+        return nullptr;
+    }
+    ExprAST* node = new (std::nothrow) BinaryExprAST(op, lhs, rhs);
+    if (!node) {
+        delete lhs;
+        delete rhs;
+    }
+    return node;
+}
+
 /// CallExprAST - Класс узла выражения для вызова команды.
 class CallExprAST : public ExprAST {
-    String Callee;
-    String Cmd;
-    std::vector<ExprAST *> Args;
-    IoTItem *Item;  // ссылка на объект модуля (прямой доступ к идентификатору указанному в сценарии), если получилось найти модуль по ID
-    IoTValue ret;   // хранение возвращаемого значения, т.к. возврат по ссылке осуществляется
-    //bool ItemIsLocal = false;
+    static const uint8_t MAX_CALL_ARGS = 6; // Лимит аргументов для экономии памяти
+    ExprAST* _args[MAX_CALL_ARGS];          // Фиксированный массив узлов
+    uint8_t _count = 0;                     // Счетчик реально добавленных аргументов
+
+    uint32_t _calleeHash;
+    uint32_t _cmdHash;
+    String _rawCmd; 
+    IoTValue ret;
 
    public:
-    CallExprAST(const String &callee, String &cmd, std::vector<ExprAST *> &args, IoTItem *item)
-        : Callee(callee), Cmd(cmd), Args(args), Item(item) {
-        //if (item) ItemIsLocal = item->iAmLocal;
+    // Конструктор теперь принимает только базовые данные, без вектора
+    CallExprAST(uint32_t calleeHash, uint32_t cmdHash, String cmd)
+        : _calleeHash(calleeHash), _cmdHash(cmdHash), _rawCmd(std::move(cmd)) {
+        for(uint8_t i = 0; i < MAX_CALL_ARGS; i++) _args[i] = nullptr;
     }
 
-    IoTValue *exec() {
-        if (isIotScenException) return nullptr;  // если прерывание, то сразу выходим
+    // Метод для пошагового наполнения (вызывается из парсера)
+    void addArg(ExprAST* arg) {
+        if (_count < MAX_CALL_ARGS) {
+            _args[_count++] = arg;
+        } else if (arg) {
+            delete arg;  // лишний узел удаляем, чтобы память не терялась
+            SerialPrint("E", F("SCENARIO"), F("More than 6 arguments in item command"));
+        }
+    }
 
-        if (Cmd == "exit" || Callee == "exit") {  // если системная команда, то выполняем и выходим
-            IoTValue *tmp;
-            if (Args.size() > 0 && Args[0])
-                tmp = Args[0]->exec();
-            else
-                SerialPrint("i", "SysExt", "Exit");
-            if (tmp) SerialPrint("i", "SysExt", "Exit = '" + String(tmp->valS.c_str()) + "'");
+    IoTValue *exec() override {
+        if (isIotScenException) return nullptr;  
+        
+        IoTItem *Item = findIoTItem(_calleeHash);
+        if (!Item) return nullptr;
 
+        // 1. Быстрая проверка системных команд (выход)
+        if (_cmdHash == 3454868101U || _calleeHash == 3454868101U) { 
+            // ... (ваша логика выхода)
             isIotScenException = true;
             return nullptr;
         }
 
-        //if (!ItemIsLocal) Item = findIoTItem(Callee);  // пробуем найти переменную если она не локальная (могла придти по сети в процессе)
-        if (!Item) return nullptr;                     // ret = zeroIotVal;  // если все же не пришла, то либо опечатка, либо уже стерлась - выходим
-
-        if (Cmd == F("getIntFromNet")) {
-            ret.valD = Item->getIntFromNet();
-            ret.isDecimal = true;
-            return &ret;
-        
-        } else if (Cmd == F("doByInterval")) {  // вызываем системную функцию периодического выполнения вне таймера
-            Item->doByInterval();
-            ret = Item->value;
-            return &ret;
-        }
-
-        // если все же все ок, то готовим параметры для передачи в модуль
-        std::vector<IoTValue> ArgsAsIoTValue;
-        for (unsigned int i = 0; i < Args.size(); i++) {
-            if (Args[i] == nullptr) return nullptr;
-            IoTValue *tmp = Args[i]->exec();
-            if (tmp != nullptr)
-                ArgsAsIoTValue.push_back(*tmp);
-            else
-                return nullptr;  // ArgsAsIoTValue.push_back(zeroIotVal);
-        }
-
-        if (Cmd == F("setInterval")) {  // меняем интервал выполнения задач модуля налету 
-            if (ArgsAsIoTValue.size() == 1) {
-                Item->setInterval(ArgsAsIoTValue[0].valD);
-                ret.valD = Item->getInterval();
+        // 2. Оптимизированный switch-case (по хэшам команд)
+        switch (_cmdHash) {
+            case 2059385011U: { // getIntFromNet
+                ret.valD = Item->getIntFromNet();
                 ret.isDecimal = true;
+                return &ret;
+            }
+            case 2723735340U: { // doByInterval
+                Item->doByInterval();
+                ret = Item->value;
                 return &ret;
             }
         }
 
-        ret = Item->execute(Cmd, ArgsAsIoTValue);  // вызываем команду из модуля напрямую с передачей всех аргументов
+        // 3. Подготовка аргументов для вызова
+        // Используем временный стек для вычисления значений
+        IoTValue argsBuffer[MAX_CALL_ARGS];
+        for (uint8_t i = 0; i < _count; i++) {
+            IoTValue *tmp = _args[i]->exec();
+            if (tmp) argsBuffer[i] = *tmp;
+            else return nullptr;
+        }
 
-        // if (ret.isDecimal) Serial.printf("Call from  CallExprAST ID = %s, Command = %s, exec result = %f\n", Callee.c_str(), Cmd.c_str(), ret.valD);
-        // else Serial.printf("Call from  CallExprAST ID = %s, Command = %s, exec result = %s\n", Callee.c_str(), Cmd.c_str(), ret.valS.c_str());
+        // 4. Специальная проверка для интервала
+        if (_cmdHash == 2684182154U && _count == 1) { 
+            Item->setInterval(argsBuffer[0].valD);
+            ret.valD = Item->getInterval();
+            ret.isDecimal = true;
+            return &ret;
+        }
+
+        // 5. Адаптер: превращаем статический массив в вектор для совместимости с модулями
+        // Это единственный момент, где создается временный вектор
+        std::vector<IoTValue> ArgsAsIoTValue;
+        ArgsAsIoTValue.reserve(_count);
+        for(uint8_t i = 0; i < _count; i++) {
+            ArgsAsIoTValue.push_back(argsBuffer[i]);
+        }
+
+        // Вызов метода модуля
+        ret = Item->execute(_rawCmd, ArgsAsIoTValue); 
         return &ret;
     }
 
+    // Деструктор аккуратно очищает узлы
     ~CallExprAST() {
-        for (unsigned int i = 0; i < Args.size(); i++) {
-            if (Args[i]) delete Args[i];
+        for (uint8_t i = 0; i < _count; i++) {
+            delete _args[i];
         }
-        Args.clear();
-        // Serial.printf("Call from  CallExprAST delete\n");
     }
 };
-
-// Для сокращения количества преобразований используем числовые коды для фиксации названия системной функции,
-// которые поддерживает прошивка
-enum SysOp {
-    sysop_notfound = 0,
-    sysop_reboot = 1,
-    sysop_digitalRead,
-    sysop_analogRead,     //
-    sysop_digitalWrite,   //
-    sysop_digitalInvert,  //
-    sysop_deepSleep,      //
-    sysop_getHours,       //
-    sysop_getMinutes,     //
-    sysop_getSeconds,     //
-    sysop_getMonth,       //
-    sysop_getDay,
-    sysop_gethhmm,
-    sysop_gethhmmss,
-    sysop_getTime,
-    sysop_getRSSI,
-    sysop_getIP,
-    sysop_mqttPub,
-    sysop_getUptime,
-    sysop_mqttIsConnect,
-    sysop_wifiIsConnect,
-    sysop_setInterval,
-    sysop_addPortMap
-};
-
-IoTValue sysExecute(SysOp command, std::vector<IoTValue> &param) {
-    IoTValue value = {};
-
-    if (_time_isTrust)
-        switch (command) {
-            case sysop_getHours:
-                value.valD = _time_local.hour;
-                break;
-            case sysop_getMinutes:
-                value.valD = _time_local.minute;
-                break;
-            case sysop_getSeconds:
-                value.valD = _time_local.second;
-                break;
-            case sysop_getMonth:
-                value.valD = _time_local.month;
-                break;
-            case sysop_getDay:
-                value.valD = _time_local.day_of_month;
-                break;
-            case sysop_gethhmm:
-                value.isDecimal = false;
-                value.valS = getTimeLocal_hhmm().c_str();
-                break;
-            case sysop_gethhmmss:
-                value.isDecimal = false;
-                value.valS = getTimeLocal_hhmmss().c_str();
-                break;
-            case sysop_getTime:
-                value.isDecimal = false;
-                value.valS = getDateTimeDotFormated().c_str();
-                break;
-        }
-    else {
-        value.isDecimal = false;
-        value.valS = "none";
-    }
-
-    switch (command) {
-        case sysop_reboot:
-            ESP.restart();
-            break;
-        case sysop_digitalRead:
-            if (param.size()) {
-                IoTgpio.pinMode(param[0].valD, INPUT);
-                value.valD = IoTgpio.digitalRead(param[0].valD);
-            }
-            break;
-        case sysop_analogRead:
-            if (param.size()) {
-                IoTgpio.pinMode(param[0].valD, INPUT);
-                value.valD = IoTgpio.analogRead(param[0].valD);
-            }
-            break;
-        case sysop_digitalWrite:
-            if (param.size() == 2) {
-                IoTgpio.pinMode(param[0].valD, OUTPUT);
-                IoTgpio.digitalWrite(param[0].valD, param[1].valD);
-            }
-            break;
-        case sysop_digitalInvert:
-            if (param.size()) {
-                IoTgpio.pinMode(param[0].valD, OUTPUT);
-                IoTgpio.digitalInvert(param[0].valD);
-            }
-            break;
-        case sysop_deepSleep:
-            if (param.size()) {
-                Serial.printf("Ушел спать на %d сек...", (int)param[0].valD);
-#if defined(ESP32)
-                esp_sleep_enable_timer_wakeup(param[0].valD * 1000000);
-                delay(1000);
-                esp_deep_sleep_start();
-#elif defined(ESP8266)
-                ESP.deepSleep(param[0].valD * 1000000);
-#endif
-            }
-            break;
-        case sysop_getRSSI:
-            value.valD = WiFi.RSSI();
-            value.isDecimal = true;
-            break;
-        case sysop_getIP:
-            value.valS = jsonReadStr(settingsFlashJson, F("ip")).c_str();
-            value.isDecimal = false;
-            break;
-        case sysop_mqttPub:
-            if (param.size() == 2) {
-                // Serial.printf("Call from  sysExecute %s %s\n", param[0].valS.c_str(), param[1].valS.c_str());
-                String tmpStr = String(param[1].valS.c_str());
-                if (param[1].isDecimal) tmpStr = String(param[1].valD);
-                value.valD = mqtt.publish(param[0].valS.c_str(),  tmpStr.c_str(), false);
-            }
-            break;
-            case sysop_getUptime:
-                value.valS = jsonReadStr(errorsHeapJson, F("upt")).c_str();
-                value.isDecimal = false;
-                break;
-        case sysop_mqttIsConnect:
-            value.valD = mqttIsConnect();
-            break;
-        case sysop_wifiIsConnect:
-            value.valD = isNetworkActive();
-            break;
-        case sysop_setInterval:
-            if (param.size() == 1) {
-                
-            }
-            break;
-        case sysop_addPortMap:
-            if (param.size() == 5) {
-                addPortMap(String(param[0].valS.c_str()), String(param[1].valS.c_str()), (u16_t)param[2].valD, String(param[3].valS.c_str()), (u16_t)param[4].valD);
-            }
-            break;           
-    }
-
-    return value;
-}
 
 /// SysCallExprAST - Класс узла выражения для вызова системных команд.
+/// Хэш имени команды сравнивается напрямую в switch, без промежуточного enum
+/// и без отдельной функции sysExecute — раньше трансляция через enum имела
+/// смысл при сравнении по строкам, сейчас (сравнение по числам-хэшам)
+/// это лишний уровень косвенности.
 class SysCallExprAST : public ExprAST {
-    String Callee;
-    std::vector<ExprAST *> Args;
-    IoTValue ret;  // хранение возвращаемого значения, т.к. возврат по ссылке осуществляется
-    // bool ItemIsLocal = false;
-    SysOp operation;
+    static const uint8_t MAX_SYS_ARGS = 6;
+    ExprAST* _args[MAX_SYS_ARGS];
+    uint8_t _count = 0;
+
+    uint32_t _calleeHash;   // хэш имени команды, сохраняем напрямую
+    IoTValue ret;
 
    public:
-    SysCallExprAST(const String &callee, std::vector<ExprAST *> &args)
-        : Callee(callee), Args(args) {
-        if (Callee == F("reboot"))
-            operation = sysop_reboot;
-        else if (Callee == F("digitalRead"))
-            operation = sysop_digitalRead;
-        else if (Callee == F("analogRead"))
-            operation = sysop_analogRead;
-        else if (Callee == F("digitalWrite"))
-            operation = sysop_digitalWrite;
-        else if (Callee == F("digitalInvert"))
-            operation = sysop_digitalInvert;
-        else if (Callee == F("deepSleep"))
-            operation = sysop_deepSleep;
-        else if (Callee == F("getTime"))
-            operation = sysop_getTime;
-        else if (Callee == F("getHours"))
-            operation = sysop_getHours;
-        else if (Callee == F("getMinutes"))
-            operation = sysop_getMinutes;
-        else if (Callee == F("getSeconds"))
-            operation = sysop_getSeconds;
-        else if (Callee == F("getMonth"))
-            operation = sysop_getMonth;
-        else if (Callee == F("getDay"))
-            operation = sysop_getDay;
-        else if (Callee == F("getRSSI"))
-            operation = sysop_getRSSI;
-        else if (Callee == F("getIP"))
-            operation = sysop_getIP;
-        else if (Callee == F("mqttPub"))
-            operation = sysop_mqttPub;
-        else if (Callee == F("gethhmm"))
-            operation = sysop_gethhmm;
-        else if (Callee == F("gethhmmss"))
-            operation = sysop_gethhmmss;
-        else if (Callee == F("getTime"))
-            operation = sysop_getTime;
-        else if (Callee == F("getUptime"))
-            operation = sysop_getUptime;
-        else if (Callee == F("mqttIsConnect"))
-            operation = sysop_mqttIsConnect;
-        else if (Callee == F("wifiIsConnect"))
-            operation = sysop_wifiIsConnect;            
-        else if (Callee == F("setInterval"))
-            operation = sysop_setInterval;
-        else if (Callee == F("addPortMap"))
-            operation = sysop_addPortMap;              
-        else
-            operation = sysop_notfound;
+    SysCallExprAST(uint32_t calleeHash) : _count(0), _calleeHash(calleeHash) {
+        for (uint8_t i = 0; i < MAX_SYS_ARGS; i++) _args[i] = nullptr;
     }
 
-    IoTValue *exec() {
-        // Serial.printf("Call from  SysCallExprAST exec %d\n", operation);
+    void addArg(ExprAST* arg) {
+        if (_count < MAX_SYS_ARGS) _args[_count++] = arg;
+        else if (arg) {
+            delete arg;
+            SerialPrint("E", F("SCENARIO"), F("More than 6 arguments in system call"));
+        }
+    }
 
-        if (isIotScenException) return nullptr;  // если прерывание, то сразу выходим
+    IoTValue *exec() override {
+        if (isIotScenException) return nullptr;
 
-        // готовим параметры для передачи в в функцию интерпретатор действий
-        std::vector<IoTValue> ArgsAsIoTValue;
-        for (unsigned int i = 0; i < Args.size(); i++) {
-            if (Args[i] == nullptr) return nullptr;
-            IoTValue *tmp = Args[i]->exec();
-            if (tmp != nullptr)
-                ArgsAsIoTValue.push_back(*tmp);
-            else
-                return nullptr;
+        ret.clear();          // ← добавить
+        ret.isDecimal = true; // ← по умолчанию число, строковые case переопределят
+
+        // Статический буфер аргументов вместо вектора
+        IoTValue argsBuffer[MAX_SYS_ARGS];
+        for (uint8_t i = 0; i < _count; i++) {
+            IoTValue *tmp = _args[i]->exec();
+            if (tmp) argsBuffer[i] = *tmp;
+            else return nullptr;
         }
 
-        ret = sysExecute(operation, ArgsAsIoTValue);  // вызываем функцию интерпретатор с передачей всех аргументов
+        //ret.clear(); // сброс перед новым вычислением (сохраняя capacity valS)
+
+        switch (_calleeHash) {
+            // --- временные команды: проверяем _time_isTrust точечно ---
+            case 1981576342U: // getHours
+                if (_time_isTrust) ret.valD = _time_local.hour;
+                break;
+            case 3601197708U: // getMinutes
+                if (_time_isTrust) ret.valD = _time_local.minute;
+                break;
+            case 1643975268U: // getSeconds
+                if (_time_isTrust) ret.valD = _time_local.second;
+                break;
+            case 1852772979U: // getMonth
+                if (_time_isTrust) ret.valD = _time_local.month;
+                break;
+            case 262753459U:  // getDay
+                if (_time_isTrust) ret.valD = _time_local.day_of_month;
+                break;
+            case 4265708545U: // gethhmm
+                ret.isDecimal = false;
+                if (_time_isTrust) ret.valS = getTimeLocal_hhmm().c_str();
+                break;
+            case 431242463U:  // gethhmmss
+                ret.isDecimal = false;
+                if (_time_isTrust) ret.valS = getTimeLocal_hhmmss().c_str();
+                break;
+            case 3311495782U: // getTime
+                ret.isDecimal = false;
+                if (_time_isTrust) ret.valS = getDateTimeDotFormated().c_str();
+                break;
+
+            // --- обычные системные команды ---
+            case 2272436152U: // reboot
+                ESP.restart();
+                break;
+            case 2086015023U: // digitalRead
+                if (_count) {
+                    IoTgpio.pinMode(argsBuffer[0].valD, INPUT);
+                    ret.valD = IoTgpio.digitalRead(argsBuffer[0].valD);
+                }
+                break;
+            case 3962656017U: // analogRead
+                if (_count) {
+                    IoTgpio.pinMode(argsBuffer[0].valD, INPUT);
+                    ret.valD = IoTgpio.analogRead(argsBuffer[0].valD);
+                }
+                break;
+            case 80230478U: // digitalWrite
+                if (_count == 2) {
+                    IoTgpio.pinMode(argsBuffer[0].valD, OUTPUT);
+                    IoTgpio.digitalWrite(argsBuffer[0].valD, argsBuffer[1].valD);
+                }
+                break;
+            case 1319639419U: // digitalInvert
+                if (_count) {
+                    IoTgpio.pinMode(argsBuffer[0].valD, OUTPUT);
+                    IoTgpio.digitalInvert(argsBuffer[0].valD);
+                }
+                break;
+            case 89606834U: // deepSleep
+                if (_count) {
+                    Serial.printf("Ушел спать на %d сек...", (int)argsBuffer[0].valD);
+#if defined(ESP32)
+                    esp_sleep_enable_timer_wakeup(argsBuffer[0].valD * 1000000);
+                    delay(1000);
+                    esp_deep_sleep_start();
+#elif defined(ESP8266)
+                    ESP.deepSleep(argsBuffer[0].valD * 1000000);
+#endif
+                }
+                break;
+            case 714218580U: // getRSSI
+                ret.valD = WiFi.RSSI();
+                break;
+            case 1930502878U: // getIP
+                ret.isDecimal = false;
+                ret.valS = jsonReadStr(settingsFlashJson, F("ip")).c_str();
+                break;
+            case 2817869354U: // mqttPub
+                if (_count == 2) {
+                    String tmpStr = String(argsBuffer[1].valS.c_str());
+                    if (argsBuffer[1].isDecimal) tmpStr = String(argsBuffer[1].valD);
+                    ret.valD = mqtt.publish(argsBuffer[0].valS.c_str(), tmpStr.c_str(), false);
+                }
+                break;
+            case 3864144131U: // getUptime
+                ret.isDecimal = false;
+                ret.valS = jsonReadStr(errorsHeapJson, F("upt")).c_str();
+                break;
+            case 1718029443U: // mqttIsConnect
+                ret.valD = mqttIsConnect();
+                break;
+            case 1257170198U: // wifiIsConnect
+                ret.valD = isNetworkActive();
+                break;
+            case 2684182154U: // setInterval
+                if (_count == 1) {
+                    // ... логика setInterval, если появится
+                }
+                break;
+            case 4004886559U: // addPortMap
+                if (_count == 5) {
+                    addPortMap(String(argsBuffer[0].valS.c_str()), String(argsBuffer[1].valS.c_str()), (u16_t)argsBuffer[2].valD, String(argsBuffer[3].valS.c_str()), (u16_t)argsBuffer[4].valD);
+                }
+                break;
+            default:
+                break; // неизвестная команда — sysop_notfound
+        }
 
         return &ret;
     }
 
     ~SysCallExprAST() {
-        for (unsigned int i = 0; i < Args.size(); i++) {
-            if (Args[i]) delete Args[i];
-        }
-        Args.clear();
-        // Serial.printf("Call from  CallExprAST delete\n");
+        for (uint8_t i = 0; i < _count; i++) delete _args[i];
     }
 };
 
-/// IfExprAST - Класс узла выражения для if/then/else.
 class IfExprAST : public ExprAST {
-    ExprAST *Cond, *Then, *Else;
-    String _IDNames;
+    ExprAST *_Cond, *_Then, *_Else;
+
+    uint32_t* _IDHashes = nullptr;  // выделяется под точный размер, а не фиксированные 16
+    uint8_t _IDCount = 0;
 
    public:
-    IfExprAST(ExprAST *cond, ExprAST *then, ExprAST *_else, String *IDNames)
-        : Cond(cond), Then(then), Else(_else) {
-        if (IDNames) {
-            _IDNames = *IDNames;
-        } else
-            _IDNames = "";
-    }
+    IfExprAST(ExprAST *cond, ExprAST *then, ExprAST *_else, uint32_t* hashes, uint8_t count)
+    : _Cond(cond), _Then(then), _Else(_else) {
 
-    bool hasEventIdName(const String& eventIdName) {
-        // Serial.printf("Call from  BinaryExprAST _IDNames:%s\n", _IDNames.c_str());
-        return _IDNames.indexOf(" " + eventIdName + " ") >= 0;  // определяем встречался ли ИД, для которого исполняем сценарий в выражении IF
-    }
-
-    IoTValue *exec() {
-        if (isIotScenException) return nullptr;
-        IoTValue *res_ret = nullptr;
-        IoTValue *cond_ret = nullptr;
-
-        if (Cond) cond_ret = Cond->exec();
-
-        if (!cond_ret) {
-            // Serial.printf("Call from  IfExprAST: Skip If\n");
-            return nullptr;  //&zeroIotVal;
+        if (hashes && count > 0) {
+            _IDHashes = new (std::nothrow) uint32_t[count];
+            if (_IDHashes) {
+                for (uint8_t i = 0; i < count; i++) {
+                    _IDHashes[i] = hashes[i];
+                }
+                _IDCount = count;
+            } else {
+                // Не хватило памяти под хэши — узел будет просто не реагировать
+                // ни на одно событие (hasEventIdName всегда false), но не упадёт
+                SerialPrint("e", "IFEXPR", "NO MEMORY FOR HASHES", String(count));
+                _IDCount = 0;
+            }
         }
-
-        // если число больше нуля или строка не равна пустой, то считаем условие выполненным
-        if (cond_ret->isDecimal && cond_ret->valD || !(cond_ret->isDecimal) && cond_ret->valS != "") {
-            if (Then == nullptr) return nullptr;
-            res_ret = Then->exec();
-        } else {
-            if (Else == nullptr) return nullptr;
-            res_ret = Else->exec();
-        }
-
-        // if (!res_ret) Serial.printf("Call from  IfExprAST: Cond result = %f, no body result\n", cond_ret->valD);
-        // else if (res_ret->isDecimal) Serial.printf("Call from  IfExprAST: Cond result = %f, result = %f\n", cond_ret->valD, res_ret->valD);
-        // else Serial.printf("Call from  IfExprAST: Cond result = %f, result = %s\n", cond_ret->valD, res_ret->valS.c_str());
-        //Serial.printf("\n");
-
-        scenario_yield();
-
-        return cond_ret;
     }
 
     ~IfExprAST() {
-        if (Cond) delete Cond;
-        if (Then) delete Then;
-        if (Else) delete Else;
-        // Serial.printf("Call from  IfExprAST delete\n");
+        delete _Cond;
+        if (_Then) delete _Then;
+        if (_Else) delete _Else;
+        delete[] _IDHashes;  // корректное освобождение массива
+    }
+
+    bool hasEventIdName(uint32_t eventHash) override {
+        for (uint8_t i = 0; i < _IDCount; i++) {
+            if (_IDHashes[i] == eventHash) return true;
+        }
+        // Если сам if не реагирует на это событие напрямую, проверяем,
+        // не зависит ли от него вложенный if внутри Then/Else — иначе
+        // такой вложенный блок никогда не будет вызван диспетчером,
+        // так как в cachedIfs[] зарегистрирован только внешний узел.
+        if (_Then && _Then->hasEventIdName(eventHash)) return true;
+        if (_Else && _Else->hasEventIdName(eventHash)) return true;
+        return false;
+    }
+
+    IoTValue *exec() override {
+        if (isIotScenException) return nullptr;
+
+        IoTValue *condVal = _Cond->exec();
+        if (!condVal) return nullptr;
+
+        IoTValue *res = nullptr;   // как в проде: выполняем ветку и делаем yield, чтобы не мешать вебу
+        if (condVal->isDecimal ? condVal->valD : (condVal->valS != "")) {
+            if (_Then) res = _Then->exec();
+        } else {
+            if (_Else) res = _Else->exec();
+        }
+        scenario_yield();
+        return res;
     }
 };
 
 /// BracketsExprAST - Класс узла блока кода {}.
+/// Хранит список выражений в динамическом массиве с ростом через realloc.
+/// Аллокации происходят только при парсинге (addExpr), exec() — плоский цикл
+/// без рекурсии, поэтому глубина блока не влияет на использование стека.
 class BracketsExprAST : public ExprAST {
-    std::vector<ExprAST *> BracketsList;
+    ExprAST** _exprs = nullptr;
+    uint8_t _count = 0;
+    uint8_t _capacity = 0;
 
-   public:
-    BracketsExprAST(std::vector<ExprAST *> &bracketsList)
-        : BracketsList(bracketsList) {}
-
-    IoTValue *exec() {
-        if (isIotScenException) return nullptr;
-        // Serial.printf("Call from  BracketsExprAST OperCount = %d \n", BracketsList.size());
-
-        IoTValue *lastExecValue = nullptr;
-        for (unsigned int i = 0; i < BracketsList.size(); i++) {
-            if (BracketsList[i] == nullptr) return nullptr;
-            lastExecValue = BracketsList[i]->exec();
-        }
-
-        return lastExecValue;
+public:
+    BracketsExprAST() {
+        //SerialPrint("i", "BRACKET", "CREATED", "empty");
     }
 
-    ~BracketsExprAST() {
-        for (unsigned int i = 0; i < BracketsList.size(); i++) {
-            if (BracketsList[i]) delete BracketsList[i];
-        }
-        BracketsList.clear();
+    void addExpr(ExprAST* expr) {
+        if (!expr) return; // защита от добавления нулевого узла
 
-        // Serial.printf("Call from  BracketsExprAST delete\n");
+        if (_count >= _capacity) {
+            uint8_t newCapacity = _capacity ? (uint8_t)(_capacity * 2) : 4;
+
+            ExprAST** newExprs = (ExprAST**)realloc(_exprs, newCapacity * sizeof(ExprAST*));
+            if (!newExprs) {
+                SerialPrint("e", "BRACKET", "REALLOC FAIL", String(_capacity));
+                delete expr; // иначе узел потеряется и будет утечка
+                return;
+            }
+            _exprs = newExprs;
+            _capacity = newCapacity;
+            //SerialPrint("i", "BRACKET", "EXPANDED", String(_capacity));
+        }
+
+        _exprs[_count++] = expr;
+    }
+
+    bool hasEventIdName(uint32_t eventHash) override {
+        for (uint8_t i = 0; i < _count; i++) {
+            if (_exprs[i]->hasEventIdName(eventHash)) return true;
+        }
+        return false;
+    }
+    
+    IoTValue* exec() override {
+        if (isIotScenException) return nullptr;
+
+        IoTValue* lastResult = nullptr;
+        for (uint8_t i = 0; i < _count; i++) {
+            lastResult = _exprs[i]->exec();
+            // Не прерываем на nullptr: это нормальный результат для
+            // if-без-else с ложным условием, а не признак сбоя.
+            // Прерываться нужно только на реальном исключении сценария
+            // (isIotScenException), которое проверяется в начале каждого exec().
+            if (isIotScenException) break;
+        }
+        return lastResult;
+    }
+    
+    ~BracketsExprAST() {
+        //SerialPrint("i", "BRACKET", "DESTROY", String(_count));
+        for (uint8_t i = 0; i < _count; i++) {
+            delete _exprs[i];
+        }
+        free(_exprs);
     }
 };
 
 //===----------------------------------------------------------------------===//
 // Lexer (Лексический анализатор)
 //===----------------------------------------------------------------------===//
-
 int IoTScenario::getLastChar() {
-    if (mode == 0) {
-        if (file) {
-            LastChar = file.read();
-            if (LastChar == 10) curLine++;
-            return LastChar;
-        } else
-            return EOF;
-    } else if (mode == 1) {
-        if (charCount < strFromFile.length()) {
-            LastChar = strFromFile.charAt(charCount);
-            // Serial.printf("%d, ", LastChar);
-            if (LastChar == 10) curLine++;
-            charCount++;
-            return LastChar;
-        } else
-            return EOF;
-    } else {
-        return EOF;
+    if (file && file.available()) {
+        int ch = file.read();
+        if (ch == '\n') curLine++; // Считаем строки
+        return ch;
     }
+    return EOF;
 }
 
-/// gettok - Возвращает следующий токен из стандартного потока ввода.
 int IoTScenario::gettok() {
-    // Пропускаем пробелы.
-    while (isspace(LastChar) || LastChar == ';')
+    // Пропускаем пробелы, табы, переносы и точки с запятой
+    while (isspace((unsigned char)LastChar) || LastChar == ';')
         LastChar = getLastChar();
 
-    if (isalpha(LastChar) || LastChar == '_') {  // идентификатор: [a-zA-Z][a-zA-Z0-9]*
-        IdentifierStr = String((char)LastChar);
-        while (isalnum((LastChar = getLastChar())) || LastChar == '_') {
+    // 1. ИДЕНТИФИКАТОРЫ И КЛЮЧЕВЫЕ СЛОВА
+    if (isalpha((unsigned char)LastChar) || LastChar == '_') {  // [a-zA-Z_][a-zA-Z0-9_]*
+        IdentifierStr = "";
+        IdentifierStr.reserve(16);  // память под типичный идентификатор выделяем заранее, heap не фрагментируется
+        // Выделяем память заранее (большинство токенов типа "if", "else", "my_var" укладываются в 15 символов)
+        //IdentifierStr.reserve(16); 
+        
+        IdentifierStr += (char)LastChar;
+        while (isalnum((unsigned char)(LastChar = getLastChar())) || LastChar == '_') {
             IdentifierStr += (char)LastChar;
         }
 
-        // Serial.printf("%s ", IdentifierStr.c_str());
+        // Считаем хэш от полученного идентификатора
+        IdentifierHash = hashFNV1a(IdentifierStr);
 
-        if (IdentifierStr == "if") return tok_if;
-        if (IdentifierStr == "then") return tok_then;
-        if (IdentifierStr == "else") return tok_else;
+        // СВЕРХБЫСТРОЕ сравнение ключевых слов по числам
+        switch (IdentifierHash) {
+            case 959999494U: return tok_if;     // "if" 959999494
+            case 3844270454U: return tok_then;   // "then" 3844270454
+            case 3183434736U: return tok_else;   // "else" 3183434736
+            default:          break;
+        }
+        
         return tok_identifier;
     }
+   
 
-    NumStr = "";
-    if (LastChar == '-') {
-        LastChar = getLastChar();
-        if (isdigit(LastChar))
-            NumStr = "-";
-        else
-            return '-';
-    }
-    if (isdigit(LastChar)) {  // Число: [0-9.]+
+    // 2. ЧИСЛА (Сборка double на лету без использования String)
+    if (isdigit((unsigned char)LastChar)) {
+        NumVal = 0.0;
+        
+        // Разбираем целую часть
         do {
-            NumStr += (char)LastChar;
+            NumVal = NumVal * 10.0 + (LastChar - '0');
             LastChar = getLastChar();
-        } while (isdigit(LastChar) || LastChar == '.');
+        } while (isdigit((unsigned char)LastChar));
+
+        // Разбираем дробную часть
+        if (LastChar == '.') {
+            LastChar = getLastChar();
+            float weight = 0.1;
+            while (isdigit((unsigned char)LastChar)) {
+                NumVal += (LastChar - '0') * weight;
+                weight *= 0.1;
+                LastChar = getLastChar();
+            }
+        }
 
         return tok_number;
     }
 
+    // 3. КОММЕНТАРИИ
     if (LastChar == '#') {
-        // Комментарий до конца строки
-        do LastChar = getLastChar();
-        while (LastChar != EOF && LastChar != '\n' && LastChar != '\r');
+        do {
+            LastChar = getLastChar();
+        } while (LastChar != EOF && LastChar != '\n' && LastChar != '\r');
 
         if (LastChar != EOF)
             return gettok();
     }
 
+    // 4. СТРОКОВЫЕ ЛИТЕРАЛЫ
     if (LastChar == '"') {  // "строка"
-        IdentifierStr = "";
+        IdentifierStr.clear();
+        //IdentifierStr.reserve(32); // Строки обычно длиннее идентификаторов
+        
         LastChar = getLastChar();
         while (LastChar != '"' && LastChar != EOF) {
-            if (LastChar == '\\') {     // обработка экранированных символов в строке
+            if (LastChar == '\\') {     // Обработка экранированных символов
                 LastChar = getLastChar();
                 if (LastChar == '"') {
                     IdentifierStr += '"';
@@ -754,58 +911,65 @@ int IoTScenario::gettok() {
             }
             LastChar = getLastChar();
         }
-        LastChar = getLastChar();
+        LastChar = getLastChar(); // Пропускаем закрывающую кавычку
 
         return tok_string;
     }
 
-    // Проверка конца файла.
+    // 5. КОНЕЦ ФАЙЛА
     if (LastChar == EOF)
         return tok_eof;
 
-    if (LastChar == '=') {
-        LastChar = getLastChar();
-        if (LastChar == '=') {
+    // 6. ОПЕРАТОРЫ СРАВНЕНИЯ И ПРИСВАИВАНИЯ
+    // Компактная структура через switch экономит flash-память и работает быстрее цепочки if
+    switch (LastChar) {
+        case '=':
             LastChar = getLastChar();
-            return tok_equal;
-        } else
+            if (LastChar == '=') { LastChar = getLastChar(); return tok_equal; }
             return '=';
-    }
-
-    if (LastChar == ':') {
-        LastChar = getLastChar();
-        if (LastChar == '=') {
+            
+        case ':':
             LastChar = getLastChar();
-            return tok_silentset;
-        } else
+            if (LastChar == '=') { LastChar = getLastChar(); return tok_silentset; }
             return ':';
-    }
-
-    if (LastChar == '!') {
-        LastChar = getLastChar();
-        if (LastChar == '=') {
+            
+        case '!':
             LastChar = getLastChar();
-            return tok_notequal;
-        } else
+            if (LastChar == '=') { LastChar = getLastChar(); return tok_notequal; }
             return '!';
-    }
-
-    if (LastChar == '<') {
-        LastChar = getLastChar();
-        if (LastChar == '=') {
+            
+        case '<':
             LastChar = getLastChar();
-            return tok_lesseq;
-        } else
+            if (LastChar == '=') { LastChar = getLastChar(); return tok_lesseq; }
             return '<';
-    }
-
-    if (LastChar == '>') {
-        LastChar = getLastChar();
-        if (LastChar == '=') {
+            
+        case '>':
             LastChar = getLastChar();
-            return tok_greateq;
-        } else
+            if (LastChar == '=') { LastChar = getLastChar(); return tok_greateq; }
             return '>';
+        
+        case '+':
+            LastChar = getLastChar();
+            if (LastChar == '+') { LastChar = getLastChar(); return tok_inc; } // ++
+            if (LastChar == '=') { LastChar = getLastChar(); return tok_addassign; } // +=
+            return '+';
+
+        case '-':
+            LastChar = getLastChar();
+            if (LastChar == '-') { LastChar = getLastChar(); return tok_dec; } // --
+            if (LastChar == '=') { LastChar = getLastChar(); return tok_subassign; } // -=
+            return '-';
+
+        case '*':
+            LastChar = getLastChar();
+            if (LastChar == '=') { LastChar = getLastChar(); return tok_mulassign; } // *=
+            return '*';
+
+        case '/':
+            LastChar = getLastChar();
+            if (LastChar == '=') { LastChar = getLastChar(); return tok_divassign; } // /=
+            return '/';
+
     }
 
     // В противном случае просто возвращаем символ как значение ASCII
@@ -827,13 +991,19 @@ int IoTScenario::getNextToken() {
 
 /// GetTokPrecedence - Возвращает приоритет текущего бинарного оператора.
 int IoTScenario::GetTokPrecedence() {
-    if (!(isascii(CurTok) || BinopPrecedence.count(CurTok)))
+    
+    // Проверяем только ASCII и отрицательные токены (операторы)
+    if (!(isascii(CurTok) || CurTok < 0))
         return -1;
 
-    // Удостоверимся, что это объявленный бинарный оператор.
-    int TokPrec = BinopPrecedence[CurTok];
-    if (TokPrec <= 0) return -1;
-    return TokPrec;
+    // Линейный поиск по таблице из 18 элементов (быстрее, чем map)
+    for (int i = 0; i < BINOP_COUNT; i++) {
+        if (BinopPrecedenceData[i].op == CurTok) {
+            return BinopPrecedenceData[i].prec;
+        }
+    }
+    
+    return -1;  // оператор не найден
 }
 
 /// Error* - Это небольшие вспомогательные функции для обработки ошибок.
@@ -843,301 +1013,503 @@ ExprAST *IoTScenario::Error(const String& Str) {
     return nullptr;
 }
 
-/// identifierexpr
-///   ::= identifier
-///   ::= identifier '(' expression* ')'
-ExprAST *IoTScenario::ParseIdentifierExpr(String *IDNames, bool callFromCondition) {
+ExprAST* IoTScenario::ParseIdentifierExpr(bool callFromCondition) {
     if (isIotScenException) return nullptr;
 
-    String IdName = IdentifierStr;
-    String Cmd = "";
-    IoTItem *tmpItem = findIoTItem(IdName);
-
-    getNextToken();  // получаем идентификатор.
+    uint32_t nameHash = IdentifierHash;
+    getNextToken(); 
 
     if (CurTok == '.') {
         getNextToken();
-        Cmd = IdentifierStr;
+        if (CurTok != tok_identifier) return Error(F("Expected command"));
+        
+        // Строка создается ТОЛЬКО если есть команда
+        String Cmd = std::move(IdentifierStr);
         getNextToken();
+        
+        if (CurTok != '(') {
+            // Это не вызов функции, а что-то другое
+            return Error(F("Expected '(' after command"));
+        }
+        
+        getNextToken(); // '('
+        
+        // Создаем CallExprAST с командой      
+        ExprAST* callNode = new (std::nothrow) CallExprAST(nameHash, hashFNV1a(Cmd), Cmd);
+        if (!callNode) {
+            // Args уже спарсены? Нет, мы только начали. Но если были аргументы до этого — их нет.
+            return Error(F("Out of memory"));
+        }
+        
+        // Парсим аргументы
+        if (CurTok != ')') {
+            while (1) {
+                ExprAST *Arg = ParseExpression(callFromCondition);
+                if (!Arg) { delete callNode; return nullptr; }
+                
+                callNode->addArg(Arg);
+                
+                if (CurTok == ')') break;
+                if (CurTok != ',') { delete callNode; return Error(F("Expected ')' or ','")); }
+                getNextToken();
+            }
+        }
+        getNextToken(); // ')'
+        return callNode;
     }
 
-    if (CurTok != '(') {  // Обычная переменная.
-        // if (tmpItem) return new VariableExprAST(IdName, tmpItem);
-        //   else return new StringExprAST("id " + IdName + " not_found");
-
-        // создаем экземпляр переменной в любом случае, даж если не нашли (tmpItem = nulptr), т.к. переменная может придти из сети позже
-        return new VariableExprAST(IdName, tmpItem);
+    // Нет точки - это просто переменная или вызов системной функции
+    if (CurTok != '(') {
+        // Обычная переменная
+        ExprAST* VarNode = new (std::nothrow) VariableExprAST(nameHash);
+        if (!VarNode) return nullptr;
+        
+        // Проверка постфиксного инкремента/декремента
+        if (CurTok == tok_inc) {
+            getNextToken();
+            ExprAST *One = new (std::nothrow) NumberExprAST(1.0f);
+            //return new (std::nothrow) BinaryExprAST(tok_addassign, VarNode, One);
+            if (!VarNode || !One) { delete VarNode; delete One; return nullptr; }
+            return safeBinary(tok_addassign, VarNode, One);
+        }
+        else if (CurTok == tok_dec) {
+            getNextToken();
+            ExprAST *One = new (std::nothrow) NumberExprAST(1.0f);
+            //return new (std::nothrow) BinaryExprAST(tok_subassign, VarNode, One);
+            if (!VarNode || !One) { delete VarNode; delete One; return nullptr; }
+            return safeBinary(tok_subassign, VarNode, One);
+        }
+        return VarNode;
     }
 
-    // Вызов функции.
-    getNextToken();  // получаем (
-    std::vector<ExprAST *> Args;
+    // Вызов системной функции (без точки)
+    getNextToken(); // '('
+    
+    // Создаем SysCallExprAST (команды нет)
+    ExprAST* callNode = new (std::nothrow) SysCallExprAST(nameHash);
+    if (!callNode) return Error(F("Out of memory"));
+  
+    // Парсим аргументы
     if (CurTok != ')') {
         while (1) {
-            ExprAST *Arg = ParseExpression(IDNames, callFromCondition);
-            if (!Arg) return nullptr;
-            Args.push_back(Arg);
-
+            ExprAST *Arg = ParseExpression(callFromCondition);
+            if (!Arg) { delete callNode; return nullptr; }
+            
+            callNode->addArg(Arg);
+            
             if (CurTok == ')') break;
-
-            if (CurTok != ',') {
-                return Error(F("Expected ')' or ',' in argument list"));
-            }
+            if (CurTok != ',') { delete callNode; return Error(F("Expected ')' or ','")); }
             getNextToken();
         }
     }
-
-    // Получаем ';'.
-    getNextToken();
-
-    if (Cmd == "")
-        return new SysCallExprAST(IdName, Args);  // создаем объект запуска системной функции
-    else
-        return new CallExprAST(IdName, Cmd, Args, tmpItem);  // создаем объект запуска функции в любом случае даж если не нашли Item
+    getNextToken(); // ')'
+    
+    return callNode;
 }
 
 /// numberexpr ::= number
 ExprAST *IoTScenario::ParseNumberExpr() {
     if (isIotScenException) return nullptr;
 
-    ExprAST *Result = new NumberExprAST(NumStr);
+    //ExprAST *Result = new (std::nothrow) NumberExprAST(NumVal);
+    ExprAST *Result = new (std::nothrow) NumberExprAST(NumVal);
+    if (!Result) return Error(F("Out of memory"));
+    //getNextToken();
+    //return Result;
     getNextToken();  // получаем число
     return Result;
 }
 
 /// parenexpr ::= '(' expression ')'
-ExprAST *IoTScenario::ParseParenExpr(String *IDNames, bool callFromCondition) {
-    getNextToken();  // получаем (.
-    ExprAST *V = ParseExpression(IDNames, callFromCondition);
+ExprAST* IoTScenario::ParseParenExpr(bool callFromCondition) {
+    getNextToken();  // съедаем '('
+    
+    // Вызываем ParseExpression уже без передачи вектора
+    ExprAST *V = ParseExpression(callFromCondition);
     if (!V) return nullptr;
 
     if (CurTok != ')')
-        return Error("expected ')'");
-    // getNextToken();  // получаем ).
+        return Error(F("expected ')'"));
+    
+    getNextToken();  // съедаем ')'
+    
     return V;
 }
 
 /// bracketsexpr ::= '{' expression '}'
-ExprAST *IoTScenario::ParseBracketsExpr(String *IDNames, bool callFromCondition) {
-    if (isIotScenException) return nullptr;
+ExprAST* IoTScenario::ParseBracketsExpr(bool callFromCondition) {
+    getNextToken(); // '{'
+    
+    // Создаем объект один раз
+    BracketsExprAST* node = new (std::nothrow) BracketsExprAST();
 
-    getNextToken();  // получаем {.
-    std::vector<ExprAST *> bracketsList;
+    if (!node) {
+        SerialPrint("e", "SCENARIO", "NO MEMORY FOR BRACKET", "");
+        return Error(F("Out of memory for BracketsExprAST"));
+    }
+
+    int count = 0;
 
     while (CurTok != '}') {
-        ExprAST *Expr = ParseExpression(IDNames, callFromCondition);
-        if (!Expr) return nullptr;
-        bracketsList.push_back(Expr);
+        // Вызываем ParseExpression БЕЗ параметров (так как мы настроили 
+        // использование глобального буфера класса)
+        ExprAST *Expr = ParseExpression(callFromCondition);
+        
+        if (!Expr) {
+            delete node; 
+            return nullptr;
+        }
+        
+        // Добавляем выражение в объект сразу после парсинга
+        node->addExpr(Expr);
+        //SerialPrint("i","BracketsExprAST "+String(node->objectId), "count =", String(count));
+        count++;
 
-        // if (CurTok == '}') break;
-
-        // Serial.printf("ParseBracketsExpr CurTok = %d \n", CurTok);
-
-        // if (CurTok != ';')
-        //     return Error("Expected ';' in operation list");
-
-        // int ttok = getNextToken();
         if (CurTok == tok_eof) {
+            delete node;
             return Error(F("Expected '}'"));
         }
     }
-
-    getNextToken();  // получаем }.
-    return new BracketsExprAST(bracketsList);
+    
+    getNextToken(); // '}'
+    return node;
 }
 
 /// quotesexpr ::= '"' expression '"'
 ExprAST *IoTScenario::ParseQuotesExpr() {
     if (isIotScenException) return nullptr;
-
-    String StringCont = IdentifierStr;
-    ExprAST *Result = new StringExprAST(StringCont);
-    getNextToken();  // получаем число
+    
+    ExprAST *Result = new (std::nothrow) StringExprAST(std::move(IdentifierStr));   // Забираем строку из IdentifierStr БЕЗ копирования через std::move   
+    if (!Result) return Error(F("Out of memory"));
+    //IdentifierStr.reserve(16);                                           // Очищаем IdentifierStr, так как данные улетели в StringExprAST
+    getNextToken();                                                  // получаем следующий токен
     return Result;
 }
 
-/// ifexpr ::= 'if' expression 'then' expression 'else' expression
-ExprAST *IoTScenario::ParseIfExpr(String *IDNames) {
+ExprAST* IoTScenario::ParseIfExpr() {
     if (isIotScenException) return nullptr;
 
-    getNextToken();  // Получаем if.
+    getNextToken(); // 'if'
 
-    // условие.
-    ExprAST *Cond = ParseExpression(IDNames, true);
+    tempHashCount = 0;
+    ExprAST *Cond = ParseExpression(true);
     if (!Cond) return nullptr;
 
-    if (CurTok != tok_then)
-        return Error("expected then");
-    getNextToken();  // Получаем then
+    // ВАЖНО: снимаем копию хэшей ЭТОГО if сразу после парсинга условия —
+    // до парсинга Then/Else, которые могут содержать вложенные if
+    // и перезаписать общий tempHashBuffer/tempHashCount.
+    uint32_t localHashes[MAX_TEMP_HASHES];
+    uint8_t localHashCount = tempHashCount;
+    for (uint8_t i = 0; i < localHashCount; i++) {
+        localHashes[i] = tempHashBuffer[i];
+    }
 
-    ExprAST *Then = ParseExpression(IDNames, false);
-    if (!Then) return nullptr;
+    if (CurTok != tok_then) {
+        delete Cond;
+        return Error(F("expected then"));
+    }
+    getNextToken(); // 'then'
 
-    // if (CurTok != tok_else)
-    //   return Error("expected else");
+    ExprAST *Then = ParseExpression(false); // тут возможна рекурсия в ParseIfExpr —
+                                             // это ОК, копия локальных хэшей уже сохранена выше
+    if (!Then) {
+        delete Cond;
+        return nullptr;
+    }
+
     ExprAST *Else = nullptr;
     if (CurTok == tok_else) {
         getNextToken();
-        Else = ParseExpression(IDNames, false);
-        if (!Else) return nullptr;
+        Else = ParseExpression(false);
+        if (!Else) {
+            delete Cond;
+            delete Then;
+            return nullptr;
+        }
     }
 
-    return new IfExprAST(Cond, Then, Else, IDNames);
+    //return new (std::nothrow) IfExprAST(Cond, Then, Else, localHashes, localHashCount);
+    ExprAST* node = new (std::nothrow) IfExprAST(Cond, Then, Else, localHashes, localHashCount);
+
+    if (!node) {
+        delete Cond;
+        delete Then;
+        delete Else;
+        return nullptr;
+    }
+    return node;
 }
 
-/// primary
-///   ::= identifierexpr
-///   ::= numberexpr
-///   ::= parenexpr
-ExprAST *IoTScenario::ParsePrimary(String *IDNames, bool callFromCondition) {
+/// primary  ::= identifierexpr   ::= numberexpr   ::= parenexpr
+ExprAST* IoTScenario::ParsePrimary(bool callFromCondition) {
     switch (CurTok) {
         default:
             Serial.println(CurTok);
             return Error(F("unknown token when expecting an expression"));
+            
         case tok_identifier: {
-            if (callFromCondition && IDNames) {
-                String tmpstr = *IDNames;
-                *IDNames = tmpstr + " " + IdentifierStr + " ";
+            // ИСПОЛЬЗУЕМ ГЛОБАЛЬНЫЙ БУФЕР КЛАССА
+            if (callFromCondition && tempHashCount < MAX_TEMP_HASHES) {
+                tempHashBuffer[tempHashCount++] = IdentifierHash;
+            } else if (callFromCondition) {
+                // переполнение буфера: события для этой переменной условия не сработают
+                SerialPrint("E", F("SCENARIO"), F("More than 8 identifiers in one if-condition, event matching will be lost"));
             }
-            return ParseIdentifierExpr(IDNames, callFromCondition);
+            // Передаем только флаг, вектор больше не нужен           
+            return ParseIdentifierExpr(callFromCondition);
         }
+        
+        case '-': {
+            getNextToken();
+            // Вызываем саму себя без вектора
+            ExprAST *Operand = ParsePrimary(callFromCondition);
+            if (!Operand) return nullptr;
+            
+            //ExprAST *Zero = new (std::nothrow) NumberExprAST(0.0);
+            //return new (std::nothrow) BinaryExprAST('-', Zero, Operand);
+            ExprAST *Zero = new (std::nothrow) NumberExprAST(0.0);
+            if (!Zero || !Operand) { delete Zero; delete Operand; return nullptr; }
+            return safeBinary('-', Zero, Operand);
+        }
+
+        case '!': {                                  // ← НОВОЕ
+            getNextToken();                           // съедаем '!'
+            ExprAST *Operand = ParsePrimary(callFromCondition);
+            if (!Operand) return nullptr;
+            //return new (std::nothrow) UnaryNotExprAST(Operand);
+            ExprAST* node = new (std::nothrow) UnaryNotExprAST(Operand);
+            if (!node) { delete Operand; return nullptr; }
+            return node;
+        }
+        
         case tok_number:
             return ParseNumberExpr();
+            
         case '(':
-            return ParseParenExpr(IDNames, callFromCondition);
+            return ParseParenExpr(callFromCondition);
+            
         case '{':
-            return ParseBracketsExpr(IDNames, callFromCondition);
+            return ParseBracketsExpr(callFromCondition);
+            
         case tok_string:
             return ParseQuotesExpr();
-        case tok_if:
-            return ParseIfExpr(IDNames);
+            
+        case tok_if:            
+            return ParseIfExpr(); 
     }
 }
 
 /// binoprhs
 ///   ::= ('+' primary)*
-ExprAST *IoTScenario::ParseBinOpRHS(int ExprPrec, ExprAST *LHS, String *IDNames, bool callFromCondition) {
+ExprAST* IoTScenario::ParseBinOpRHS(int ExprPrec, ExprAST *LHS, bool callFromCondition) {
     if (isIotScenException) return nullptr;
 
-    // Если это бинарный оператор, получаем его приоритет
     while (1) {
         int TokPrec = GetTokPrecedence();
 
-        // Если этот бинарный оператор связывает выражения по крайней мере так же,
-        // как текущий, то используем его
         if (TokPrec < ExprPrec)
             return LHS;
 
-        // Отлично, мы знаем, что это бинарный оператор.
         int BinOp = CurTok;
         getNextToken();  // eat binop
 
-        // Разобрать первичное выражение после бинарного оператора
-        ExprAST *RHS = ParsePrimary(IDNames, callFromCondition);
+        // Парсим первичное выражение уже БЕЗ вектора
+        ExprAST *RHS = ParsePrimary(callFromCondition);
         if (!RHS) return nullptr;
 
-        // Если BinOp связан с RHS меньшим приоритетом, чем оператор после RHS,
-        // то берём часть вместе с RHS как LHS.
         int NextPrec = GetTokPrecedence();
         if (TokPrec < NextPrec) {
-            RHS = ParseBinOpRHS(TokPrec + 1, RHS, IDNames, callFromCondition);
+            // Рекурсивный вызов теперь принимает только приоритет, узел и флаг
+            RHS = ParseBinOpRHS(TokPrec + 1, RHS, callFromCondition);
             if (RHS == nullptr) return nullptr;
         }
 
-        // Собираем LHS/RHS.
-        LHS = new BinaryExprAST(BinOp, LHS, RHS);
+        // Собираем дерево выражений
+        //LHS = new (std::nothrow) BinaryExprAST(BinOp, LHS, RHS);
+        LHS = safeBinary(BinOp, LHS, RHS);
+        if (!LHS) return nullptr;
     }
 }
 
-/// expression
-///   ::= primary binoprhs
-///
-ExprAST *IoTScenario::ParseExpression(String *IDNames, bool callFromCondition) {
-    ExprAST *LHS = ParsePrimary(IDNames, callFromCondition);
+ExprAST* IoTScenario::ParseExpression(bool callFromCondition) {
+    // Вектор больше не нужен, используем глобальные переменные класса
+    ExprAST *LHS = ParsePrimary(callFromCondition);
     if (!LHS) return nullptr;
-    return ParseBinOpRHS(0, LHS, IDNames, callFromCondition);
+    
+    // Передаем callFromCondition дальше по цепочке
+    return ParseBinOpRHS(0, LHS, callFromCondition);
 }
 
-void IoTScenario::loadScenario(String fileName) {  // подготавливаем контекст для чтения и интерпретации файла
+bool IoTScenario::addCachedIf(ExprAST* node) {
+    if (cachedIfCount >= cachedIfCapacity) {
+        int newCapacity = cachedIfCapacity ? cachedIfCapacity * 2 : 4;
+
+        ExprAST** newArr = (ExprAST**)realloc(cachedIfs, newCapacity * sizeof(ExprAST*));
+        if (!newArr) {
+            SerialPrint("e", "SCENARIO", "REALLOC FAIL cachedIfs", String(cachedIfCapacity));
+            return false;
+        }
+        cachedIfs = newArr;
+        cachedIfCapacity = newCapacity;
+    }
+
+    cachedIfs[cachedIfCount++] = node;
+    return true;
+}
+
+void IoTScenario::loadScenario(const String& fileName) {
     isIotScenException = false;
 
-    if (mode == 0) {
-        if (file) file.close();
-        file = FileFS.open(fileName.c_str(), "r");
-        if (!file) {
-            Error(F("Open file scenario error"));
-            return;
-        }
-    } else if (mode == 1) {
-        file = FileFS.open(fileName.c_str(), "r");
-        if (!file) {
-            Error(F("Open file scenario error"));
-            return;
-        }
-        strFromFile = file.readString();
-        // strFromFile.replace("{\"scen\":\"", "");
-        // strFromFile.replace("\\n", "\n");
-        // strFromFile.replace("\\\"", "\"");
-        // strFromFile.replace(";", " ");
-        // strFromFile.replace("\\t", " ");
-        // strFromFile.remove(strFromFile.length() - 2, 2);
-        Serial.printf("strFromFile: %s, %s\n", strFromFile.c_str(), fileName.c_str());
-        file.close();
+    for (int i = 0; i < cachedIfCount; i++) {
+        delete cachedIfs[i];
+        cachedIfs[i] = nullptr; 
     }
-}
+    cachedIfCount = 0; // capacity и сам буфер НЕ освобождаем — переиспользуем при повторной загрузке
 
-void IoTScenario::exec(const String& eventIdName) {  // посимвольно считываем и сразу интерпретируем сценарий в дерево AST
-    if (mode == 0 && !file) return;
+    if (file) file.close();
+    file = FileFS.open(fileName.c_str(), "r");
+    if (!file) {
+        Error(F("Open file scenario error"));
+        return;
+    }
 
-    LastChar = 0;
+    LastChar = getLastChar();
     CurTok = 0;
     curLine = 1;
-    charCount = 0;
+    getNextToken();
 
-    if (mode == 0) file.seek(0);
-
-    if (mode < 2) {
-        while (CurTok != EOF) {
-            switch (CurTok) {
-                case tok_if: {
-                    IDNames = "";  // сбрасываем накопитель встречающихся идентификаторов в условии
-                    ExprAST *tmpAST = ParseIfExpr(&IDNames);
-                    if (tmpAST) {
-                        if (tmpAST->hasEventIdName(eventIdName)) {
-                            tmpAST->exec();
-                        }
-                        delete tmpAST;
-                    } else
-                        getNextToken();
-                    break;
+    while (CurTok != tok_eof) {
+        if (CurTok == tok_if) {
+            ExprAST* node = ParseIfExpr();
+            if (node) {
+                if (!addCachedIf(node)) {
+                    Error(F("Out of memory caching IF statement!"));
+                    delete node; // не потерять узел, если добавить не удалось
                 }
-                default:
-                    getNextToken();
-                    break;
+            } else {
+                getNextToken();
             }
+        } else {
+            getNextToken();
+        }
+    }
+
+    file.close();
+
+#ifdef IoTSCEN_DEBUG
+    Serial.printf("=== SCENARIO MEMORY REPORT ===\r\n");
+    Serial.printf("Total AST objects created: %d\r\n", ExprAST::maxObjectCount);
+    Serial.printf("Active AST objects: %d\r\n", ExprAST::objectCount);
+    Serial.printf("Cached IF statements: %d\r\n", cachedIfCount);
+    Serial.printf("Free heap: %d bytes\r\n", ESP.getFreeHeap());
+    Serial.printf("==============================\r\n");
+#endif
+}
+
+// void IoTScenario::loadScenario(const String& fileName) {
+//     isIotScenException = false;
+
+//     for (int i = 0; i < cachedIfCount; i++) {
+//         delete cachedIfs[i];
+//     }
+//     cachedIfCount = 0;
+
+//     // 2. Открытие файла
+//     if (file) file.close(); 
+//     file = FileFS.open(fileName.c_str(), FILE_READ); 
+//     if (!file) { 
+//         Error(F("Open file scenario error")); 
+//         return; 
+//     } 
+
+//     // 3. Инициализация парсера
+//     LastChar = getLastChar(); // Читаем первый символ прямо из файла
+//     CurTok = 0; 
+//     curLine = 1; 
+//     getNextToken(); 
+
+//     // 4. Парсинг
+//     while (CurTok != tok_eof) { 
+//         if (CurTok == tok_if) { 
+//             ExprAST* node = ParseIfExpr();
+//             if (node) { 
+//                 //cachedIfs.push_back(node); 
+//                 if (cachedIfCount < MAX_CACHED_IFS) {
+//                     cachedIfs[cachedIfCount++] = node;
+//                 } else {
+//                     Error(F("Too many IF statements!"));
+//                 }
+//             } else { 
+//                 getNextToken(); 
+//             } 
+//         } else { 
+//             getNextToken(); 
+//         } 
+//     } 
+
+//     file.close(); // Файл больше не нужен
+//     //Serial.println("Scenario loaded successfully.");
+//     //SerialPrint(F("i"), F("Scenario"), F("Loaded and cached if-statements :"),String(cachedIfCount)); 
+//     Serial.printf("=== SCENARIO MEMORY REPORT ===\r\n");
+//     Serial.printf("Total AST objects created: %d\r\n", ExprAST::maxObjectCount);
+//     Serial.printf("Active AST objects: %d\r\n", ExprAST::objectCount);
+//     Serial.printf("Cached IF statements: %d\r\n", cachedIfCount);
+//     Serial.printf("Free heap: %d bytes\r\n", ESP.getFreeHeap());
+//     Serial.printf("==============================\r\n");
+// }
+
+void IoTScenario::exec(const String& eventIdName) {
+    
+    if (cachedIfCount == 0 || eventIdName.length() == 0) return;
+
+    // Считаем хэш входящего события ОДИН раз
+    uint32_t eventHash = hashFNV1a(eventIdName);
+
+    for (int i = 0; i < cachedIfCount; i++) {
+    // cachedIfs[i] — это ваш узел (вместо node из итератора)
+    if (cachedIfs[i]->hasEventIdName(eventHash)) {
+        cachedIfs[i]->exec();
+        
+        // Прерываем, если случилась ошибка
+        if (isIotScenException) break;   
+    }
+}
+}
+
+void IoTScenario::exec(uint32_t eventHash) {
+    
+    if (cachedIfCount == 0 || eventHash == 2166136261U) return;
+  
+    for (int i = 0; i < cachedIfCount; i++) {
+        // cachedIfs[i] — это ваш узел (вместо node из итератора)
+        if (cachedIfs[i]->hasEventIdName(eventHash)) {
+            cachedIfs[i]->exec();
+            
+            // Прерываем, если случилась ошибка
+            if (isIotScenException) break;   
         }
     }
 }
 
-IoTScenario::IoTScenario() {
-    // Задаём стандартные бинарные операторы.
-    // 1 - наименьший приоритет.
-    BinopPrecedence[tok_silentset] = 1;
-    BinopPrecedence['='] = 2;
-    BinopPrecedence['|'] = 5;
-    BinopPrecedence['&'] = 6;
-    BinopPrecedence[tok_equal] = 10;     // ==
-    BinopPrecedence[tok_notequal] = 11;  // !=
-    BinopPrecedence[tok_lesseq] = 15;    // <=
-    BinopPrecedence[tok_greateq] = 16;   // >=
-    BinopPrecedence['<'] = 20;
-    BinopPrecedence['>'] = 21;
-    BinopPrecedence['+'] = 25;
-    BinopPrecedence['-'] = 26;
-    BinopPrecedence['/'] = 27;
-    BinopPrecedence['*'] = 28;  // highest.
-}
+IoTScenario::IoTScenario() {}
+
+// IoTScenario::~IoTScenario() {
+    
+//     for (int i = 0; i < cachedIfCount; i++) {
+//         delete cachedIfs[i];
+//     }
+//     if (file) file.close();
+// }
 
 IoTScenario::~IoTScenario() {
+    for (int i = 0; i < cachedIfCount; i++) {
+        delete cachedIfs[i];
+        cachedIfs[i] = nullptr; 
+    }
+    
+    cachedIfCount = 0;           // <-- добавить
+    cachedIfCapacity = 0;        // <-- добавить
+    free(cachedIfs); // ← добавлено: освобождаем сам массив-буфер
+    cachedIfs = nullptr;         // <-- добавить
     if (file) file.close();
 }

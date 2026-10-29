@@ -108,7 +108,7 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t* payload, size_t length)
                     //  if ((*it)->getID().endsWith("-date")) {
                     //     (*it)->setTodayDate();
                     // }
-                    if ((*it)->getSubtype() == "Loging" || "LogingDaily") {
+                    if ((*it)->getSubtype() == "Loging" || (*it)->getSubtype() == "LogingDaily") {
                         (*it)->setPublishDestination(TO_WS, num);
                         (*it)->publishValue();
                     }

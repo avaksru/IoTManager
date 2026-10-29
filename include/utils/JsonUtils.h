@@ -12,6 +12,7 @@ extern String jsonWriteBool(String& json, String name, boolean value, bool e = t
 
 extern bool jsonRead(const String& json, String key, long& value, bool e = true);
 extern bool jsonRead(const String& json, String key, float& value, bool e = true);
+extern bool jsonRead(const String& json, String key, double& value, bool e = true);
 extern bool jsonRead(const String& json, String key, String& value, bool e = true);
 extern bool jsonRead(const String& json, String key, bool& value, bool e = true);
 extern bool jsonRead(const String& json, String key, int& value, bool e = true);

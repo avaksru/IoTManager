@@ -93,7 +93,7 @@ public:
             String msg = descr + ": total " + String(currentValue) + ", consumed " + String(difference);
             for (std::list<IoTItem *>::iterator it = IoTItems.begin(); it != IoTItems.end(); ++it)
             {
-                if ((*it)->getSubtype() == "TelegramLT" || "Telegram")
+                if ((*it)->getSubtype() == "TelegramLT" || (*it)->getSubtype() == "Telegram")
                 {
                     (*it)->sendTelegramMsg(false, msg);
                 }
